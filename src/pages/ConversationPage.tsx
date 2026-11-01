@@ -92,7 +92,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
   )
 
   return (
-    <div className="space-y-2 border-b border-slate-200 bg-surface py-3">
+    <div className="space-y-2 border-b border-slate-200 bg-slate-50 py-3">
       <div className="flex items-center gap-2">
         <Link
           to="/messages"
@@ -111,7 +111,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
         <span className="text-xs text-slate-500">{c.iAmSeller ? t('messages.roleBuyer') : t('messages.roleSeller')}</span>
       </div>
       {c.listingId && c.listingAvailable ? (
-        <Link to={`/a/${c.listingId}`} className="flex items-center gap-3 rounded-lg p-1 hover:bg-slate-50">
+        <Link to={`/a/${c.listingId}`} className="flex items-center gap-3 rounded-lg p-1 hover:bg-slate-100">
           {listing}
         </Link>
       ) : (
@@ -198,7 +198,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
 
   if (!conversation.canReply) {
     return (
-      <p className="border-t border-slate-200 bg-slate-50 p-3 text-center text-sm text-slate-600">
+      <p className="border-t border-slate-200 p-3 text-center text-sm text-slate-600">
         {conversation.otherUserId ? t('messages.cannotReplyBlocked') : t('messages.cannotReplyDeleted')}
       </p>
     )
@@ -229,7 +229,8 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2 border-t border-slate-200 bg-surface pt-3 pb-1">
+    // same background as the page: only the text box stands out
+    <form onSubmit={handleSubmit} className="space-y-2 border-t border-slate-200 bg-slate-50 pt-3 pb-1">
       {send.isError && <Alert kind="error">{translateKey(t, errorToKey(send.error))}</Alert>}
       <div className="flex items-end gap-2">
         <label htmlFor="message-text" className="sr-only">
