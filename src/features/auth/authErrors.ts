@@ -61,6 +61,10 @@ export function errorToKey(error: unknown): string {
     if (error.status === 429) {
       return 'errors.rateLimit'
     }
+    // the email service (SMTP) refused to send: confirmation / reset email could not leave
+    if (/error sending .*email/i.test(error.message)) {
+      return 'errors.emailSendFailed'
+    }
   }
   if (error && typeof error === 'object' && 'message' in error) {
     const message = String((error as { message: unknown }).message)

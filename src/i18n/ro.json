@@ -202,7 +202,8 @@
     "cannotBlockSelf": "Nu te poți bloca singur.",
     "cannotBlockAdmin": "Un administrator nu poate fi blocat.",
     "userNotFound": "Utilizatorul nu a fost găsit.",
-    "duplicate": "Există deja."
+    "duplicate": "Există deja.",
+    "emailSendFailed": "Nu am putut trimite emailul. Încearcă din nou peste câteva minute; dacă se repetă, scrie-ne (pagina Contact)."
   },
   "notFound": {
     "metaTitle": "Pagina nu a fost găsită – Telauto.md",

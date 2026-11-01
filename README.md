@@ -244,6 +244,10 @@ Ca prietenii să-și poată face cont, emailurile se trimit prin **Brevo** (grat
    host `smtp-relay.brevo.com`, port `587`, username = Login, password = SMTP key,
    sender email = adresa confirmată în Brevo, sender name `Telauto.md`.
 
+> ⚠️ Dacă la înregistrare apare eroarea `525 5.7.1 Unauthorized IP address` (Supabase → Logs → Auth),
+> în Brevo → **Security → Authorized IPs** trebuie oprită blocarea adreselor IP necunoscute:
+> serverele Supabase nu au o adresă IP fixă.
+
 Cheia SMTP stă **doar** în Supabase. Cu SMTP propriu, Supabase permite și emailurile în română/rusă din
 `supabase/templates/` (secțiunile `[auth.email.template.*]` din `config.toml`).
 
