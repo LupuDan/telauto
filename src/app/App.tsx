@@ -4,15 +4,18 @@ import { AuthProvider } from '../features/auth/AuthProvider'
 import { RequireAuth } from '../features/auth/RequireAuth'
 import { AccountPage } from '../pages/AccountPage'
 import { AuthConfirmPage } from '../pages/AuthConfirmPage'
+import { CategoryPage } from '../pages/CategoryPage'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { EditListingPage } from '../pages/EditListingPage'
 import { HomePage } from '../pages/HomePage'
+import { ListingPage } from '../pages/ListingPage'
 import { LoginPage } from '../pages/LoginPage'
 import { NewListingPage } from '../pages/NewListingPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PublicProfilePage } from '../pages/PublicProfilePage'
 import { RegisterPage } from '../pages/RegisterPage'
 import { ResetPage } from '../pages/ResetPage'
+import { SearchPage } from '../pages/SearchPage'
 import { Layout } from './Layout'
 
 const queryClient = new QueryClient({
@@ -22,7 +25,7 @@ const queryClient = new QueryClient({
 })
 
 // Routes from plan section 7 that are built in later phases show "Coming soon".
-const PUBLIC_PLANNED_ROUTES = ['/c/:slug', '/search', '/a/:id', '/p/:page']
+const PUBLIC_PLANNED_ROUTES = ['/p/:page']
 const PRIVATE_PLANNED_ROUTES = ['/messages', '/messages/:id', '/admin']
 
 export function App() {
@@ -39,6 +42,9 @@ export function App() {
               <Route path="/reset" element={<ResetPage />} />
               <Route path="/auth/confirm" element={<AuthConfirmPage />} />
               <Route path="/u/:id" element={<PublicProfilePage />} />
+              <Route path="/c/:slug" element={<CategoryPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/a/:id" element={<ListingPage />} />
               {PUBLIC_PLANNED_ROUTES.map((path) => (
                 <Route key={path} path={path} element={<ComingSoonPage />} />
               ))}

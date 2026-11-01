@@ -50,7 +50,8 @@
     "heading": "Cumpără și vinde în siguranță",
     "categoriesHeading": "Categorii",
     "latestHeading": "Anunțuri noi",
-    "latestEmpty": "Încă nu sunt anunțuri. Vor apărea aici în curând."
+    "latestEmpty": "Încă nu sunt anunțuri. Vor apărea aici în curând.",
+    "seeAll": "Vezi toate"
   },
   "auth": {
     "loginMetaTitle": "Intră în cont – Telauto.md",
@@ -143,9 +144,9 @@
     "memberSince": "Pe Telauto.md din {{date}}",
     "blocked": "Cont blocat",
     "listingsHeading": "Anunțuri active",
-    "listingsSoon": "Anunțurile vor apărea aici în curând.",
     "notFoundTitle": "Profilul nu a fost găsit",
-    "notFoundText": "Utilizatorul nu există sau și-a șters contul."
+    "notFoundText": "Utilizatorul nu există sau și-a șters contul.",
+    "noListings": "Acest utilizator nu are anunțuri active."
   },
   "validation": {
     "required": "Completează acest câmp.",
@@ -361,7 +362,8 @@
       "label": "Culoare"
     },
     "battery_health": {
-      "label": "Sănătatea bateriei (%)"
+      "label": "Sănătatea bateriei (%)",
+      "card": "baterie {{value}}%"
     },
     "warranty": {
       "label": "Garanție"
@@ -389,7 +391,8 @@
       "label": "Anul fabricației"
     },
     "mileage_km": {
-      "label": "Kilometraj (km)"
+      "label": "Kilometraj (km)",
+      "card": "{{value}} km"
     },
     "fuel": {
       "label": "Combustibil",
@@ -430,7 +433,8 @@
       }
     },
     "engine_volume_l": {
-      "label": "Capacitate motor (litri)"
+      "label": "Capacitate motor (litri)",
+      "card": "{{value}} l"
     },
     "registered_md": {
       "label": "Înmatriculat în RM"
@@ -458,5 +462,79 @@
     "manufacturer": {
       "label": "Producător"
     }
+  },
+  "listing": {
+    "imeiBadge": "IMEI indicat",
+    "vinBadge": "VIN indicat",
+    "negotiableShort": "negociabil",
+    "openPhoto": "Deschide poza {{n}} din {{total}} pe tot ecranul",
+    "previousPhoto": "Poza anterioară",
+    "nextPhoto": "Poza următoare",
+    "showPhoto": "Arată poza {{n}}",
+    "closePhoto": "Închide",
+    "sellerTitle": "Vânzătorul",
+    "ownListing": "Acesta este anunțul tău.",
+    "loginToSeePhone": "Intră în cont ca să vezi telefonul",
+    "loginHint": "Telefonul vânzătorului este vizibil doar utilizatorilor conectați. Așa protejăm vânzătorii de spam.",
+    "loginHintPrivate": "Telefonul și {{field}} sunt vizibile doar utilizatorilor conectați. Așa protejăm vânzătorii de spam.",
+    "showPhone": "Arată telefonul",
+    "showPhonePrivate": "Arată telefonul și {{field}}",
+    "noPhone": "Vânzătorul nu a indicat un număr de telefon. Îi vei putea scrie prin mesaje.",
+    "comingSoon": "în curând",
+    "actions": {
+      "message": "Scrie mesaj",
+      "save": "Salvează",
+      "report": "Raportează"
+    },
+    "safetyTitle": "Sfaturi de siguranță",
+    "safety1": "Nu plăti avans și nu trimite datele cardului înainte să vezi produsul.",
+    "safety2": "Întâlnește-te într-un loc public și verifică produsul pe loc.",
+    "safety3": "La telefoane verifică IMEI-ul (*#06#), la mașini verifică VIN-ul din talon.",
+    "notFoundText": "Anunțul nu există, a expirat sau a fost ascuns.",
+    "breadcrumb": "Ești aici",
+    "home": "Prima pagină",
+    "notPublicDraft": "Acest anunț este o ciornă. Doar tu îl vezi până îl publici.",
+    "notPublic": "Acest anunț nu este vizibil pentru alții (vândut, expirat sau ascuns). Doar tu îl vezi.",
+    "publishedOn": "publicat pe {{date}}",
+    "characteristics": "Caracteristici",
+    "similar": "Anunțuri asemănătoare"
+  },
+  "search": {
+    "categoryMetaTitle": "{{name}} – anunțuri în Moldova – Telauto.md",
+    "categoryMetaDescription": "{{name}}: anunțuri gratuite în toată Moldova, cu filtre și căutare sigură.",
+    "headingQuery": "Rezultate pentru „{{q}}”",
+    "headingAll": "Toate anunțurile",
+    "resultCount_one": "{{count}} anunț",
+    "resultCount_few": "{{count}} anunțuri",
+    "resultCount_other": "{{count}} de anunțuri",
+    "results": "Rezultate",
+    "filtersTitle": "Filtre",
+    "filtersButton": "Filtre",
+    "closeFilters": "Închide filtrele",
+    "keywords": "Cuvinte cheie",
+    "category": "Categoria",
+    "allCategories": "Toate categoriile",
+    "allLocalities": "Toată Moldova",
+    "any": "Oricare",
+    "from": "de la",
+    "to": "până la",
+    "priceHint": "Prețurile în EUR și MDL se compară aproximativ (1 € ≈ 20 MDL).",
+    "compatibleWith": "Se potrivește la mașina",
+    "compatibleYear": "Anul mașinii",
+    "apply": "Arată rezultatele",
+    "reset": "Resetează",
+    "sortLabel": "Sortează",
+    "sort": {
+      "new": "Cele mai noi",
+      "cheap": "Cele mai ieftine",
+      "expensive": "Cele mai scumpe"
+    },
+    "emptyTitle": "Nu am găsit anunțuri",
+    "emptyText": "Încearcă alte cuvinte sau mai puține filtre.",
+    "clearAll": "Șterge toate filtrele",
+    "pagination": "Pagini",
+    "previous": "Înapoi",
+    "next": "Înainte",
+    "pageN": "Pagina {{n}}"
   }
 }

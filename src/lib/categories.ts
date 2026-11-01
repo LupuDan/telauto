@@ -63,6 +63,8 @@ export type CategoryConfig = {
   conditionLabels: 'default' | 'parts'
   privateField?: 'imei' | 'vin'
   hasCompatibility: boolean
+  /** attribute keys shown on the result card, in this order */
+  cardFields: readonly string[]
   fields: readonly FieldDef[]
 }
 
@@ -78,6 +80,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     conditionLabels: 'default',
     privateField: 'imei',
     hasCompatibility: false,
+    cardFields: ['storage_gb', 'network_lock', 'battery_health'],
     fields: [
       { key: 'brand_id', type: 'reference', source: 'phoneBrand', required: true, filter: 'reference' },
       {
@@ -110,6 +113,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     minPhotos: 1,
     conditionLabels: 'default',
     hasCompatibility: false,
+    cardFields: ['accessory_type'],
     fields: [
       {
         key: 'accessory_type',
@@ -130,6 +134,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     conditionLabels: 'default',
     privateField: 'vin',
     hasCompatibility: false,
+    cardFields: ['year', 'mileage_km', 'fuel', 'transmission'],
     fields: [
       {
         key: 'make_id',
@@ -179,6 +184,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
     minPhotos: 1,
     conditionLabels: 'parts',
     hasCompatibility: true,
+    cardFields: ['part_type'],
     fields: [
       {
         key: 'part_type',

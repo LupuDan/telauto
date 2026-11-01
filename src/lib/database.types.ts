@@ -655,8 +655,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      build_search_query: { Args: { p_text: string }; Returns: unknown }
       category_min_photos: { Args: { p_category_id: number }; Returns: number }
       delete_my_account: { Args: never; Returns: undefined }
+      get_listing_badges: {
+        Args: { p_listing_id: string }
+        Returns: {
+          has_imei: boolean
+          has_vin: boolean
+        }[]
+      }
       get_listing_contact: {
         Args: { p_listing_id: string }
         Returns: {
@@ -681,8 +689,50 @@ export type Database = {
         Returns: undefined
       }
       owns_listing_folder: { Args: { object_name: string }; Returns: boolean }
+      price_in_mdl: {
+        Args: { p_currency: string; p_price: number }
+        Returns: number
+      }
       publish_listing: { Args: { p_listing_id: string }; Returns: undefined }
       reactivate_listing: { Args: { p_listing_id: string }; Returns: string }
+      search_listings: {
+        Args: {
+          p_attributes?: Json
+          p_category_id?: number
+          p_compat_make_id?: number
+          p_compat_model_id?: number
+          p_compat_year?: number
+          p_condition?: string
+          p_currency?: string
+          p_exclude_id?: string
+          p_limit?: number
+          p_locality_id?: number
+          p_offset?: number
+          p_price_max?: number
+          p_price_min?: number
+          p_query?: string
+          p_ranges?: Json
+          p_sort?: string
+          p_user_id?: string
+        }
+        Returns: {
+          attributes: Json
+          category_id: number
+          condition: string
+          cover_path: string
+          created_at: string
+          currency: string
+          has_imei: boolean
+          has_vin: boolean
+          id: string
+          locality_id: number
+          negotiable: boolean
+          price: number
+          title: string
+          total_count: number
+          user_id: string
+        }[]
+      }
       start_conversation: { Args: { p_listing_id: string }; Returns: string }
     }
     Enums: {

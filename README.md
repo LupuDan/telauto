@@ -77,6 +77,10 @@ se creează un fișier nou, cu următorul număr.
 | `0007_reports.sql` | raportări, ascunderea automată după 3 raportări |
 | `0008_contact_function.sql` | `get_listing_contact()` – telefon, IMEI, VIN doar pentru utilizatori conectați |
 | `0009_storage.sql` | bucket-ul de poze `listing-images` și regulile lui |
+| `0010_tighten_function_grants.sql` | funcțiile interne (triggere) nu pot fi apelate din site |
+| `0011_delete_account.sql` | `delete_my_account()` – ștergerea propriului cont |
+| `0012_listing_drafts_phone_models.sql` | ciorne, `publish_listing()`, lista de modele de telefoane |
+| `0013_search.sql` | `search_listings()` – căutarea cu filtre, sortare și pagini; `get_listing_badges()` |
 | `seed.sql` | categoriile, municipiile și raioanele, mărcile de telefoane, mărcile și modelele auto |
 
 ### Prima conectare (o singură dată)
@@ -113,6 +117,21 @@ npx supabase db push --include-seed   # rulează migrările noi + seed.sql
 
 Dacă publicarea se întrerupe (de ex. cade internetul), ciorna rămâne în **Contul meu → Anunțurile mele → Ciorne**
 și poate fi finalizată de acolo. Câmpurile fiecărei categorii sunt definite în `src/lib/categories.ts`.
+
+### Căutarea (faza 5)
+
+Toate listele de anunțuri (prima pagină, categorie, căutare, profil public, „anunțuri asemănătoare”)
+folosesc funcția `search_listings()` din `0013_search.sql`:
+
+- arată doar anunțurile **active, neexpirate**, ale utilizatorilor neblocați (regula e scrisă în funcție);
+- textul se caută în titlu și descriere, fără diacritice și după începutul cuvântului („masina” găsește „Mașină”, „iphon” găsește „iPhone”);
+- filtrele specifice categoriei se generează din `src/lib/categories.ts` (proprietatea `filter` a fiecărui câmp);
+- prețurile în EUR și MDL se compară cu un curs aproximativ **1 € = 20 MDL** (funcția `price_in_mdl()`;
+  pentru alt curs se face o migrare nouă care o redefinește);
+- filtrele stau în adresă (de ex. `#/c/autovehicule?f.fuel=diesel&f.year.min=2010`), deci o căutare se poate trimite ca link.
+
+Pe pagina anunțului, telefonul, IMEI-ul și VIN-ul vin doar din `get_listing_contact()`, care refuză vizitatorii neconectați.
+Etichetele „IMEI indicat” / „VIN indicat” arată doar *că* există valoarea, nu valoarea.
 
 ### Testul de securitate
 

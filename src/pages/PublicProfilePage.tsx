@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
+import { ListingGrid, ListingGridSkeleton } from '../components/ListingCard'
 import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
 import { useProfile } from '../features/profile/hooks'
 import { useLocalities } from '../features/reference/hooks'
+import { useSearchListings } from '../features/search/api'
 import { formatMonthYear, localizedName } from '../lib/format'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -63,10 +65,24 @@ export function PublicProfilePage() {
         <h2 id="profile-listings" className="mb-3 text-lg font-semibold">
           {t('profile.listingsHeading')}
         </h2>
-        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
-          {t('profile.listingsSoon')}
-        </p>
+        <ProfileListings userId={data.id} />
       </section>
     </div>
   )
+}
+
+function ProfileListings({ userId }: { userId: string }) {
+  const { t } = useTranslation()
+  const listings = useSearchListings({ p_user_id: userId, p_limit: 48 })
+
+  if (listings.isPending) return <ListingGridSkeleton count={4} />
+  if (listings.isError) return <ErrorState error={listings.error} onRetry={() => void listings.refetch()} />
+  if (listings.data.items.length === 0) {
+    return (
+      <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+        {t('profile.noListings')}
+      </p>
+    )
+  }
+  return <ListingGrid listings={listings.data.items} />
 }

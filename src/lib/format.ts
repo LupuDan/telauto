@@ -36,6 +36,22 @@ export function normalizePhone(input: string): string {
 
 export const PHONE_PATTERN = /^\+?[0-9]{8,15}$/
 
+/** "180 000" */
+export function formatNumber(value: number, lng: string | undefined): string {
+  return new Intl.NumberFormat(LOCALES[toLanguage(lng)], { maximumFractionDigits: 2 }).format(value)
+}
+
+/** "3 nov." for dates in the current year, otherwise "3 nov. 2025". */
+export function formatShortDate(value: string | Date, lng: string | undefined): string {
+  const date = typeof value === 'string' ? new Date(value) : value
+  const sameYear = date.getFullYear() === new Date().getFullYear()
+  return new Intl.DateTimeFormat(LOCALES[toLanguage(lng)], {
+    day: 'numeric',
+    month: 'short',
+    ...(sameYear ? {} : { year: 'numeric' }),
+  }).format(date)
+}
+
 /** "1 500 MDL" / "12 300 €" */
 export function formatPrice(price: number, currency: string, lng: string | undefined): string {
   const number = new Intl.NumberFormat(LOCALES[toLanguage(lng)], { maximumFractionDigits: 2 }).format(price)
