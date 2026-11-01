@@ -178,12 +178,12 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
         {...attributes}
         {...listeners}
         aria-label={t('listingForm.photoDrag', { n: index + 1 })}
-        className="aspect-[4/3] cursor-grab touch-manipulation active:cursor-grabbing"
+        className="relative aspect-[4/3] cursor-grab touch-manipulation overflow-hidden active:cursor-grabbing"
       >
         <img
           src={photo.previewUrl}
           alt={t('listingForm.photoAlt', { n: index + 1 })}
-          className="size-full object-cover select-none"
+          className="absolute inset-0 size-full object-cover select-none"
           draggable={false}
         />
       </div>
