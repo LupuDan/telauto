@@ -5,8 +5,10 @@ import { RequireAuth } from '../features/auth/RequireAuth'
 import { AccountPage } from '../pages/AccountPage'
 import { AuthConfirmPage } from '../pages/AuthConfirmPage'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
+import { EditListingPage } from '../pages/EditListingPage'
 import { HomePage } from '../pages/HomePage'
 import { LoginPage } from '../pages/LoginPage'
+import { NewListingPage } from '../pages/NewListingPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { PublicProfilePage } from '../pages/PublicProfilePage'
 import { RegisterPage } from '../pages/RegisterPage'
@@ -21,7 +23,7 @@ const queryClient = new QueryClient({
 
 // Routes from plan section 7 that are built in later phases show "Coming soon".
 const PUBLIC_PLANNED_ROUTES = ['/c/:slug', '/search', '/a/:id', '/p/:page']
-const PRIVATE_PLANNED_ROUTES = ['/new', '/a/:id/edit', '/messages', '/messages/:id', '/admin']
+const PRIVATE_PLANNED_ROUTES = ['/messages', '/messages/:id', '/admin']
 
 export function App() {
   return (
@@ -43,6 +45,8 @@ export function App() {
 
               <Route element={<RequireAuth />}>
                 <Route path="/account" element={<AccountPage />} />
+                <Route path="/new" element={<NewListingPage />} />
+                <Route path="/a/:id/edit" element={<EditListingPage />} />
                 {PRIVATE_PLANNED_ROUTES.map((path) => (
                   <Route key={path} path={path} element={<ComingSoonPage />} />
                 ))}

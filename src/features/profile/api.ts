@@ -47,6 +47,14 @@ export async function updateMyProfile(userId: string, values: ProfileUpdate) {
   if (phoneError) throw phoneError
 }
 
+export async function updateMyPhone(userId: string, phone: string) {
+  const { error } = await supabase
+    .from('profile_private')
+    .update({ phone: phone === '' ? null : phone })
+    .eq('user_id', userId)
+  if (error) throw error
+}
+
 /** Deletes every photo the user uploaded: <user_id>/<listing_id>/<file>. */
 async function deleteAllMyImages(userId: string) {
   const bucket = supabase.storage.from(LISTING_IMAGES_BUCKET)

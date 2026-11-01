@@ -36,6 +36,12 @@ export function normalizePhone(input: string): string {
 
 export const PHONE_PATTERN = /^\+?[0-9]{8,15}$/
 
+/** "1 500 MDL" / "12 300 €" */
+export function formatPrice(price: number, currency: string, lng: string | undefined): string {
+  const number = new Intl.NumberFormat(LOCALES[toLanguage(lng)], { maximumFractionDigits: 2 }).format(price)
+  return currency === 'EUR' ? `${number} €` : `${number} MDL`
+}
+
 /** Picks the name column for the current language from rows like { name_ro, name_ru }. */
 export function localizedName(row: { name_ro: string; name_ru: string }, lng: string | undefined): string {
   return toLanguage(lng) === 'ru' ? row.name_ru : row.name_ro

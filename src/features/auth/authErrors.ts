@@ -10,6 +10,11 @@ const DATABASE_ERROR_KEYS: Record<string, string> = {
   LOGIN_REQUIRED: 'errors.loginRequired',
   NOT_ALLOWED: 'errors.notAllowed',
   LISTING_NOT_FOUND: 'errors.listingNotFound',
+  LISTING_NOT_DRAFT: 'errors.listingNotDraft',
+  LISTING_PHOTOS_MISSING: 'errors.photosMissing',
+  LISTING_COMPATIBILITY_MISSING: 'errors.compatibilityMissing',
+  LISTING_STATUS_ADMIN_ONLY: 'errors.notAllowed',
+  PROFILE_FIELD_ADMIN_ONLY: 'errors.notAllowed',
 }
 
 /** Supabase Auth error codes -> translation keys. */

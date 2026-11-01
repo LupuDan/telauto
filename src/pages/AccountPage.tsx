@@ -8,6 +8,7 @@ import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
 import { signOut } from '../features/auth/api'
 import { useAuth } from '../features/auth/authContext'
+import { MyListings } from '../features/listings/MyListings'
 import { ChangePasswordForm } from '../features/profile/ChangePasswordForm'
 import { DeleteAccountForm } from '../features/profile/DeleteAccountForm'
 import { useMyPhone, useProfile } from '../features/profile/hooks'
@@ -21,7 +22,8 @@ export function AccountPage() {
   usePageMeta(t('account.metaTitle'))
   const [params, setParams] = useSearchParams()
   const tabParam = params.get('tab')
-  const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : 'settings'
+  const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : 'listings'
+  const { user } = useAuth()
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -54,8 +56,18 @@ export function AccountPage() {
         </ul>
       </nav>
 
+      {(params.get('notice') === 'published' || params.get('notice') === 'saved') && (
+        <div className="mb-4">
+          <Alert kind="success">
+            {params.get('notice') === 'published' ? t('myListings.publishedNotice') : t('myListings.savedNotice')}
+          </Alert>
+        </div>
+      )}
+
       {tab === 'settings' ? (
         <SettingsTab />
+      ) : tab === 'listings' && user ? (
+        <MyListings userId={user.id} />
       ) : (
         <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
           {t('account.tabComingSoon')}

@@ -7,7 +7,9 @@
   "common": {
     "loading": "Se încarcă...",
     "retry": "Încearcă din nou",
-    "errorTitle": "A apărut o eroare"
+    "errorTitle": "A apărut o eroare",
+    "yes": "Da",
+    "no": "Nu"
   },
   "header": {
     "searchPlaceholder": "Caută telefoane, mașini, piese...",
@@ -154,7 +156,22 @@
     "displayNameMin": "Numele trebuie să aibă cel puțin 2 caractere.",
     "displayNameMax": "Numele poate avea cel mult 60 de caractere.",
     "phone": "Scrie un număr de telefon valid, de ex. 069123456 sau +37369123456.",
-    "acceptTerms": "Trebuie să accepți termenii ca să îți creezi cont."
+    "acceptTerms": "Trebuie să accepți termenii ca să îți creezi cont.",
+    "chooseCategory": "Alege categoria.",
+    "titleMin": "Titlul trebuie să aibă cel puțin 3 caractere.",
+    "titleMax": "Titlul poate avea cel mult 100 de caractere.",
+    "tooLong": "Textul este prea lung.",
+    "price": "Scrie un preț mai mare ca 0 (ex. 1500 sau 1500,50).",
+    "integer": "Scrie un număr întreg.",
+    "number": "Scrie un număr.",
+    "range": "Valoarea nu este în intervalul permis.",
+    "date": "Alege o dată validă.",
+    "imei": "IMEI-ul trebuie să aibă 15 cifre și să fie valid (verifică cifrele).",
+    "vin": "VIN-ul are 17 caractere: cifre și litere, fără I, O și Q.",
+    "year": "Anul trebuie să fie între 1950 și anul viitor.",
+    "yearOrder": "„Până în” nu poate fi mai mic decât „Din”.",
+    "compatibilityRequired": "Adaugă cel puțin o mașină compatibilă.",
+    "compatibilityMax": "Poți adăuga cel mult 20 de compatibilități."
   },
   "errors": {
     "generic": "Ceva nu a mers. Încearcă din nou peste puțin timp.",
@@ -175,7 +192,10 @@
     "imageLimit": "Un anunț poate avea cel mult 10 poze.",
     "messageLimit": "Ai trimis prea multe mesaje în ultima oră. Încearcă din nou mai târziu.",
     "garageLimit": "Poți salva cel mult 10 mașini în garaj.",
-    "ownListing": "Nu poți scrie la propriul anunț."
+    "ownListing": "Nu poți scrie la propriul anunț.",
+    "listingNotDraft": "Anunțul a fost deja publicat.",
+    "photosMissing": "Anunțul nu are destule poze pentru această categorie.",
+    "compatibilityMissing": "Piesa trebuie să aibă cel puțin o compatibilitate."
   },
   "comingSoon": {
     "metaTitle": "În curând – Telauto.md",
@@ -188,5 +208,255 @@
     "heading": "Pagina nu a fost găsită",
     "text": "Adresa nu există sau a fost mutată.",
     "backHome": "Înapoi la prima pagină"
+  },
+  "listingForm": {
+    "newMetaTitle": "Adaugă anunț – Telauto.md",
+    "editMetaTitle": "Editează anunțul – Telauto.md",
+    "newTitle": "Adaugă anunț",
+    "editTitle": "Editează anunțul",
+    "finishDraftTitle": "Finalizează anunțul",
+    "steps": {
+      "category": "Alege categoria",
+      "photos": "Poze",
+      "details": "Detalii",
+      "characteristics": "Caracteristici",
+      "publish": "Contact și publicare"
+    },
+    "stepOf": "Pasul {{current}} din {{total}}",
+    "back": "Înapoi",
+    "next": "Continuă",
+    "publish": "Publică anunțul",
+    "saveChanges": "Salvează modificările",
+    "choose": "– Alege –",
+    "chooseParentFirst": "– Alege mai întâi marca –",
+    "notSpecified": "– Nespecificat –",
+    "otherOption": "Altul (scrie)",
+    "rangeHint": "Între {{min}} și {{max}}.",
+    "minPhotosShort": "minimum {{count}} poze",
+    "photosHint": "Adaugă între {{min}} și {{max}} poze. Prima poză este poza principală.",
+    "photosMin": "Adaugă cel puțin {{count}} poze pentru această categorie.",
+    "photosReorderHint": "Schimbă ordinea trăgând pozele (pe telefon: ține apăsat) sau cu săgețile ← →.",
+    "photoFailed": "Unele poze nu au putut fi citite ({{count}}). Încearcă JPG, PNG sau WebP.",
+    "photoProcessing": "Se pregătește poza...",
+    "addPhotos": "Adaugă poze",
+    "mainPhoto": "Principală",
+    "photoAlt": "Poza {{n}}",
+    "photoDrag": "Poza {{n}} – trage pentru a schimba ordinea",
+    "photoMoveLeft": "Mută mai în față",
+    "photoMoveRight": "Mută mai în spate",
+    "photoRemove": "Șterge poza",
+    "title": "Titlu",
+    "titleHint": "Scurt și clar, de ex. „iPhone 13 128 GB, baterie 89%”.",
+    "description": "Descriere",
+    "price": "Preț",
+    "currency": "Valuta",
+    "negotiable": "Preț negociabil",
+    "condition": "Starea",
+    "conditionOptions": {
+      "default": {
+        "new": "Nou",
+        "used": "Folosit"
+      },
+      "parts": {
+        "new": "Nouă",
+        "used": "Din dezmembrare"
+      }
+    },
+    "locality": "Localitatea",
+    "imei": "IMEI (opțional)",
+    "imeiHint": "Îl găsești formând *#06#. Este vizibil doar utilizatorilor conectați. Anunțurile cu IMEI primesc eticheta „IMEI indicat”.",
+    "vin": "VIN (opțional)",
+    "vinHint": "Codul de 17 caractere din talon. Este vizibil doar utilizatorilor conectați. Anunțurile cu VIN primesc eticheta „VIN indicat”.",
+    "compatibilityTitle": "Mașini compatibile",
+    "compatibilityHint": "Pentru ce mașini se potrivește piesa. Fără model = toate modelele mărcii.",
+    "compatibilityAdd": "Adaugă mașină compatibilă",
+    "compatibilityRemove": "Elimină",
+    "compatibilityMake": "Marca",
+    "compatibilityModel": "Modelul",
+    "compatibilityAllModels": "Toate modelele",
+    "compatibilityYearFrom": "Din anul",
+    "compatibilityYearTo": "Până în",
+    "contactTitle": "Contact",
+    "noPhone": "Nu ai adăugat un număr de telefon. Cumpărătorii îți vor putea scrie doar prin mesaje.",
+    "addPhone": "Adaugă telefon",
+    "changePhone": "Schimbă",
+    "summary": "Rezumat",
+    "summaryCategory": "Categoria",
+    "summaryPhotos": "Poze",
+    "publishHint": "Anunțul va fi activ 30 de zile. După aceea îl poți reactiva din „Anunțurile mele”. Publicând, confirmi că respecți termenii site-ului.",
+    "progressSaving": "Se salvează anunțul...",
+    "progressPhotos": "Se încarcă pozele: {{done}} din {{total}}...",
+    "progressPublishing": "Se publică...",
+    "localDraftHint": "Textele se salvează automat în acest browser (pozele nu).",
+    "startOver": "Începe din nou",
+    "draftRestored": "Am restaurat ciorna nesalvată. Pozele trebuie adăugate din nou.",
+    "draftNotice": "Acest anunț este o ciornă și nu este vizibil pentru nimeni. Verifică pașii și apasă „Publică anunțul”.",
+    "notEditable": "Acest anunț a fost ascuns de administrator și nu poate fi editat.",
+    "backToMyListings": "Înapoi la anunțurile mele"
+  },
+  "myListings": {
+    "groups": {
+      "active": "Active",
+      "draft": "Ciorne",
+      "sold": "Vândute",
+      "expired": "Expirate",
+      "hidden": "Ascunse"
+    },
+    "empty": "Nu ai anunțuri aici.",
+    "expiresOn": "activ până pe {{date}}",
+    "expiredOn": "expirat pe {{date}}",
+    "views_one": "{{count}} vizualizare",
+    "views_few": "{{count}} vizualizări",
+    "views_other": "{{count}} de vizualizări",
+    "hiddenNotice": "Ascuns până la verificarea administratorului (de ex. după raportări).",
+    "rejectedNotice": "Respins de administrator.",
+    "finish": "Finalizează",
+    "view": "Vezi",
+    "edit": "Editează",
+    "markSold": "Vândut",
+    "reactivate": "Reactivează",
+    "delete": "Șterge",
+    "deleteConfirm": "Sigur ștergi anunțul?",
+    "deleteYes": "Da, șterge",
+    "deleteNo": "Nu",
+    "publishedNotice": "Anunțul a fost publicat.",
+    "savedNotice": "Modificările au fost salvate."
+  },
+  "fields": {
+    "brand_id": {
+      "label": "Marca"
+    },
+    "model_id": {
+      "label": "Modelul"
+    },
+    "model_other": {
+      "label": "Scrie modelul"
+    },
+    "make_id": {
+      "label": "Marca"
+    },
+    "make_other": {
+      "label": "Scrie marca"
+    },
+    "storage_gb": {
+      "label": "Memorie",
+      "options": {
+        "16": "16 GB",
+        "32": "32 GB",
+        "64": "64 GB",
+        "128": "128 GB",
+        "256": "256 GB",
+        "512": "512 GB",
+        "1024": "1 TB"
+      }
+    },
+    "network_lock": {
+      "label": "Rețea",
+      "options": {
+        "unlocked": "Deblocat (orice operator)",
+        "locked": "Legat de operator"
+      }
+    },
+    "color": {
+      "label": "Culoare"
+    },
+    "battery_health": {
+      "label": "Sănătatea bateriei (%)"
+    },
+    "warranty": {
+      "label": "Garanție"
+    },
+    "warranty_until": {
+      "label": "Garanție până la"
+    },
+    "accessory_type": {
+      "label": "Tip",
+      "options": {
+        "case": "Husă",
+        "charger": "Încărcător",
+        "headphones": "Căști",
+        "screen_protector": "Sticlă de protecție",
+        "other": "Altul"
+      }
+    },
+    "brand": {
+      "label": "Marca"
+    },
+    "compatible_model": {
+      "label": "Model de telefon compatibil"
+    },
+    "year": {
+      "label": "Anul fabricației"
+    },
+    "mileage_km": {
+      "label": "Kilometraj (km)"
+    },
+    "fuel": {
+      "label": "Combustibil",
+      "options": {
+        "petrol": "Benzină",
+        "diesel": "Motorină",
+        "lpg_petrol": "Gaz / benzină",
+        "hybrid": "Hibrid",
+        "electric": "Electric"
+      }
+    },
+    "transmission": {
+      "label": "Cutie de viteze",
+      "options": {
+        "manual": "Manuală",
+        "automatic": "Automată"
+      }
+    },
+    "body_type": {
+      "label": "Caroserie",
+      "options": {
+        "sedan": "Sedan",
+        "hatchback": "Hatchback",
+        "wagon": "Universal",
+        "suv": "SUV / Crossover",
+        "minivan": "Minivan",
+        "coupe": "Coupe",
+        "cabriolet": "Cabriolet",
+        "pickup": "Pickup",
+        "van": "Microbuz / furgon"
+      }
+    },
+    "steering": {
+      "label": "Volan",
+      "options": {
+        "left": "Stânga",
+        "right": "Dreapta"
+      }
+    },
+    "engine_volume_l": {
+      "label": "Capacitate motor (litri)"
+    },
+    "registered_md": {
+      "label": "Înmatriculat în RM"
+    },
+    "history": {
+      "label": "Istoric declarat (accidente, reparații, proprietari)"
+    },
+    "part_type": {
+      "label": "Tipul piesei",
+      "options": {
+        "engine": "Motor",
+        "transmission": "Transmisie",
+        "body": "Caroserie",
+        "suspension": "Suspensie",
+        "brakes": "Frâne",
+        "electrical": "Electrică",
+        "interior": "Interior",
+        "wheels_tires": "Roți și anvelope",
+        "other": "Altele"
+      }
+    },
+    "part_code": {
+      "label": "Cod piesă (OEM)"
+    },
+    "manufacturer": {
+      "label": "Producător"
+    }
   }
 }

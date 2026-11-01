@@ -101,6 +101,19 @@ npx supabase db push --include-seed   # rulează migrările noi + seed.sql
 
 `db push` rulează doar migrările care nu au fost încă rulate, deci comanda se poate repeta fără grijă.
 
+> ⚠️ Dacă `seed.sql` a fost modificat, `db push --include-seed` doar îi actualizează amprenta și **nu** îl rulează din nou.
+> Rulează-l direct cu `npm run db:seed`. Fișierul se poate rula de câte ori vrei: rândurile existente rămân neschimbate.
+
+### Anunțuri: cum se publică (faza 4)
+
+1. Anunțul se creează ca **ciornă** (`status = draft`), vizibilă doar autorului. Aici se verifică limita anti-spam.
+2. Se salvează IMEI/VIN (opțional), compatibilitățile (la piese) și pozele.
+3. Funcția `publish_listing()` verifică **pe server** numărul minim de poze (telefoane 3, accesorii 1,
+   autovehicule 5, piese 1) și, la piese, cel puțin o compatibilitate. Apoi anunțul devine `active` pentru 30 de zile.
+
+Dacă publicarea se întrerupe (de ex. cade internetul), ciorna rămâne în **Contul meu → Anunțurile mele → Ciorne**
+și poate fi finalizată de acolo. Câmpurile fiecărei categorii sunt definite în `src/lib/categories.ts`.
+
 ### Testul de securitate
 
 ```powershell

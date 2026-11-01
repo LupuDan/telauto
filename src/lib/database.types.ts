@@ -393,6 +393,35 @@ export type Database = {
         }
         Relationships: []
       }
+      phone_models: {
+        Row: {
+          brand_id: number
+          id: number
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          brand_id: number
+          id?: number
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          brand_id?: number
+          id?: number
+          name?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "phone_models_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "phone_brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profile_private: {
         Row: {
           phone: string | null
@@ -626,6 +655,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      category_min_photos: { Args: { p_category_id: number }; Returns: number }
       delete_my_account: { Args: never; Returns: undefined }
       get_listing_contact: {
         Args: { p_listing_id: string }
@@ -651,6 +681,7 @@ export type Database = {
         Returns: undefined
       }
       owns_listing_folder: { Args: { object_name: string }; Returns: boolean }
+      publish_listing: { Args: { p_listing_id: string }; Returns: undefined }
       reactivate_listing: { Args: { p_listing_id: string }; Returns: string }
       start_conversation: { Args: { p_listing_id: string }; Returns: string }
     }

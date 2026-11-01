@@ -109,3 +109,46 @@ select am.id, unnest(d.models)
 from data d
 join all_makes am on am.name = d.make
 on conflict (make_id, name) do nothing;
+
+-- Phone models (starting list, newest first; admins can add more). Added in 0012.
+with data (brand, models) as (
+  values
+    ('Apple', array['iPhone 17 Pro Max', 'iPhone 17 Pro', 'iPhone Air', 'iPhone 17', 'iPhone 16e',
+      'iPhone 16 Pro Max', 'iPhone 16 Pro', 'iPhone 16 Plus', 'iPhone 16',
+      'iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15 Plus', 'iPhone 15',
+      'iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14 Plus', 'iPhone 14',
+      'iPhone 13 Pro Max', 'iPhone 13 Pro', 'iPhone 13', 'iPhone 13 mini',
+      'iPhone 12 Pro Max', 'iPhone 12 Pro', 'iPhone 12', 'iPhone 12 mini',
+      'iPhone 11 Pro Max', 'iPhone 11 Pro', 'iPhone 11', 'iPhone SE (2022)', 'iPhone SE (2020)',
+      'iPhone XS Max', 'iPhone XS', 'iPhone XR', 'iPhone X', 'iPhone 8 Plus', 'iPhone 8', 'iPhone 7 Plus', 'iPhone 7']),
+    ('Samsung', array['Galaxy S26 Ultra', 'Galaxy S26+', 'Galaxy S26', 'Galaxy Z Fold7', 'Galaxy Z Flip7',
+      'Galaxy S25 Ultra', 'Galaxy S25+', 'Galaxy S25', 'Galaxy S25 FE', 'Galaxy S24 Ultra', 'Galaxy S24+', 'Galaxy S24', 'Galaxy S24 FE',
+      'Galaxy S23 Ultra', 'Galaxy S23+', 'Galaxy S23', 'Galaxy S23 FE', 'Galaxy S22 Ultra', 'Galaxy S22', 'Galaxy S21', 'Galaxy S20',
+      'Galaxy Z Fold6', 'Galaxy Z Flip6', 'Galaxy Z Fold5', 'Galaxy Z Flip5',
+      'Galaxy A56', 'Galaxy A55', 'Galaxy A54', 'Galaxy A36', 'Galaxy A35', 'Galaxy A34', 'Galaxy A26', 'Galaxy A25',
+      'Galaxy A16', 'Galaxy A15', 'Galaxy A14', 'Galaxy A06', 'Galaxy A05s', 'Galaxy M35', 'Galaxy Note 20 Ultra']),
+    ('Xiaomi', array['Xiaomi 15T Pro', 'Xiaomi 15T', 'Xiaomi 15 Ultra', 'Xiaomi 15', 'Xiaomi 14T Pro', 'Xiaomi 14T', 'Xiaomi 14', 'Xiaomi 13T', 'Xiaomi 13',
+      'Redmi Note 15 Pro+', 'Redmi Note 15 Pro', 'Redmi Note 15', 'Redmi Note 14 Pro+', 'Redmi Note 14 Pro', 'Redmi Note 14',
+      'Redmi Note 13 Pro', 'Redmi Note 13', 'Redmi Note 12', 'Redmi 15', 'Redmi 14C', 'Redmi 13', 'Redmi 13C', 'Redmi A3',
+      'POCO F7 Pro', 'POCO F7', 'POCO X7 Pro', 'POCO X7', 'POCO F6', 'POCO X6 Pro', 'POCO M6 Pro']),
+    ('Huawei', array['Pura 80 Pro', 'Pura 70 Pro', 'Pura 70', 'Mate X6', 'Mate 60 Pro', 'P60 Pro', 'P50 Pro', 'P40 Pro', 'P30 Pro', 'P30 Lite',
+      'nova 13', 'nova 12', 'nova 11', 'Y90', 'Y70']),
+    ('Honor', array['Magic7 Pro', 'Magic7 Lite', 'Magic6 Pro', 'Magic6 Lite', 'Honor 400 Pro', 'Honor 400', 'Honor 200 Pro', 'Honor 200',
+      'Honor 90', 'X9c', 'X9b', 'X8b', 'X7c', 'X6b']),
+    ('Google', array['Pixel 10 Pro XL', 'Pixel 10 Pro', 'Pixel 10', 'Pixel 9 Pro XL', 'Pixel 9 Pro', 'Pixel 9', 'Pixel 9a',
+      'Pixel 8 Pro', 'Pixel 8', 'Pixel 8a', 'Pixel 7 Pro', 'Pixel 7', 'Pixel 7a', 'Pixel 6 Pro', 'Pixel 6', 'Pixel 6a']),
+    ('OnePlus', array['OnePlus 13', 'OnePlus 13R', 'OnePlus 12', 'OnePlus 12R', 'OnePlus 11', 'OnePlus 10 Pro',
+      'Nord 5', 'Nord 4', 'Nord CE4', 'Nord CE4 Lite', 'Nord 3']),
+    ('Motorola', array['Edge 60 Pro', 'Edge 60', 'Edge 50 Pro', 'Edge 50', 'razr 60 ultra', 'razr 50 ultra', 'razr 50',
+      'moto g85', 'moto g75', 'moto g55', 'moto g54', 'moto g35', 'moto g24', 'moto e14']),
+    ('Nokia', array['G42', 'G22', 'G21', 'C32', 'C22', 'X30', 'XR21', '3310', '105', '110']),
+    ('Realme', array['GT 7 Pro', 'GT 7', 'GT 6', '14 Pro+', '14 Pro', '13 Pro+', '13 Pro', '12 Pro+', '12', 'C75', 'C67', 'C65', 'C55', 'Note 60']),
+    ('Oppo', array['Find X8 Pro', 'Find X8', 'Reno14 Pro', 'Reno14', 'Reno13 Pro', 'Reno13', 'Reno12 Pro', 'Reno12',
+      'A80', 'A79', 'A60', 'A40', 'A18'])
+)
+insert into public.phone_models (brand_id, name, sort_order)
+select b.id, m.name, m.ord::smallint
+from data d
+join public.phone_brands b on b.name = d.brand
+cross join lateral unnest(d.models) with ordinality as m(name, ord)
+on conflict (brand_id, name) do nothing;
