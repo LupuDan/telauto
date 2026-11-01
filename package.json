@@ -7,16 +7,22 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen:types": "supabase gen types typescript --linked --schema public > src/lib/database.types.ts",
+    "db:push": "supabase db push --linked",
+    "db:test": "supabase db query -f supabase/tests/rls_check.sql --linked"
   },
   "dependencies": {
+    "@hookform/resolvers": "^7.0.1",
     "@supabase/supabase-js": "^2.118.0",
     "@tanstack/react-query": "^5.105.1",
     "i18next": "^26.6.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
+    "react-hook-form": "^7.91.0",
     "react-i18next": "^17.1.10",
-    "react-router": "^8.5.1"
+    "react-router": "^8.5.1",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

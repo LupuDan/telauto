@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
 // Only the PUBLIC key (anon / publishable) may ever be used here.
 // Never put the service_role / secret key in frontend code: everything in this
@@ -14,15 +15,19 @@ if (!isSupabaseConfigured) {
   )
 }
 
-export const supabase = createClient(
+export const supabase = createClient<Database>(
   supabaseUrl ?? 'http://localhost.invalid',
   supabaseAnonKey ?? 'missing-key',
   {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      // HashRouter uses the URL hash for routes, so auth redirects are handled manually (phase 3).
+      // PKCE: email links come back as "?code=..." (not "#access_token=..."),
+      // which does not clash with HashRouter. The code is handled in features/auth/authRedirect.ts.
+      flowType: 'pkce',
       detectSessionInUrl: false,
     },
   },
 )
+
+export const LISTING_IMAGES_BUCKET = 'listing-images'

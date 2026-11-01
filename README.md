@@ -130,6 +130,37 @@ Site-ul le traduce în mesaje clare pentru utilizator:
 | `OWN_LISTING` | încercare de a scrie la propriul anunț |
 | `LOGIN_REQUIRED`, `NOT_ALLOWED` | acțiune care cere cont conectat / cont neblocat |
 
+## Conturi și emailuri (Supabase Auth)
+
+Setările de autentificare stau în `supabase/config.toml` (secțiunea `[auth]`) și se trimit în Supabase cu:
+
+```powershell
+npx supabase config diff    # arată ce s-ar schimba (verifică întotdeauna înainte!)
+npx supabase config push    # trimite doar setările scrise în fișier
+```
+
+Setări importante:
+- **Site URL**: `https://lupudan.github.io/telauto/`. **Redirect URLs**: adresa GitHub Pages și `http://localhost:5173`.
+- Confirmarea emailului este **obligatorie**. Parola are minimum 8 caractere.
+- Link-urile din emailuri se întorc pe site ca `?code=...` (fluxul PKCE) și sunt preluate de `src/features/auth/authRedirect.ts`.
+
+> ⚠️ **Limita emailurilor**: serverul de email gratuit al Supabase trimite doar câteva emailuri pe oră
+> și doar către adresele membrilor echipei proiectului. Pentru testarea cu prieteni (faza 9) trebuie legat
+> un serviciu de email propriu (SMTP). Atunci se pot activa și emailurile în română/rusă din `supabase/templates/`
+> (Supabase permite emailuri personalizate doar cu SMTP propriu).
+
+> ℹ️ Link-ul de **resetare a parolei** funcționează doar în browserul în care a fost cerut (limitare PKCE).
+> Link-ul de **confirmare a contului** funcționează de oriunde: dacă e deschis pe alt dispozitiv,
+> contul este confirmat și utilizatorul doar trebuie să intre în cont.
+
+### Tipurile TypeScript ale bazei de date
+
+După orice migrare nouă:
+
+```powershell
+npm run gen:types    # regenerează src/lib/database.types.ts
+```
+
 ## Structura proiectului
 
 ```

@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <body style="margin:0;padding:24px;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a">
+    <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;padding:24px">
+      <h1 style="margin:0 0 16px;font-size:22px;color:#1d4ed8">Telauto.md</h1>
+
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.5">Ai cerut resetarea parolei. Apasă butonul de mai jos ca să alegi o parolă nouă. Link-ul este valabil o oră.</p>
+
+      <p style="margin:0 0 24px;font-size:15px;line-height:1.5" lang="ru">Вы запросили сброс пароля. Нажмите кнопку ниже, чтобы задать новый пароль. Ссылка действительна один час.</p>
+
+      <p style="margin:0 0 24px;text-align:center">
+        <a href="{{ if .RedirectTo }}{{ .RedirectTo }}{{ else }}{{ .SiteURL }}{{ end }}#/auth/confirm?token_hash={{ .TokenHash }}&type=recovery"
+           style="display:inline-block;background:#1d4ed8;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 24px;border-radius:8px">
+          Alege parola nouă / Задать новый пароль
+        </a>
+      </p>
+
+      <p style="margin:0;font-size:13px;color:#64748b;line-height:1.5">
+        Dacă nu tu ai cerut resetarea, ignoră acest email – parola rămâne aceeași.<br />
+        <span lang="ru">Если вы не запрашивали сброс, проигнорируйте письмо – пароль останется прежним.</span>
+      </p>
+    </div>
+  </body>
+</html>
