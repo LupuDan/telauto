@@ -42,7 +42,7 @@ export function MyCarFilter({
         id={id}
         value={selected?.id ?? ''}
         onChange={(event) => onChange(vehicles.data.find((vehicle) => vehicle.id === event.target.value) ?? null)}
-        className={`${inputClass(false)} sm:w-auto sm:flex-1`}
+        className={inputClass(false, 'w-full sm:w-auto sm:flex-1')}
       >
         <option value="">{t('garage.allParts')}</option>
         {vehicles.data.map((vehicle) => (

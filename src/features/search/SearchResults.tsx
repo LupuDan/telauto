@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { ListingGrid, ListingGridSkeleton } from '../../components/ListingCard'
@@ -76,7 +76,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
       <div>
         <h1 className="text-2xl font-bold">{heading}</h1>
         <p className="text-sm text-slate-600" aria-live="polite">
-          {result.data ? t('search.resultCount', { count: total }) : ' '}
+          {result.data ? t('search.resultCount', { count: total }) : 'Â '}
         </p>
       </div>
 
@@ -91,7 +91,8 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           aria-modal={panelOpen ? true : undefined}
           aria-label={t('search.filtersTitle')}
         >
-          <div className="lg:sticky lg:top-4 lg:rounded-xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
+          {/* desktop: stays visible while scrolling, below the sticky header; scrolls inside if taller than the screen */}
+          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
             <FilterPanel
               key={`${category?.slug ?? 'all'}?${params.toString()}`}
               category={category}
@@ -117,7 +118,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
               id="sort"
               value={filters.sort}
               onChange={(event) => changeSort(event.target.value as SortOption)}
-              className={`${inputClass(false)} w-auto`}
+              className={inputClass(false, 'w-auto')}
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option} value={option}>

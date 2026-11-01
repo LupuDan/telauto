@@ -134,28 +134,34 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
         <option value="used">{t(`listingForm.conditionOptions.${conditionGroup}.used`)}</option>
       </SelectField>
 
+      {/* "from" and "to" share the width; the currency is a small MDL | EUR switch next to the title */}
       <fieldset>
-        <legend className="mb-1 block text-sm font-medium text-slate-700">{t('listingForm.price')}</legend>
-        <div className="flex gap-2">
+        <div className="mb-1 flex items-center justify-between gap-2">
+          <legend className="text-sm font-medium text-slate-700">{t('listingForm.price')}</legend>
+          <div role="group" aria-label={t('listingForm.currency')} className="flex rounded-lg border border-slate-300 p-0.5">
+            {(['MDL', 'EUR'] as const).map((currency) => (
+              <button
+                key={currency}
+                type="button"
+                aria-pressed={draft.currency === currency}
+                onClick={() => set({ currency })}
+                className={`rounded-md px-2 py-0.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand-600 ${
+                  draft.currency === currency ? 'bg-brand-700 text-white' : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {currency}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
           <RangeInputs
-            label={t('listingForm.price')}
+            label={`${t('listingForm.price')} (${draft.currency})`}
             min={draft.priceMin}
             max={draft.priceMax}
             decimal
             onChange={(bound, value) => set(bound === 'min' ? { priceMin: value } : { priceMax: value })}
           />
-          <label className="sr-only" htmlFor="filter-currency">
-            {t('listingForm.currency')}
-          </label>
-          <select
-            id="filter-currency"
-            value={draft.currency}
-            onChange={(event) => set({ currency: event.target.value === 'EUR' ? 'EUR' : 'MDL' })}
-            className={`${inputClass(false)} w-24 shrink-0`}
-          >
-            <option value="MDL">MDL</option>
-            <option value="EUR">EUR</option>
-          </select>
         </div>
         <p className="mt-1 text-xs text-slate-500">{t('search.priceHint')}</p>
       </fieldset>
@@ -166,7 +172,7 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
             <legend className="mb-1 block text-sm font-medium text-slate-700">
               {translateKey(t, `fields.${field.key}.label`)}
             </legend>
-            <div className="flex gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <RangeInputs
                 label={translateKey(t, `fields.${field.key}.label`)}
                 min={draft.ranges[field.key]?.min ?? ''}
@@ -219,7 +225,7 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
         </fieldset>
       )}
 
-      <div className="sticky bottom-0 flex gap-2 bg-white py-2 lg:static lg:bg-transparent lg:py-0">
+      <div className="sticky bottom-0 flex gap-2 bg-white py-2">
         <Button type="submit" className="flex-1">
           {t('search.apply')}
         </Button>
