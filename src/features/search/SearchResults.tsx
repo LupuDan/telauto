@@ -8,6 +8,7 @@ import { ErrorState } from '../../components/ui/ErrorState'
 import { inputClass } from '../../components/ui/fieldStyles'
 import { translateKey } from '../../i18n/translate'
 import type { CategoryConfig } from '../../lib/categories'
+import { MyCarFilter } from '../garage/MyCarFilter'
 import { useSearchListings } from './api'
 import { FilterPanel } from './FilterPanel'
 import {
@@ -125,6 +126,23 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
               ))}
             </select>
           </div>
+
+          {category?.hasCompatibility && (
+            <MyCarFilter
+              filters={filters}
+              onChange={(vehicle) =>
+                navigate(
+                  hrefFor({
+                    ...filters,
+                    page: 1,
+                    compatMake: vehicle ? String(vehicle.makeId) : '',
+                    compatModel: vehicle?.modelId ? String(vehicle.modelId) : '',
+                    compatYear: vehicle ? String(vehicle.year) : '',
+                  }),
+                )
+              }
+            />
+          )}
 
           {result.isPending ? (
             <ListingGridSkeleton />

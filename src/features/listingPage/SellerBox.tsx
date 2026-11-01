@@ -6,6 +6,7 @@ import { translateKey } from '../../i18n/translate'
 import { formatMonthYear, localizedName } from '../../lib/format'
 import { useAuth } from '../auth/authContext'
 import { errorToKey } from '../auth/authErrors'
+import { FavoriteButton } from '../favorites/FavoriteButton'
 import { useLocalities } from '../reference/hooks'
 import { useListingContact, type ListingDetails } from './api'
 
@@ -95,18 +96,9 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
 
         {!isOwner && (
           <div className="grid grid-cols-3 gap-2">
-            {(['message', 'save', 'report'] as const).map((action) => (
-              <button
-                key={action}
-                type="button"
-                disabled
-                title={t('listing.comingSoon')}
-                className="flex min-h-11 flex-col items-center justify-center rounded-lg border border-slate-200 px-1 py-1 text-xs font-medium text-slate-400"
-              >
-                <span>{translateKey(t, `listing.actions.${action}`)}</span>
-                <span className="text-[10px]">{t('listing.comingSoon')}</span>
-              </button>
-            ))}
+            <ComingSoonAction action="message" />
+            <FavoriteButton listingId={listing.id} variant="full" />
+            <ComingSoonAction action="report" />
           </div>
         )}
       </section>
@@ -120,6 +112,22 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
         </ul>
       </aside>
     </div>
+  )
+}
+
+/** Buttons of later phases (messages: phase 7, reports: phase 8). */
+function ComingSoonAction({ action }: { action: 'message' | 'report' }) {
+  const { t } = useTranslation()
+  return (
+    <button
+      type="button"
+      disabled
+      title={t('listing.comingSoon')}
+      className="flex min-h-11 flex-col items-center justify-center rounded-lg border border-slate-200 px-1 py-1 text-xs font-medium text-slate-400"
+    >
+      <span>{translateKey(t, `listing.actions.${action}`)}</span>
+      <span className="text-[10px]">{t('listing.comingSoon')}</span>
+    </button>
   )
 }
 

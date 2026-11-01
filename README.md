@@ -133,6 +133,16 @@ folosesc funcția `search_listings()` din `0013_search.sql`:
 Pe pagina anunțului, telefonul, IMEI-ul și VIN-ul vin doar din `get_listing_contact()`, care refuză vizitatorii neconectați.
 Etichetele „IMEI indicat” / „VIN indicat” arată doar *că* există valoarea, nu valoarea.
 
+### Favorite și Garajul meu (faza 6)
+
+- **Favorite** (`favorites`): butonul ♡ pe carduri și „Salvează” pe pagina anunțului. Fiecare utilizator vede doar
+  favoritele lui. Anunțurile vândute, expirate sau ascunse rămân în listă ca „indisponibile”, ca să poată fi eliminate.
+  La ștergerea unui anunț dispare automat și din favorite.
+- **Garajul meu** (`user_vehicles`): maximum 10 mașini (marcă, model opțional, an, nume opțional), vizibile doar proprietarului.
+- **„Doar piese pentru mașina mea”** apare pe pagina Piese auto pentru utilizatorii cu mașini în garaj și folosește
+  filtrul de compatibilitate din `search_listings()` (`cmake`, `cmodel`, `cyear` în adresă).
+  O piesă marcată „toate modelele” apare pentru orice model al mărcii; o mașină din garaj fără model vede piesele tuturor modelelor.
+
 ### Testul de securitate
 
 ```powershell

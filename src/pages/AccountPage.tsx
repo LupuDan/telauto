@@ -8,6 +8,8 @@ import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
 import { signOut } from '../features/auth/api'
 import { useAuth } from '../features/auth/authContext'
+import { FavoritesList } from '../features/favorites/FavoritesList'
+import { GarageList } from '../features/garage/GarageList'
 import { MyListings } from '../features/listings/MyListings'
 import { ChangePasswordForm } from '../features/profile/ChangePasswordForm'
 import { DeleteAccountForm } from '../features/profile/DeleteAccountForm'
@@ -66,13 +68,13 @@ export function AccountPage() {
 
       {tab === 'settings' ? (
         <SettingsTab />
-      ) : tab === 'listings' && user ? (
+      ) : tab === 'favorites' ? (
+        <FavoritesList />
+      ) : tab === 'garage' ? (
+        <GarageList />
+      ) : user ? (
         <MyListings userId={user.id} />
-      ) : (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
-          {t('account.tabComingSoon')}
-        </p>
-      )}
+      ) : null}
     </div>
   )
 }

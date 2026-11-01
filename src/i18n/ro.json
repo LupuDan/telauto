@@ -111,7 +111,6 @@
       "garage": "Garajul meu",
       "settings": "Setări"
     },
-    "tabComingSoon": "Această secțiune va fi disponibilă în curând.",
     "blockedNotice": "Contul tău este blocat de administrator. Nu poți publica anunțuri și nu poți trimite mesaje.",
     "profileSection": "Profil",
     "email": "Email",
@@ -536,5 +535,34 @@
     "previous": "Înapoi",
     "next": "Înainte",
     "pageN": "Pagina {{n}}"
+  },
+  "favorites": {
+    "save": "Salvează",
+    "saved": "Salvat",
+    "remove": "Elimină din favorite",
+    "removeShort": "Elimină",
+    "empty": "Nu ai salvat încă niciun anunț. Apasă ♡ pe un anunț ca să-l găsești aici.",
+    "browse": "Caută anunțuri",
+    "hint": "Apasă ♥ pe un anunț ca să-l elimini din favorite.",
+    "unavailableHeading": "Anunțuri indisponibile",
+    "unavailableTitle": "Anunț indisponibil",
+    "unavailableText": "A fost vândut, a expirat sau a fost ascuns."
+  },
+  "garage": {
+    "intro": "Adaugă mașinile tale ca să găsești rapid piese compatibile („Doar piese pentru mașina mea”).",
+    "empty": "Nu ai adăugat încă nicio mașină.",
+    "add": "Adaugă mașină",
+    "addTitle": "Mașină nouă",
+    "editTitle": "Editează mașina",
+    "year": "Anul fabricației",
+    "label": "Nume (opțional)",
+    "labelHint": "De ex. „Mașina mea” sau „Mașina soției”.",
+    "modelHint": "Dacă nu alegi modelul, vei vedea piesele pentru toate modelele mărcii.",
+    "cancel": "Renunță",
+    "showParts": "Vezi piese compatibile",
+    "deleteConfirm": "Ștergi mașina din garaj?",
+    "onlyMyCar": "Doar piese pentru mașina mea",
+    "allParts": "Toate piesele",
+    "manage": "Garajul meu"
   }
 }
