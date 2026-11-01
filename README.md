@@ -60,6 +60,76 @@ Publicarea se face **automat**: la fiecare `git push` pe ramura `main`, GitHub A
 
 Paginile au adrese cu `#/` (de exemplu `.../telauto/#/search`), ca să nu dea eroare la reîncărcare pe GitHub Pages.
 
+## Baza de date (Supabase)
+
+Toată structura bazei de date se află în fișiere SQL numerotate din `supabase/migrations/`
+(`0001_...`, `0002_...`). **Nu modifica niciodată un fișier de migrare deja rulat.** Pentru orice schimbare
+se creează un fișier nou, cu următorul număr.
+
+| Fișier | Conținut |
+| --- | --- |
+| `0001_extensions_and_helpers.sql` | extensia `unaccent`, funcții ajutătoare (admin, blocat, IMEI, VIN) |
+| `0002_reference_tables.sql` | localități, categorii, mărci de telefoane, mărci și modele auto |
+| `0003_profiles.sql` | profiluri (create automat la înregistrare) + telefonul, separat (`profile_private`) |
+| `0004_listings.sql` | anunțuri, IMEI/VIN separat (`listing_private`), poze, compatibilități, limita anti-spam |
+| `0005_favorites_garage.sql` | favorite și „Garajul meu” |
+| `0006_messaging.sql` | conversații, mesaje, limita de 30 mesaje/oră, mesaje suspecte |
+| `0007_reports.sql` | raportări, ascunderea automată după 3 raportări |
+| `0008_contact_function.sql` | `get_listing_contact()` – telefon, IMEI, VIN doar pentru utilizatori conectați |
+| `0009_storage.sql` | bucket-ul de poze `listing-images` și regulile lui |
+| `seed.sql` | categoriile, municipiile și raioanele, mărcile de telefoane, mărcile și modelele auto |
+
+### Prima conectare (o singură dată)
+
+Într-o fereastră **PowerShell** obișnuită (din meniul Start):
+
+```powershell
+cd D:\Flip_Md\telauto
+npx supabase login                                   # se deschide browserul, apeși "Authorize"
+npx supabase link --project-ref oswiiqerjujocvdajoss # leagă folderul de proiectul Supabase
+```
+
+Dacă `link` cere parola bazei de date, o introduci tu (parola aleasă la crearea proiectului).
+Parola nu se scrie în niciun fișier.
+
+### Rularea migrărilor
+
+```powershell
+npx supabase db push --dry-run        # arată ce migrări noi s-ar rula, fără să schimbe nimic
+npx supabase db push --include-seed   # rulează migrările noi + seed.sql
+```
+
+`db push` rulează doar migrările care nu au fost încă rulate, deci comanda se poate repeta fără grijă.
+
+### Testul de securitate
+
+```powershell
+npx supabase db query -f supabase/tests/rls_check.sql --linked
+```
+
+Sau: Supabase → **SQL Editor** → **New query**, lipești conținutul din `supabase/tests/rls_check.sql`, apeși **Run**.
+Rezultatul este un tabel; coloana `ok` trebuie să fie `true` pe fiecare rând. Testul își creează singur
+două conturi de test și le șterge la final.
+
+### De ce telefonul și IMEI-ul stau în tabele separate
+
+Regulile RLS din Postgres decid ce **rânduri** poate citi cineva, nu ce **coloane**. De aceea telefonul
+(`profile_private`) și IMEI/VIN (`listing_private`) stau în tabele separate, pe care vizitatorii nu le pot citi deloc.
+Utilizatorii conectați le primesc doar prin funcția `get_listing_contact()` („Arată telefonul”).
+
+### Erori pe care le trimite baza de date
+
+Site-ul le traduce în mesaje clare pentru utilizator:
+
+| Cod | Când apare |
+| --- | --- |
+| `LISTING_LIMIT_REACHED` | prea multe anunțuri în 24h (cont nou: 3, cont mai vechi de 7 zile: 20) |
+| `LISTING_IMAGE_LIMIT_REACHED` | mai mult de 10 poze la un anunț |
+| `MESSAGE_LIMIT_REACHED` | mai mult de 30 de mesaje într-o oră |
+| `GARAGE_LIMIT_REACHED` | mai mult de 10 mașini în garaj |
+| `OWN_LISTING` | încercare de a scrie la propriul anunț |
+| `LOGIN_REQUIRED`, `NOT_ALLOWED` | acțiune care cere cont conectat / cont neblocat |
+
 ## Structura proiectului
 
 ```
