@@ -247,9 +247,9 @@ Ca prietenii să-și poată face cont, emailurile se trimit prin **Brevo** (grat
 Cheia SMTP stă **doar** în Supabase. Cu SMTP propriu, Supabase permite și emailurile în română/rusă din
 `supabase/templates/` (secțiunile `[auth.email.template.*]` din `config.toml`).
 
-> ℹ️ Link-ul de **resetare a parolei** funcționează doar în browserul în care a fost cerut (limitare PKCE).
-> Link-ul de **confirmare a contului** funcționează de oriunde: dacă e deschis pe alt dispozitiv,
-> contul este confirmat și utilizatorul doar trebuie să intre în cont.
+> ℹ️ De la faza 9 emailurile folosesc șabloanele din `supabase/templates/` (text în română și rusă), cu link-uri
+> `#/auth/confirm?token_hash=...`. Atât confirmarea contului, cât și resetarea parolei funcționează **de pe orice dispozitiv**.
+> Fără SMTP propriu, Supabase refuză șabloanele (`config push` dă eroare) – vezi „Serviciul de email” mai sus.
 
 ### Tipurile TypeScript ale bazei de date
 
@@ -301,7 +301,7 @@ Bifează fiecare punct pe **telefon** (Chrome/Safari) și pe **calculator**. Des
 **Conturi și emailuri:**
 - [ ] Un prieten (email care NU e în echipa Supabase) își face cont și **primește emailul de confirmare**, în limba aleasă
 - [ ] Linkul din email confirmă contul; intrarea în cont merge
-- [ ] „Ai uitat parola?” trimite email, iar parola nouă funcționează (în același browser)
+- [ ] „Ai uitat parola?” trimite email (în română și rusă), iar parola nouă funcționează, chiar dacă linkul e deschis pe telefon
 - [ ] Setări: schimb numele, localitatea, telefonul, limba; schimb parola
 
 **Anunțuri:**

@@ -245,14 +245,15 @@ otp_expiry = 3600
 # sender_name = "Admin"
 
 # Telauto.md: bilingual (ro/ru) templates in supabase/templates/ (links work on any device).
-# Custom templates need a custom SMTP provider on the free plan -> enable together with [auth.email.smtp] (phase 9).
-# [auth.email.template.confirmation]
-# subject = "Confirmă contul Telauto.md / Подтвердите аккаунт Telauto.md"
-# content_path = "./supabase/templates/confirmation.html"
+# They need the custom SMTP (Brevo) set in Supabase -> Authentication -> Emails -> SMTP Settings (see README).
+# The SMTP password is stored only in Supabase, never in this file.
+[auth.email.template.confirmation]
+subject = "Confirmă contul Telauto.md / Подтвердите аккаунт Telauto.md"
+content_path = "./supabase/templates/confirmation.html"
 
-# [auth.email.template.recovery]
-# subject = "Resetarea parolei Telauto.md / Сброс пароля Telauto.md"
-# content_path = "./supabase/templates/recovery.html"
+[auth.email.template.recovery]
+subject = "Resetarea parolei Telauto.md / Сброс пароля Telauto.md"
+content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]
