@@ -1,34 +1,57 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { lazy, type ComponentType } from 'react'
 import { HashRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from '../features/auth/AuthProvider'
 import { RequireAuth } from '../features/auth/RequireAuth'
-import { AccountPage } from '../pages/AccountPage'
-import { AdminPage } from '../pages/AdminPage'
-import { AuthConfirmPage } from '../pages/AuthConfirmPage'
 import { CategoryPage } from '../pages/CategoryPage'
-import { ComingSoonPage } from '../pages/ComingSoonPage'
-import { ConversationPage } from '../pages/ConversationPage'
-import { EditListingPage } from '../pages/EditListingPage'
 import { HomePage } from '../pages/HomePage'
 import { ListingPage } from '../pages/ListingPage'
-import { LoginPage } from '../pages/LoginPage'
-import { MessagesPage } from '../pages/MessagesPage'
-import { NewListingPage } from '../pages/NewListingPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
-import { PublicProfilePage } from '../pages/PublicProfilePage'
-import { RegisterPage } from '../pages/RegisterPage'
-import { ResetPage } from '../pages/ResetPage'
 import { SearchPage } from '../pages/SearchPage'
 import { Layout } from './Layout'
+
+// The pages most visitors open (home, category, search, listing) are in the main file.
+// The others are downloaded only when opened, so the first visit on a phone is faster.
+// (Layout shows a spinner while they load, see <Suspense> there.)
+// After a new version is published, a tab opened before may ask for files that no longer exist:
+// then the page is reloaded once to get the new version.
+const RELOAD_KEY = 'telauto.chunkReload'
+
+const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, name: K) =>
+  lazy(() =>
+    load().then(
+      (module) => {
+        sessionStorage.removeItem(RELOAD_KEY)
+        return { default: module[name] }
+      },
+      (error: unknown) => {
+        if (!sessionStorage.getItem(RELOAD_KEY)) {
+          sessionStorage.setItem(RELOAD_KEY, '1')
+          window.location.reload()
+        }
+        throw error
+      },
+    ),
+  )
+
+const AccountPage = page(() => import('../pages/AccountPage'), 'AccountPage')
+const AdminPage = page(() => import('../pages/AdminPage'), 'AdminPage')
+const AuthConfirmPage = page(() => import('../pages/AuthConfirmPage'), 'AuthConfirmPage')
+const ConversationPage = page(() => import('../pages/ConversationPage'), 'ConversationPage')
+const EditListingPage = page(() => import('../pages/EditListingPage'), 'EditListingPage')
+const LoginPage = page(() => import('../pages/LoginPage'), 'LoginPage')
+const MessagesPage = page(() => import('../pages/MessagesPage'), 'MessagesPage')
+const NewListingPage = page(() => import('../pages/NewListingPage'), 'NewListingPage')
+const PublicProfilePage = page(() => import('../pages/PublicProfilePage'), 'PublicProfilePage')
+const RegisterPage = page(() => import('../pages/RegisterPage'), 'RegisterPage')
+const ResetPage = page(() => import('../pages/ResetPage'), 'ResetPage')
+const StaticPage = page(() => import('../pages/StaticPage'), 'StaticPage')
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: { staleTime: 60_000, retry: 1, refetchOnWindowFocus: false },
   },
 })
-
-// Routes from plan section 7 that are built in later phases show "Coming soon".
-const PUBLIC_PLANNED_ROUTES = ['/p/:page']
 
 export function App() {
   return (
@@ -47,9 +70,7 @@ export function App() {
               <Route path="/c/:slug" element={<CategoryPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/a/:id" element={<ListingPage />} />
-              {PUBLIC_PLANNED_ROUTES.map((path) => (
-                <Route key={path} path={path} element={<ComingSoonPage />} />
-              ))}
+              <Route path="/p/:page" element={<StaticPage />} />
 
               <Route element={<RequireAuth />}>
                 <Route path="/account" element={<AccountPage />} />

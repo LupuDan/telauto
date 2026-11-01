@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useAuth } from '../features/auth/authContext'
 import { useLiveUnreadCounter, useUnreadCount } from '../features/messages/api'
 import { useProfile } from '../features/profile/hooks'
@@ -23,9 +23,11 @@ function AdminLink({ userId }: { userId: string }) {
   return (
     <Link
       to="/admin"
+      aria-label={t('header.admin')}
       className="inline-flex min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
-      {t('header.admin')}
+      <span aria-hidden="true">⚙</span>
+      <span className="ml-1 hidden sm:inline">{t('header.admin')}</span>
     </Link>
   )
 }
@@ -61,6 +63,8 @@ function MessagesLink() {
 export function Header() {
   const { t } = useTranslation()
   const { user, loading } = useAuth()
+  const [params] = useSearchParams()
+  const searchQuery = params.get('q') ?? ''
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
@@ -75,10 +79,12 @@ export function Header() {
 
         {/* On phones the search bar takes its own full-width row (order-last). */}
         <div className="order-last w-full md:order-none md:w-auto md:flex-1">
-          <SearchBar />
+          {/* key: the box shows the new words after every search (also searches started elsewhere) */}
+          <SearchBar key={searchQuery} />
         </div>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
+        {/* flex-wrap: on very narrow phones (360 px) the buttons go on two rows instead of leaving the screen */}
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2 md:ml-0">
           <LanguageSwitcher />
 
           {!loading && user && <MessagesLink />}

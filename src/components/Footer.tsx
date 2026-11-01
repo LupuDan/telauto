@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { STATIC_PAGES } from '../lib/staticPages'
 
-const STATIC_PAGES = ['terms', 'privacy', 'safety', 'help', 'contact'] as const
 const CURRENT_YEAR = new Date().getFullYear()
 
 export function Footer() {

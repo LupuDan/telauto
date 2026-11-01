@@ -204,12 +204,6 @@
     "userNotFound": "Utilizatorul nu a fost găsit.",
     "duplicate": "Există deja."
   },
-  "comingSoon": {
-    "metaTitle": "În curând – Telauto.md",
-    "heading": "În curând",
-    "text": "Această pagină va fi disponibilă într-o versiune următoare.",
-    "backHome": "Înapoi la prima pagină"
-  },
   "notFound": {
     "metaTitle": "Pagina nu a fost găsită – Telauto.md",
     "heading": "Pagina nu a fost găsită",
@@ -486,7 +480,6 @@
     "showPhone": "Arată telefonul",
     "showPhonePrivate": "Arată telefonul și {{field}}",
     "noPhone": "Vânzătorul nu a indicat un număr de telefon. Îi vei putea scrie prin mesaje.",
-    "comingSoon": "în curând",
     "actions": {
       "message": "Scrie mesaj",
       "save": "Salvează",
@@ -687,5 +680,229 @@
       "none": "Nimic aici.",
       "rename": "Redenumește"
     }
+  },
+  "pages": {
+    "common": {
+      "draftNotice": "Text provizoriu pentru versiunea de test. Înainte de lansarea publică trebuie verificat de un jurist.",
+      "updated": "Ultima actualizare: {{date}}",
+      "contactEmail": "Email de contact"
+    },
+    "terms": {
+      "title": "Termeni și condiții",
+      "metaDescription": "Regulile de folosire a site-ului Telauto.md.",
+      "sections": [
+        {
+          "heading": "1. Cine suntem",
+          "paragraphs": [
+            "Telauto.md este un site de anunțuri gratuite pentru telefoane mobile, accesorii, autovehicule și piese auto în Republica Moldova. Site-ul este administrat de Lupu Daniel (contact: lupu.daniel@elev.cihcahul.md).",
+            "Aceasta este o versiune de test. Funcțiile se pot schimba, iar datele de test pot fi șterse."
+          ]
+        },
+        {
+          "heading": "2. Contul",
+          "paragraphs": [
+            "Pentru a publica anunțuri, a scrie mesaje sau a vedea telefonul vânzătorului ai nevoie de un cont confirmat prin email.",
+            "Ești responsabil pentru parola ta și pentru tot ce se publică din contul tău. Un cont aparține unei singure persoane."
+          ]
+        },
+        {
+          "heading": "3. Ce poți publica",
+          "paragraphs": [
+            "Doar bunuri care îți aparțin sau pe care ai dreptul să le vinzi, în categoria potrivită, cu poze reale și descriere corectă.",
+            "Este interzis: bunuri furate, contrafăcute sau blocate (telefoane raportate pierdute/furate), arme, droguri, documente, conturi și abonamente, anunțuri înșelătoare, duplicate sau care cer plata în avans.",
+            "Anunțurile sunt active 30 de zile și pot fi reactivate din „Anunțurile mele”. Conturile noi pot publica cel mult 3 anunțuri în 24 de ore."
+          ]
+        },
+        {
+          "heading": "4. Moderare",
+          "paragraphs": [
+            "Orice utilizator poate raporta un anunț sau un mesaj. După 3 raportări de la persoane diferite, anunțul se ascunde automat până la verificare.",
+            "Administratorul poate ascunde sau respinge anunțuri și poate bloca conturile care încalcă aceste reguli, fără notificare prealabilă."
+          ]
+        },
+        {
+          "heading": "5. Răspundere",
+          "paragraphs": [
+            "Telauto.md doar pune în legătură cumpărătorii și vânzătorii. Nu suntem parte la tranzacții, nu primim plăți și nu garantăm calitatea, starea sau existența bunurilor.",
+            "Verifică întotdeauna produsul și actele înainte de plată. Citește „Sfaturi de siguranță”."
+          ]
+        },
+        {
+          "heading": "6. Modificări",
+          "paragraphs": [
+            "Acești termeni se pot schimba. Versiunea în vigoare este cea publicată pe această pagină."
+          ]
+        }
+      ]
+    },
+    "privacy": {
+      "title": "Politica de confidențialitate",
+      "metaDescription": "Ce date personale păstrează Telauto.md și cine le vede.",
+      "sections": [
+        {
+          "heading": "1. Cine se ocupă de date",
+          "paragraphs": [
+            "Operatorul datelor este Lupu Daniel. Pentru orice întrebare despre datele tale scrie la lupu.daniel@elev.cihcahul.md."
+          ]
+        },
+        {
+          "heading": "2. Ce date păstrăm",
+          "paragraphs": [
+            "Emailul și parola (criptată) pentru cont; numele afișat, localitatea și limba preferată; telefonul, dacă îl adaugi.",
+            "Anunțurile tale cu pozele lor; IMEI-ul sau VIN-ul, dacă le completezi; mesajele trimise prin site; favoritele și mașinile din „Garajul meu”; raportările trimise."
+          ]
+        },
+        {
+          "heading": "3. Cine vede datele",
+          "paragraphs": [
+            "Oricine vede anunțurile active, numele afișat, localitatea și data înscrierii.",
+            "Telefonul, IMEI-ul și VIN-ul le văd doar utilizatorii conectați care apasă „Arată telefonul”. Mesajele le văd doar cei doi participanți; administratorul vede doar mesajele marcate ca suspecte sau raportate. Favoritele și garajul le vezi doar tu.",
+            "Nu vindem și nu dăm datele altor firme pentru reclamă."
+          ]
+        },
+        {
+          "heading": "4. Unde sunt păstrate",
+          "paragraphs": [
+            "Datele sunt păstrate la furnizorul Supabase, pe servere din Uniunea Europeană (Irlanda). Site-ul este găzduit pe GitHub Pages. Emailurile de confirmare sunt trimise printr-un serviciu de email."
+          ]
+        },
+        {
+          "heading": "5. Cookie-uri și memoria browserului",
+          "paragraphs": [
+            "Nu folosim cookie-uri de reclamă sau de urmărire. Browserul păstrează doar ce e necesar pentru funcționare: sesiunea de cont, limba aleasă, ciorna anunțului și închiderea acestui banner."
+          ]
+        },
+        {
+          "heading": "6. Drepturile tale",
+          "paragraphs": [
+            "Poți modifica oricând datele din „Contul meu → Setări” și poți șterge contul de acolo. La ștergere dispar profilul, anunțurile cu pozele, favoritele și garajul. Mesajele trimise rămân la cealaltă persoană, cu numele „Utilizator șters”.",
+            "Conform Legii nr. 133/2011 privind protecția datelor cu caracter personal, poți cere acces la date, corectarea sau ștergerea lor la lupu.daniel@elev.cihcahul.md."
+          ]
+        }
+      ]
+    },
+    "safety": {
+      "title": "Sfaturi de siguranță",
+      "metaDescription": "Cum cumperi și vinzi în siguranță pe Telauto.md.",
+      "sections": [
+        {
+          "heading": "Regula de aur",
+          "paragraphs": [
+            "Nu plăti niciodată în avans și nu trimite datele cardului (numărul, data, codul CVV sau codurile din SMS). Plătește doar după ce ai văzut și verificat produsul."
+          ]
+        },
+        {
+          "heading": "Semne de înșelătorie",
+          "paragraphs": [
+            "Prețul este mult sub piață; vânzătorul „e plecat” și trimite doar prin curier; ți se cere avans sau „taxă de livrare”; primești link-uri spre pagini de plată sau „confirmare a banilor”; ești grăbit să decizi.",
+            "Site-ul marchează automat mesajele cu link-uri sau cuvinte ca „avans”, „card”, „curier” și îți arată un avertisment."
+          ]
+        },
+        {
+          "heading": "Telefoane",
+          "paragraphs": [
+            "Verifică IMEI-ul formând *#06# și compară-l cu cel de pe cutie și din setări. Verifică dacă telefonul nu e blocat la operator sau în contul iCloud / Google al altcuiva.",
+            "Anunțurile cu eticheta „IMEI indicat” au IMEI-ul completat de vânzător; îl vezi după ce intri în cont."
+          ]
+        },
+        {
+          "heading": "Autovehicule și piese",
+          "paragraphs": [
+            "Compară VIN-ul din anunț cu cel din certificatul de înmatriculare și de pe mașină. Cere actele și verifică istoricul. Fă o verificare la un service ales de tine.",
+            "La piese verifică codul piesei și compatibilitatea cu mașina ta înainte de plată."
+          ]
+        },
+        {
+          "heading": "Întâlnirea",
+          "paragraphs": [
+            "Întâlnește-te într-un loc public, ziua, eventual cu un prieten. Verifică produsul pe loc. Pentru sume mari folosește transferul bancar după verificare."
+          ]
+        },
+        {
+          "heading": "Ceva e suspect?",
+          "paragraphs": [
+            "Apasă „Raportează” pe anunț sau sub mesaj. Administratorul verifică, iar după 3 raportări anunțul se ascunde automat."
+          ]
+        }
+      ]
+    },
+    "help": {
+      "title": "Ajutor",
+      "metaDescription": "Întrebări frecvente despre Telauto.md.",
+      "sections": [
+        {
+          "heading": "Cum public un anunț?",
+          "paragraphs": [
+            "Intră în cont și apasă „+ Adaugă anunț”. Alegi categoria, adaugi pozele, detaliile și caracteristicile, apoi apeși „Publică anunțul”. Publicarea este gratuită."
+          ]
+        },
+        {
+          "heading": "Câte poze trebuie?",
+          "paragraphs": [
+            "Telefoane: cel puțin 3; autovehicule: cel puțin 5; accesorii și piese: cel puțin 1. Maximum 10. Prima poză este cea principală; ordinea se schimbă trăgând pozele."
+          ]
+        },
+        {
+          "heading": "Cât timp e activ anunțul?",
+          "paragraphs": [
+            "30 de zile. Apoi îl găsești la „Contul meu → Anunțurile mele → Expirate” și îl poți reactiva cu un clic. Când vinzi, apasă „Vândut”."
+          ]
+        },
+        {
+          "heading": "De ce nu pot publica mai multe anunțuri?",
+          "paragraphs": [
+            "Pentru a opri spamul, un cont mai nou de 7 zile poate publica cel mult 3 anunțuri în 24 de ore; un cont mai vechi, cel mult 20."
+          ]
+        },
+        {
+          "heading": "De ce nu văd telefonul vânzătorului?",
+          "paragraphs": [
+            "Telefonul, IMEI-ul și VIN-ul se văd doar după ce intri în cont. Așa protejăm vânzătorii de spam. Poți scrie și prin mesaje."
+          ]
+        },
+        {
+          "heading": "Ce este „Garajul meu”?",
+          "paragraphs": [
+            "Adaugi mașinile tale (marcă, model, an), iar la Piese auto alegi „Doar piese pentru mașina mea” ca să vezi doar piesele compatibile."
+          ]
+        },
+        {
+          "heading": "Nu am primit emailul de confirmare",
+          "paragraphs": [
+            "Verifică dosarul Spam. Pe pagina de intrare în cont poți cere un email nou. Dacă tot nu ajunge, scrie-ne la adresa din pagina Contact."
+          ]
+        },
+        {
+          "heading": "Cum îmi șterg contul?",
+          "paragraphs": [
+            "„Contul meu → Setări → Ștergerea contului”. Se șterg profilul, anunțurile și pozele. Operațiunea nu poate fi anulată."
+          ]
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "metaDescription": "Cum ne contactezi.",
+      "sections": [
+        {
+          "heading": "Scrie-ne",
+          "paragraphs": [
+            "Pentru întrebări, probleme cu contul sau propuneri scrie la lupu.daniel@elev.cihcahul.md. Răspundem de obicei în 1–2 zile lucrătoare.",
+            "Pentru un anunț sau un mesaj suspect folosește butonul „Raportează” – așa ajunge cel mai repede la administrator."
+          ]
+        },
+        {
+          "heading": "Administrator",
+          "paragraphs": [
+            "Lupu Daniel, Republica Moldova."
+          ]
+        }
+      ]
+    }
+  },
+  "cookies": {
+    "text": "Telauto.md nu folosește cookie-uri de reclamă sau de urmărire. Browserul păstrează doar ce e necesar ca site-ul să funcționeze (contul, limba, ciorna anunțului).",
+    "more": "Detalii",
+    "accept": "Am înțeles"
   }
 }

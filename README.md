@@ -47,6 +47,11 @@ Le găsești în Supabase la **Project Settings → API Keys**.
 | `npm run build` | verifică codul (TypeScript) și construiește site-ul în folderul `dist/` |
 | `npm run preview` | deschide local varianta construită (după `npm run build`) |
 | `npm run lint` | caută greșeli frecvente în cod |
+| `npm test` | rulează testele automate (Vitest): IMEI, VIN, prețuri, ani, câmpurile pe categorii, filtrele, traducerile |
+| `npm run db:test` | testul de securitate al bazei de date (vezi mai jos) |
+
+Testele Vitest stau lângă codul testat, în fișiere `*.test.ts` (de ex. `src/lib/validators.test.ts`).
+Rulează `npm test` după orice modificare a validărilor sau a câmpurilor din `src/lib/categories.ts`.
 
 ## Publicarea pe GitHub Pages
 
@@ -228,10 +233,19 @@ Setări importante:
 - Confirmarea emailului este **obligatorie**. Parola are minimum 8 caractere.
 - Link-urile din emailuri se întorc pe site ca `?code=...` (fluxul PKCE) și sunt preluate de `src/features/auth/authRedirect.ts`.
 
-> ⚠️ **Limita emailurilor**: serverul de email gratuit al Supabase trimite doar câteva emailuri pe oră
-> și doar către adresele membrilor echipei proiectului. Pentru testarea cu prieteni (faza 9) trebuie legat
-> un serviciu de email propriu (SMTP). Atunci se pot activa și emailurile în română/rusă din `supabase/templates/`
-> (Supabase permite emailuri personalizate doar cu SMTP propriu).
+### Serviciul de email (SMTP prin Brevo)
+
+Serverul de email gratuit al Supabase trimite doar câteva emailuri pe oră și **doar către membrii echipei proiectului**.
+Ca prietenii să-și poată face cont, emailurile se trimit prin **Brevo** (gratuit, 300 emailuri/zi):
+
+1. Cont pe [brevo.com](https://www.brevo.com) → **Senders** → adaugă și confirmă adresa expeditorului.
+2. **SMTP & API → SMTP**: notează **Login** și generează o **SMTP key** (este o parolă: nu o pune în cod, în chat sau pe GitHub).
+3. Supabase → **Authentication → Emails → SMTP Settings** → *Enable custom SMTP*:
+   host `smtp-relay.brevo.com`, port `587`, username = Login, password = SMTP key,
+   sender email = adresa confirmată în Brevo, sender name `Telauto.md`.
+
+Cheia SMTP stă **doar** în Supabase. Cu SMTP propriu, Supabase permite și emailurile în română/rusă din
+`supabase/templates/` (secțiunile `[auth.email.template.*]` din `config.toml`).
 
 > ℹ️ Link-ul de **resetare a parolei** funcționează doar în browserul în care a fost cerut (limitare PKCE).
 > Link-ul de **confirmare a contului** funcționează de oriunde: dacă e deschis pe alt dispozitiv,
@@ -254,9 +268,68 @@ src/
   app/          rute, layout, setări generale
   pages/        câte un fișier pentru fiecare pagină
   components/   bucăți reutilizabile (antet, subsol, căutare...)
-  features/     funcționalități (cont, anunțuri, mesaje...) – din fazele următoare
-  lib/          clientul Supabase, configurația categoriilor, formatări
-  i18n/         traduceri: ro.json (română) și ru.json (rusă)
+  features/     funcționalități: auth, profile, listings, listingPage, search, favorites,
+                garage, messages, reports, admin, reference
+  lib/          clientul Supabase, configurația categoriilor, validări, formatări, paginile statice
+  i18n/         traduceri: ro.json (română) și ru.json (rusă), inclusiv textele paginilor statice
+public/         favicon.svg, og-image.png (imaginea din previzualizarea linkului)
+supabase/tests/ testul de securitate rls_check.sql
 ```
 
 **Regulă:** orice text afișat pe site se scrie în `src/i18n/ro.json` și `src/i18n/ru.json`, nu direct în cod.
+
+## Pagini statice, cookie-uri, viteză (faza 9)
+
+- `#/p/terms`, `#/p/privacy`, `#/p/safety`, `#/p/help`, `#/p/contact` – textele stau în `src/i18n/*.json` la `pages.*`.
+  **Termenii și Confidențialitatea sunt provizorii** și trebuie verificate de un jurist înainte de lansarea publică.
+- Bannerul de cookie-uri (`src/components/CookieBanner.tsx`) doar informează: site-ul nu folosește cookie-uri de reclamă
+  sau urmărire, ci doar memoria browserului (sesiunea, limba, ciorna, închiderea bannerului).
+- Paginile rar folosite (formularul, contul, mesajele, adminul, paginile statice) se descarcă doar când sunt deschise
+  (`src/app/App.tsx`), ca prima pagină să se încarce repede pe telefon.
+- `index.html` conține descrierea implicită și etichetele Open Graph pentru previzualizarea linkului.
+
+## ✅ Lista de verificare înainte de a trimite linkul prietenilor
+
+Bifează fiecare punct pe **telefon** (Chrome/Safari) și pe **calculator**. Deschide https://lupudan.github.io/telauto/ și apasă Ctrl + F5.
+
+**Tehnic (le rulează oricine are proiectul):**
+- [ ] `npm test` – toate testele trec
+- [ ] `npm run lint` și `npm run build` – fără erori
+- [ ] `npm run db:test` – coloana `ok` este `true` pe toate rândurile
+- [ ] GitHub → Actions: ultima publicare are bifa verde
+
+**Conturi și emailuri:**
+- [ ] Un prieten (email care NU e în echipa Supabase) își face cont și **primește emailul de confirmare**, în limba aleasă
+- [ ] Linkul din email confirmă contul; intrarea în cont merge
+- [ ] „Ai uitat parola?” trimite email, iar parola nouă funcționează (în același browser)
+- [ ] Setări: schimb numele, localitatea, telefonul, limba; schimb parola
+
+**Anunțuri:**
+- [ ] Public câte un anunț în fiecare categorie (telefon 3 poze, mașină 5 poze, piesă cu compatibilitate)
+- [ ] Pozele se micșorează și se pot reordona; IMEI/VIN greșit este refuzat
+- [ ] Al 4-lea anunț din aceeași zi pe un cont nou este refuzat cu mesaj clar
+- [ ] Editez, marchez „Vândut”, reactivez, șterg un anunț
+
+**Căutare și pagina anunțului:**
+- [ ] Prima pagină arată anunțurile noi; căutarea fără diacritice merge
+- [ ] Filtrele (marcă, preț, an, kilometraj...) și sortarea dau rezultate corecte; pe telefon se deschide panoul „Filtre”
+- [ ] Fără cont **nu** se vede telefonul; cu alt cont, „Arată telefonul” îl arată
+- [ ] Galeria merge (glisare pe telefon, ecran mare)
+
+**Favorite, garaj, mesaje:**
+- [ ] ♡ salvează; anunțul apare în Contul meu → Favorite
+- [ ] O mașină din garaj filtrează corect piesele compatibile
+- [ ] Două conturi în două browsere își scriu și văd mesajele imediat; ✉ arată necititele
+- [ ] Mesajul cu „avans pe card” arată avertismentul
+
+**Raportări și admin:**
+- [ ] „Raportează” trimite raportarea; apare în `#/admin`
+- [ ] Adminul ascunde un anunț și blochează / deblochează un utilizator
+- [ ] Un cont obișnuit primește „Nu ai acces” la `#/admin`
+
+**Restul:**
+- [ ] Bannerul de cookie-uri apare o singură dată; paginile din subsol se deschid
+- [ ] Totul este tradus când comut RO / RU
+- [ ] Previzualizarea linkului în Viber/Telegram arată imaginea Telauto.md
+
+Când toate sunt bifate, trimite linkul prietenilor și roagă-i să-ți scrie ce nu merge (pagina Contact sau „Raportează”).

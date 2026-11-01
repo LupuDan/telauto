@@ -7,3 +7,8 @@ import type { TFunction } from 'i18next'
 export function translateKey(t: TFunction, key: string, options?: Record<string, unknown>): string {
   return (t as unknown as (k: string, o?: Record<string, unknown>) => string)(key, options)
 }
+
+/** Reads a group of texts (lists, sections of the static pages) as an object instead of a string. */
+export function translateObject<T>(t: TFunction, key: string): T {
+  return (t as unknown as (k: string, o: Record<string, unknown>) => T)(key, { returnObjects: true })
+}

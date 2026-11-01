@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -8,4 +9,9 @@ import { defineConfig } from 'vite'
 export default defineConfig(({ command }) => ({
   base: process.env.VITE_BASE ?? (command === 'build' ? '/telauto/' : '/'),
   plugins: [react(), tailwindcss()],
+  // npm test: unit tests for validations and filters (they do not need a browser or Supabase)
+  test: {
+    include: ['src/**/*.test.ts'],
+    environment: 'node',
+  },
 }))

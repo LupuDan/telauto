@@ -1,8 +1,10 @@
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Outlet, useLocation } from 'react-router'
+import { CookieBanner } from '../components/CookieBanner'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
+import { LoadingState } from '../components/ui/LoadingState'
 
 export function Layout() {
   const { t } = useTranslation()
@@ -27,9 +29,13 @@ export function Layout() {
       </a>
       <Header />
       <main id="main" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 outline-none">
-        <Outlet />
+        {/* pages that are downloaded on first use (see App.tsx) show a spinner meanwhile */}
+        <Suspense fallback={<LoadingState />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
+      <CookieBanner />
     </div>
   )
 }

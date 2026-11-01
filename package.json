@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "preview": "vite preview",
     "gen:types": "supabase gen types typescript --linked --schema public > src/lib/database.types.ts",
     "db:push": "supabase db push --linked",
@@ -39,6 +41,7 @@
     "supabase": "^2.122.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~7.0.2",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   }
 }
