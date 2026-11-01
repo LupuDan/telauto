@@ -5,6 +5,7 @@ import { useLiveUnreadCounter, useUnreadCount } from '../features/messages/api'
 import { useProfile } from '../features/profile/hooks'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { SearchBar } from './SearchBar'
+import { ThemeToggle } from './ThemeToggle'
 
 function UserIcon() {
   return (
@@ -27,7 +28,7 @@ function AdminLink({ userId }: { userId: string }) {
       className="hidden min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 sm:inline-flex text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       <span aria-hidden="true">⚙</span>
-      <span className="ml-1 hidden sm:inline">{t('header.admin')}</span>
+      <span className="ml-1 hidden md:inline">{t('header.admin')}</span>
     </Link>
   )
 }
@@ -42,7 +43,7 @@ function MessagesLink() {
     <Link
       to="/messages"
       aria-label={count > 0 ? `${t('header.messages')} – ${t('messages.unread', { count })}` : t('header.messages')}
-      className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2 py-2 text-slate-700 sm:px-2.5 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-surface px-2 py-2 text-slate-700 sm:px-2.5 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5" aria-hidden="true">
         <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -67,7 +68,7 @@ export function Header() {
   const searchQuery = params.get('q') ?? ''
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-surface/95 backdrop-blur">
       {/*
         Phones: row 1 = logo + buttons (never wraps; the logo is shortened before anything overlaps),
                 row 2 = search.
@@ -86,6 +87,10 @@ export function Header() {
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:order-3 lg:ml-0">
             <LanguageSwitcher />
+            {/* phones narrower than 400 px have it in the footer (not enough room here) */}
+            <span className="hidden min-[400px]:contents">
+              <ThemeToggle />
+            </span>
 
             {!loading && user && <MessagesLink />}
             {/* on phones the admin panel is opened from "Contul meu" (less crowded header) */}
@@ -95,10 +100,10 @@ export function Header() {
               <Link
                 to={user ? '/account' : '/login'}
                 aria-label={user ? t('header.account') : t('header.login')}
-                className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-2.5"
+                className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-surface px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-2.5"
               >
                 <UserIcon />
-                <span className="hidden sm:inline">{user ? t('header.account') : t('header.login')}</span>
+                <span className="hidden md:inline">{user ? t('header.account') : t('header.login')}</span>
               </Link>
             )}
 
@@ -107,12 +112,12 @@ export function Header() {
               aria-label={t('header.addListing')}
               className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg bg-brand-700 px-2.5 py-2 text-sm font-semibold whitespace-nowrap text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-3"
             >
-              <span aria-hidden="true" className="text-lg leading-none min-[400px]:text-sm">
+              <span aria-hidden="true" className="text-lg leading-none min-[480px]:text-sm">
                 +
               </span>
-              {/* very narrow phones: only "+" */}
-              <span className="ml-1 hidden min-[400px]:inline sm:hidden">{t('header.addListingShort')}</span>
-              <span className="ml-1 hidden sm:inline">{t('header.addListing')}</span>
+              {/* phones under 480 px: only "+" */}
+              <span className="ml-1 hidden min-[480px]:inline md:hidden">{t('header.addListingShort')}</span>
+              <span className="ml-1 hidden md:inline">{t('header.addListing')}</span>
             </Link>
           </div>
         </div>

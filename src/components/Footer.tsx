@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { STATIC_PAGES } from '../lib/staticPages'
+import { ThemeToggle } from './ThemeToggle'
 
 const CURRENT_YEAR = new Date().getFullYear()
 
@@ -8,7 +9,7 @@ export function Footer() {
   const { t } = useTranslation()
 
   return (
-    <footer className="mt-12 border-t border-slate-200 bg-white">
+    <footer className="mt-12 border-t border-slate-200 bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-slate-600">
         <nav aria-label={t('footer.navLabel')}>
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
@@ -21,6 +22,7 @@ export function Footer() {
             ))}
           </ul>
         </nav>
+        <ThemeToggle variant="full" className="mt-4" />
         <p className="mt-4 flex flex-wrap gap-x-2">
           <span>{t('footer.rights', { year: CURRENT_YEAR })}</span>
           <span aria-hidden="true">·</span>

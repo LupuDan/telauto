@@ -96,7 +96,7 @@ export function ReferencesTab() {
             parentId={parentId}
           />
         ) : (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
+          <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-sm text-slate-500">
             {t('admin.references.chooseParent')}
           </p>
         )}
@@ -142,7 +142,7 @@ function ReferenceColumn({
   const items = (query.data ?? []).filter((item) => item.name.toLowerCase().includes(filter.trim().toLowerCase()))
 
   return (
-    <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="space-y-3 rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">
       <h3 className="font-semibold">{title}</h3>
       <form onSubmit={handleAdd} className="flex gap-2">
         <label className="sr-only" htmlFor={`new-${kind}`}>

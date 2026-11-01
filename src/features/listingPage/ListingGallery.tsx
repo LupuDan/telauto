@@ -47,11 +47,11 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
   }
 
   const arrowClass =
-    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-xl shadow hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-600 disabled:opacity-0 sm:flex'
+    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-xl shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand-600 disabled:opacity-0 sm:flex'
 
   return (
     <div className="space-y-2">
-      <div className="relative overflow-hidden rounded-xl bg-slate-900">
+      <div className="relative overflow-hidden rounded-xl bg-neutral-900">
         <div
           ref={stripRef}
           onScroll={handleScroll}
@@ -139,7 +139,7 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-white/30"
+            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
             aria-label={t('listing.closePhoto')}
           >
             ×
@@ -148,7 +148,7 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
             <button
               type="button"
               onClick={() => setIndex(index - 1)}
-              className="absolute left-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-white/30"
+              className="absolute left-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
               aria-label={t('listing.previousPhoto')}
             >
               ←
@@ -158,7 +158,7 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
             <button
               type="button"
               onClick={() => setIndex(index + 1)}
-              className="absolute right-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-white/30"
+              className="absolute right-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
               aria-label={t('listing.nextPhoto')}
             >
               →

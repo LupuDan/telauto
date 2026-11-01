@@ -11,6 +11,17 @@
       content="Telefoane, accesorii, autovehicule și piese auto. Anunțuri gratuite în Moldova, căutare sigură. Телефоны, аксессуары, авто и запчасти."
     />
     <meta name="theme-color" content="#1d4ed8" />
+    <!-- light / dark mode before the page is drawn (no white flash); see src/lib/theme.ts -->
+    <script>
+      try {
+        var saved = localStorage.getItem('telauto.theme')
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) {
+          document.documentElement.classList.add('dark')
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b1120')
+        }
+      } catch (e) {}
+    </script>
 
     <!-- link previews on Facebook, Viber, Telegram, WhatsApp (the same for every page on GitHub Pages) -->
     <meta property="og:type" content="website" />

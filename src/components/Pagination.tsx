@@ -30,7 +30,7 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
   return (
     <nav aria-label={t('search.pagination')} className="flex flex-wrap items-center justify-center gap-2">
       {page > 1 && (
-        <Link to={hrefFor(page - 1)} className={`${itemClass} border-slate-300 bg-white hover:bg-slate-50`}>
+        <Link to={hrefFor(page - 1)} className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}>
           <span aria-hidden="true">←</span>
           <span className="sr-only sm:not-sr-only sm:ml-1">{t('search.previous')}</span>
         </Link>
@@ -49,14 +49,14 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
             key={item}
             to={hrefFor(item)}
             aria-label={t('search.pageN', { n: item })}
-            className={`${itemClass} border-slate-300 bg-white hover:bg-slate-50`}
+            className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}
           >
             {item}
           </Link>
         ),
       )}
       {page < pageCount && (
-        <Link to={hrefFor(page + 1)} className={`${itemClass} border-slate-300 bg-white hover:bg-slate-50`}>
+        <Link to={hrefFor(page + 1)} className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}>
           <span className="sr-only sm:not-sr-only sm:mr-1">{t('search.next')}</span>
           <span aria-hidden="true">→</span>
         </Link>

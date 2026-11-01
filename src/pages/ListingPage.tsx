@@ -143,7 +143,7 @@ function ListingView({
               <h2 id="compat-heading" className="text-lg font-semibold">
                 {t('listingForm.compatibilityTitle')}
               </h2>
-              <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white text-sm">
+              <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-surface text-sm">
                 {listing.compatibility.map((row, index) => (
                   <li key={index} className="flex justify-between gap-3 px-4 py-2.5">
                     <span className="font-medium">
@@ -163,7 +163,7 @@ function ListingView({
               <h2 id="description-heading" className="text-lg font-semibold">
                 {t('listingForm.description')}
               </h2>
-              <p className="rounded-xl border border-slate-200 bg-white p-4 break-words whitespace-pre-line text-slate-800">
+              <p className="rounded-xl border border-slate-200 bg-surface p-4 break-words whitespace-pre-line text-slate-800">
                 {listing.description}
               </p>
             </section>

@@ -42,7 +42,7 @@ export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonPr
         aria-pressed={saved}
         aria-label={label}
         title={label}
-        className="flex size-10 items-center justify-center rounded-full bg-white/90 text-xl leading-none text-slate-700 shadow hover:bg-white focus-visible:outline-2 focus-visible:outline-brand-600"
+        className="flex size-10 items-center justify-center rounded-full bg-surface/90 text-xl leading-none text-slate-700 shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand-600"
       >
         {heart}
       </button>

@@ -92,7 +92,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
   )
 
   return (
-    <div className="space-y-2 border-b border-slate-200 bg-white py-3">
+    <div className="space-y-2 border-b border-slate-200 bg-surface py-3">
       <div className="flex items-center gap-2">
         <Link
           to="/messages"
@@ -162,7 +162,7 @@ function MessageList({ messages }: { messages: Message[] }) {
             <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
                 className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${
-                  mine ? 'rounded-br-sm bg-brand-700 text-white' : 'rounded-bl-sm border border-slate-200 bg-white text-slate-900'
+                  mine ? 'rounded-br-sm bg-brand-700 text-white' : 'rounded-bl-sm border border-slate-200 bg-surface text-slate-900'
                 }`}
               >
                 {/* user text: React shows it as plain text, never as HTML */}
@@ -229,7 +229,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2 border-t border-slate-200 bg-white pt-3 pb-1">
+    <form onSubmit={handleSubmit} className="space-y-2 border-t border-slate-200 bg-surface pt-3 pb-1">
       {send.isError && <Alert kind="error">{translateKey(t, errorToKey(send.error))}</Alert>}
       <div className="flex items-end gap-2">
         <label htmlFor="message-text" className="sr-only">
@@ -244,7 +244,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
           maxLength={MAX_MESSAGE_LENGTH}
           rows={Math.min(5, Math.max(1, text.split('\n').length))}
           placeholder={t('messages.placeholder')}
-          className="block min-h-11 w-full flex-1 resize-none rounded-xl border border-slate-300 bg-white px-3 py-2 text-base outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
+          className="block min-h-11 w-full flex-1 resize-none rounded-xl border border-slate-300 bg-surface px-3 py-2 text-base outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
         />
         <Button type="submit" loading={send.isPending} disabled={!text.trim()} aria-label={t('messages.send')}>
           <span aria-hidden="true">➤</span>

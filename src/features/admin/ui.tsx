@@ -59,10 +59,10 @@ export function ActionError({ error }: { error: unknown }) {
 
 export function EmptyBox({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">{children}</p>
+    <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">{children}</p>
   )
 }
 
 export function Card({ children }: { children: ReactNode }) {
-  return <li className="space-y-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">{children}</li>
+  return <li className="space-y-3 rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">{children}</li>
 }

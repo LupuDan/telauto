@@ -183,7 +183,7 @@ export function ListingWizard(props: Props) {
           </div>
         )}
 
-        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+        <section className="rounded-xl border border-slate-200 bg-surface p-4 shadow-sm sm:p-6">
           <h2 className="mb-4 text-xl font-bold">{translateKey(t, `listingForm.steps.${step}`)}</h2>
 
           {step === 'category' && <CategoryStep selected={categorySlug} onChoose={chooseCategory} />}
@@ -300,7 +300,7 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
             onClick={() => onChoose(slug)}
             aria-pressed={selected === slug}
             className={`flex w-full flex-col items-center gap-2 rounded-xl border p-4 text-center font-medium transition hover:border-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${
-              selected === slug ? 'border-brand-700 bg-brand-50' : 'border-slate-200 bg-white'
+              selected === slug ? 'border-brand-700 bg-brand-50' : 'border-slate-200 bg-surface'
             }`}
           >
             <span aria-hidden="true" className="text-3xl">
@@ -373,7 +373,7 @@ function DetailsStep({ category }: { category: CategoryConfig }) {
           {(['new', 'used'] as const).map((value) => (
             <label
               key={value}
-              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50"
+              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-surface px-4 has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50"
             >
               <input type="radio" value={value} className="accent-brand-700" {...register('condition')} />
               {translateKey(t, `listingForm.conditionOptions.${category.conditionLabels}.${value}`)}

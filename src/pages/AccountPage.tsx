@@ -148,7 +148,7 @@ function SettingsTab() {
 function Section({ title, danger = false, children }: { title: string; danger?: boolean; children: ReactNode }) {
   return (
     <section
-      className={`rounded-xl border bg-white p-5 shadow-sm ${danger ? 'border-red-200' : 'border-slate-200'}`}
+      className={`rounded-xl border bg-surface p-5 shadow-sm ${danger ? 'border-red-200' : 'border-slate-200'}`}
     >
       <h2 className={`mb-4 text-lg font-semibold ${danger ? 'text-red-800' : ''}`}>{title}</h2>
       {children}

@@ -46,7 +46,7 @@ export function AttributeList({
   }
 
   return (
-    <dl className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+    <dl className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-surface">
       {rows.map((row) => (
         <div key={row.key} className="grid grid-cols-2 gap-3 px-4 py-2.5 text-sm">
           <dt className="text-slate-600">{row.label}</dt>

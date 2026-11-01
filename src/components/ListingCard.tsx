@@ -23,7 +23,7 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
     <div className="relative h-full">
       <Link
         to={`/a/${listing.id}`}
-        className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-surface shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
       >
         {/* fixed 4:3 box; the photo is cropped to fill it, so tall or wide photos never change the card size */}
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-slate-100">
@@ -89,7 +89,7 @@ export function ListingGridSkeleton({ count = 8 }: { count?: number }) {
   return (
     <ul aria-hidden="true" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: count }, (_, index) => (
-        <li key={index} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+        <li key={index} className="overflow-hidden rounded-xl border border-slate-200 bg-surface">
           <div className="aspect-[4/3] animate-pulse bg-slate-100" />
           <div className="space-y-2 p-3">
             <div className="h-5 w-1/2 animate-pulse rounded bg-slate-100" />

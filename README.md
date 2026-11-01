@@ -292,6 +292,16 @@ supabase/tests/ testul de securitate rls_check.sql
   (`src/app/App.tsx`), ca prima pagină să se încarce repede pe telefon.
 - `index.html` conține descrierea implicită și etichetele Open Graph pentru previzualizarea linkului.
 
+### Modul întunecat
+
+- Butonul ☀/🌙 (în antet de la 400 px lățime și mereu în subsol) schimbă între pagini luminoase și întunecate.
+  Prima dată se folosește setarea telefonului/calculatorului; alegerea se ține minte (`localStorage`, `telauto.theme`).
+- Un mic script din `index.html` aplică alegerea înainte să apară pagina (fără „fulger” alb).
+- Culorile întunecate stau într-un singur loc: `src/index.css` (clasa `.dark`). Scala de gri se inversează și
+  nuanțele deschise devin închise, deci componentele nu au nevoie de clase `dark:` separate.
+- **Regulă pentru cod nou:** pentru fundalul cutiilor folosește `bg-surface` (nu `bg-white`), altfel cutia rămâne albă
+  în modul întunecat. `bg-white` doar peste poze/fundal negru (galeria).
+
 ## ✅ Lista de verificare înainte de a trimite linkul prietenilor
 
 Bifează fiecare punct pe **telefon** (Chrome/Safari) și pe **calculator**. Deschide https://lupudan.github.io/telauto/ și apasă Ctrl + F5.

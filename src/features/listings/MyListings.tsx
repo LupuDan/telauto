@@ -50,7 +50,7 @@ export function MyListings({ userId }: { userId: string }) {
               className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
                 group === g
                   ? 'border-brand-700 bg-brand-700 text-white'
-                  : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+                  : 'border-slate-300 bg-surface text-slate-700 hover:bg-slate-50'
               }`}
             >
               {translateKey(t, `myListings.groups.${g}`)} ({counts[g]})
@@ -66,7 +66,7 @@ export function MyListings({ userId }: { userId: string }) {
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+        <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
           {t('myListings.empty')}
         </p>
       ) : (
@@ -91,7 +91,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
     action.mutate({ type, listingId: listing.id })
 
   return (
-    <li className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+    <li className="rounded-xl border border-slate-200 bg-surface p-3 shadow-sm">
       <div className="flex gap-3">
         <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:size-24">
           {listing.coverPath ? (
@@ -183,7 +183,7 @@ function LinkButton({ to, children }: { to: string; children: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+      className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-surface px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
     >
       {children}
     </Link>

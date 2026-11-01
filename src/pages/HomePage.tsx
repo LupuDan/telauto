@@ -34,7 +34,7 @@ export function HomePage() {
             <li key={slug}>
               <Link
                 to={`/c/${slug}`}
-                className="flex h-full flex-col items-center gap-2 rounded-xl border border-slate-200 bg-white p-4 text-center font-medium shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                className="flex h-full flex-col items-center gap-2 rounded-xl border border-slate-200 bg-surface p-4 text-center font-medium shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
               >
                 <span aria-hidden="true" className="text-3xl">
                   {CATEGORY_ICONS[slug]}
@@ -60,7 +60,7 @@ export function HomePage() {
         ) : latest.isError ? (
           <ErrorState error={latest.error} onRetry={() => void latest.refetch()} />
         ) : latest.data.items.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+          <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
             {t('home.latestEmpty')}
           </p>
         ) : (
@@ -120,7 +120,7 @@ function HomeSearch() {
       </select>
       <button
         type="submit"
-        className="min-h-11 rounded-lg bg-white px-6 font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="min-h-11 rounded-lg bg-surface px-6 font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         {t('header.searchButton')}
       </button>

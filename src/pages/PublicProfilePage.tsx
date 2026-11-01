@@ -41,7 +41,7 @@ export function PublicProfilePage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <section className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="flex items-center gap-4 rounded-xl border border-slate-200 bg-surface p-5 shadow-sm">
         <div
           aria-hidden="true"
           className="flex size-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-2xl font-bold text-brand-700"
@@ -79,7 +79,7 @@ function ProfileListings({ userId }: { userId: string }) {
   if (listings.isError) return <ErrorState error={listings.error} onRetry={() => void listings.refetch()} />
   if (listings.data.items.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+      <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
         {t('profile.noListings')}
       </p>
     )

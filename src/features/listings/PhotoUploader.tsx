@@ -124,7 +124,7 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-slate-300 bg-white text-sm font-semibold text-brand-700 hover:border-brand-600 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-slate-300 bg-surface text-sm font-semibold text-brand-700 hover:border-brand-600 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
                 >
                   <span aria-hidden="true" className="text-2xl">
                     +
@@ -170,7 +170,7 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`relative overflow-hidden rounded-lg border bg-white ${
+      className={`relative overflow-hidden rounded-lg border bg-surface ${
         isDragging ? 'z-10 border-brand-600 shadow-lg' : 'border-slate-200'
       }`}
     >

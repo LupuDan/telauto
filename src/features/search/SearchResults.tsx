@@ -84,7 +84,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
         <aside
           className={
             panelOpen
-              ? 'fixed inset-0 z-50 overflow-y-auto bg-white p-4 lg:static lg:z-auto lg:overflow-visible lg:p-0'
+              ? 'fixed inset-0 z-50 overflow-y-auto bg-surface p-4 lg:static lg:z-auto lg:overflow-visible lg:p-0'
               : 'hidden lg:block'
           }
           role={panelOpen ? 'dialog' : undefined}
@@ -92,7 +92,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           aria-label={t('search.filtersTitle')}
         >
           {/* desktop: stays visible while scrolling, below the sticky header; scrolls inside if taller than the screen */}
-          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-xl lg:border lg:border-slate-200 lg:bg-white lg:p-4 lg:shadow-sm">
+          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-xl lg:border lg:border-slate-200 lg:bg-surface lg:p-4 lg:shadow-sm">
             <FilterPanel
               key={`${category?.slug ?? 'all'}?${params.toString()}`}
               category={category}
@@ -150,7 +150,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           ) : result.isError ? (
             <ErrorState error={result.error} onRetry={() => void result.refetch()} />
           ) : result.data.items.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center">
+            <div className="rounded-xl border border-dashed border-slate-300 bg-surface p-8 text-center">
               <p className="font-semibold text-slate-800">{t('search.emptyTitle')}</p>
               <p className="mt-1 text-slate-600">{t('search.emptyText')}</p>
               {(activeCount > 0 || filters.q) && (

@@ -21,14 +21,14 @@ export function MessagesPage() {
       ) : conversations.isError ? (
         <ErrorState error={conversations.error} onRetry={() => void conversations.refetch()} />
       ) : conversations.data.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center">
+        <div className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center">
           <p className="text-slate-600">{t('messages.empty')}</p>
           <Link to="/search" className="mt-3 inline-block font-semibold text-brand-700 hover:underline">
             {t('favorites.browse')}
           </Link>
         </div>
       ) : (
-        <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-surface shadow-sm">
           {conversations.data.map((conversation) => (
             <li key={conversation.id}>
               <ConversationRow conversation={conversation} />

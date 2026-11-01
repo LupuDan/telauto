@@ -52,7 +52,7 @@ export function GarageList() {
       {remove.isError && <Alert kind="error">{translateKey(t, errorToKey(remove.error))}</Alert>}
 
       {list.length === 0 && editing !== 'new' && (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500">
+        <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
           {t('garage.empty')}
         </p>
       )}
@@ -65,7 +65,7 @@ export function GarageList() {
                 <VehicleForm vehicle={vehicle} onDone={() => setEditing(null)} />
               </li>
             ) : (
-              <li key={vehicle.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <li key={vehicle.id} className="rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     {/* user text: plain text */}

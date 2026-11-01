@@ -906,5 +906,9 @@
     "text": "Telauto.md nu folosește cookie-uri de reclamă sau de urmărire. Browserul păstrează doar ce e necesar ca site-ul să funcționeze (contul, limba, ciorna anunțului).",
     "more": "Detalii",
     "accept": "Am înțeles"
+  },
+  "theme": {
+    "toDark": "Mod întunecat",
+    "toLight": "Mod luminos"
   }
 }

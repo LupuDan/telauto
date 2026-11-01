@@ -225,7 +225,8 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
         </fieldset>
       )}
 
-      <div className="sticky bottom-0 flex gap-2 bg-white py-2">
+      {/* -bottom-4 + pb-4: the bar also covers the bottom padding of the scrolling panel */}
+      <div className="sticky -bottom-4 flex gap-2 bg-surface pt-2 pb-4">
         <Button type="submit" className="flex-1">
           {t('search.apply')}
         </Button>
