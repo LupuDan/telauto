@@ -680,7 +680,8 @@
       "filter": "Filtrează lista",
       "none": "Nimic aici.",
       "rename": "Redenumește"
-    }
+    },
+    "openPanel": "Panoul de administrare"
   },
   "pages": {
     "common": {

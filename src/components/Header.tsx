@@ -24,7 +24,7 @@ function AdminLink({ userId }: { userId: string }) {
     <Link
       to="/admin"
       aria-label={t('header.admin')}
-      className="inline-flex min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      className="hidden min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 sm:inline-flex text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       <span aria-hidden="true">⚙</span>
       <span className="ml-1 hidden sm:inline">{t('header.admin')}</span>
@@ -42,7 +42,7 @@ function MessagesLink() {
     <Link
       to="/messages"
       aria-label={count > 0 ? `${t('header.messages')} – ${t('messages.unread', { count })}` : t('header.messages')}
-      className="relative inline-flex min-h-10 items-center rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+      className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-white px-2 py-2 text-slate-700 sm:px-2.5 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5" aria-hidden="true">
         <rect x="3" y="5" width="18" height="14" rx="2" />
@@ -68,47 +68,58 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
-        <Link
-          to="/"
-          aria-label={t('header.homeLink')}
-          className="shrink-0 text-xl font-extrabold tracking-tight text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-        >
-          {t('app.name')}
-        </Link>
+      {/*
+        Phones: row 1 = logo + buttons (never wraps; the logo is shortened before anything overlaps),
+                row 2 = search.
+        Computers (lg+): the row-1 wrapper becomes "display: contents", so logo, search and buttons
+                share one line (ordered with lg:order-*).
+      */}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 sm:py-3">
+        <div className="flex w-full min-w-0 items-center gap-2 lg:contents">
+          <Link
+            to="/"
+            aria-label={t('header.homeLink')}
+            className="min-w-0 truncate text-lg font-extrabold min-[360px]:text-xl tracking-tight text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 lg:order-1 lg:shrink-0"
+          >
+            {t('app.name')}
+          </Link>
 
-        {/* On phones the search bar takes its own full-width row (order-last). */}
-        <div className="order-last w-full md:order-none md:w-auto md:flex-1">
-          {/* key: the box shows the new words after every search (also searches started elsewhere) */}
-          <SearchBar key={searchQuery} />
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:order-3 lg:ml-0">
+            <LanguageSwitcher />
+
+            {!loading && user && <MessagesLink />}
+            {/* on phones the admin panel is opened from "Contul meu" (less crowded header) */}
+            {!loading && user && <AdminLink userId={user.id} />}
+
+            {!loading && (
+              <Link
+                to={user ? '/account' : '/login'}
+                aria-label={user ? t('header.account') : t('header.login')}
+                className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-2.5"
+              >
+                <UserIcon />
+                <span className="hidden sm:inline">{user ? t('header.account') : t('header.login')}</span>
+              </Link>
+            )}
+
+            <Link
+              to="/new"
+              aria-label={t('header.addListing')}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg bg-brand-700 px-2.5 py-2 text-sm font-semibold whitespace-nowrap text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-3"
+            >
+              <span aria-hidden="true" className="text-lg leading-none min-[400px]:text-sm">
+                +
+              </span>
+              {/* very narrow phones: only "+" */}
+              <span className="ml-1 hidden min-[400px]:inline sm:hidden">{t('header.addListingShort')}</span>
+              <span className="ml-1 hidden sm:inline">{t('header.addListing')}</span>
+            </Link>
+          </div>
         </div>
 
-        {/* flex-wrap: on very narrow phones (360 px) the buttons go on two rows instead of leaving the screen */}
-        <div className="ml-auto flex flex-wrap items-center justify-end gap-2 md:ml-0">
-          <LanguageSwitcher />
-
-          {!loading && user && <MessagesLink />}
-          {!loading && user && <AdminLink userId={user.id} />}
-
-          {!loading && (
-            <Link
-              to={user ? '/account' : '/login'}
-              aria-label={user ? t('header.account') : t('header.login')}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-            >
-              <UserIcon />
-              <span className="hidden sm:inline">{user ? t('header.account') : t('header.login')}</span>
-            </Link>
-          )}
-
-          <Link
-            to="/new"
-            className="inline-flex min-h-10 items-center rounded-lg bg-brand-700 px-3 py-2 text-sm font-semibold whitespace-nowrap text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-          >
-            <span aria-hidden="true">+&nbsp;</span>
-            <span className="sm:hidden">{t('header.addListingShort')}</span>
-            <span className="hidden sm:inline">{t('header.addListing')}</span>
-          </Link>
+        <div className="w-full lg:order-2 lg:w-auto lg:flex-1">
+          {/* key: the box shows the new words after every search (also searches started elsewhere) */}
+          <SearchBar key={searchQuery} />
         </div>
       </div>
     </header>

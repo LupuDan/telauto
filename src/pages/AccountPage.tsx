@@ -26,10 +26,22 @@ export function AccountPage() {
   const tabParam = params.get('tab')
   const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : 'listings'
   const { user } = useAuth()
+  const myProfile = useProfile(user?.id)
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="mb-4 text-2xl font-bold">{t('account.title')}</h1>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h1 className="text-2xl font-bold">{t('account.title')}</h1>
+        {myProfile.data?.role === 'admin' && (
+          <Link
+            to="/admin"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+          >
+            <span aria-hidden="true">⚙</span>
+            {t('admin.openPanel')}
+          </Link>
+        )}
+      </div>
 
       {params.get('notice') === 'password-changed' && (
         <div className="mb-4">
