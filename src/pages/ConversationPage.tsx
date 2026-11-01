@@ -19,6 +19,7 @@ import {
   type Message,
 } from '../features/messages/api'
 import { translateKey } from '../i18n/translate'
+import { ReportButton } from '../features/reports/ReportButton'
 import { formatDate, formatPrice } from '../lib/format'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -176,6 +177,11 @@ function MessageList({ messages }: { messages: Message[] }) {
                 </p>
               </div>
             </div>
+            {!mine && message.senderId && (
+              <div className="mt-0.5 pl-1">
+                <ReportButton variant="link" target={{ messageId: message.id }} />
+              </div>
+            )}
           </div>
         )
       })}

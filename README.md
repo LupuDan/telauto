@@ -82,6 +82,8 @@ se creează un fișier nou, cu următorul număr.
 | `0012_listing_drafts_phone_models.sql` | ciorne, `publish_listing()`, lista de modele de telefoane |
 | `0013_search.sql` | `search_listings()` – căutarea cu filtre, sortare și pagini; `get_listing_badges()` |
 | `0014_messaging_views.sql` | `get_my_conversations()` și `count_unread_messages()` pentru paginile de mesaje |
+| `0015_admin.sql` | funcțiile panoului de administrare (`admin_*`); adminii nu pot fi blocați |
+| `0016_fix_reports_policy_recursion.sql` | repară raportarea (bucla dintre regulile `reports` și `messages`) |
 | `seed.sql` | categoriile, municipiile și raioanele, mărcile de telefoane, mărcile și modelele auto |
 
 ### Prima conectare (o singură dată)
@@ -153,6 +155,35 @@ Etichetele „IMEI indicat” / „VIN indicat” arată doar *că* există valo
   (doar conversațiile proprii). Conversația rămâne și după ce anunțul e vândut sau șters.
 - Mesajele cu link-uri sau cuvinte ca „avans”, „card”, „curier”, „предоплата” primesc `is_flagged = true` (în baza de date);
   destinatarul vede deasupra lor un avertisment. Limita: 30 de mesaje pe oră (`MESSAGE_LIMIT_REACHED`).
+
+### Raportări și administrare (faza 8)
+
+- „Raportează” (pe pagina anunțului și sub mesajele primite) creează un rând în `reports`.
+  Un utilizator raportează același lucru o singură dată. **3 raportări deschise de la persoane diferite**
+  ascund automat anunțul (`hidden`) până îl verifică adminul.
+- Panoul **`#/admin`** are taburile Raportări, Mesaje marcate, Anunțuri ascunse, Utilizatori, Mărci și modele.
+  Pagina se vede doar pentru `role = admin`, dar adevărata protecție e în baza de date: fiecare funcție `admin_*`
+  verifică `is_admin()`, iar regulile RLS refuză restul.
+- Un utilizator **blocat** nu poate publica, scrie sau raporta, iar anunțurile lui dispar din căutare.
+  Adminii nu pot fi blocați și nu se pot bloca singuri.
+- Mărcile și modelele se pot adăuga și redenumi. Ștergerea merge doar dacă nu sunt folosite în anunțuri,
+  compatibilități sau garaje (`admin_delete_reference()`).
+
+#### Cum îți dai (sau iei) rolul de admin
+
+Rolul **nu** se poate schimba din site, nici de un admin. Se schimbă doar din Supabase:
+
+1. Deschide [supabase.com/dashboard](https://supabase.com/dashboard) → proiectul **telauto** → **SQL Editor** → **New query**.
+2. Lipește comanda de mai jos, cu emailul contului tău de pe site, și apasă **Run**:
+
+   ```sql
+   update public.profiles set role = 'admin'
+   where id = (select id from auth.users where lower(email) = lower('emailul-tau@exemplu.md'));
+   ```
+
+3. Reîncarcă site-ul (Ctrl + F5). În antet apare butonul **Admin**.
+
+Pentru a lua rolul înapoi, aceeași comandă cu `role = 'user'`.
 
 ### Testul de securitate
 

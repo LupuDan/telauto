@@ -3,6 +3,7 @@ import { HashRouter, Route, Routes } from 'react-router'
 import { AuthProvider } from '../features/auth/AuthProvider'
 import { RequireAuth } from '../features/auth/RequireAuth'
 import { AccountPage } from '../pages/AccountPage'
+import { AdminPage } from '../pages/AdminPage'
 import { AuthConfirmPage } from '../pages/AuthConfirmPage'
 import { CategoryPage } from '../pages/CategoryPage'
 import { ComingSoonPage } from '../pages/ComingSoonPage'
@@ -28,7 +29,6 @@ const queryClient = new QueryClient({
 
 // Routes from plan section 7 that are built in later phases show "Coming soon".
 const PUBLIC_PLANNED_ROUTES = ['/p/:page']
-const PRIVATE_PLANNED_ROUTES = ['/admin']
 
 export function App() {
   return (
@@ -57,9 +57,7 @@ export function App() {
                 <Route path="/a/:id/edit" element={<EditListingPage />} />
                 <Route path="/messages" element={<MessagesPage />} />
                 <Route path="/messages/:id" element={<ConversationPage />} />
-                {PRIVATE_PLANNED_ROUTES.map((path) => (
-                  <Route key={path} path={path} element={<ComingSoonPage />} />
-                ))}
+                <Route path="/admin" element={<AdminPage />} />
               </Route>
 
               <Route path="*" element={<NotFoundPage />} />

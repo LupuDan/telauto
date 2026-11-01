@@ -20,7 +20,8 @@
     "homeLink": "Telauto.md – prima pagină",
     "account": "Contul meu",
     "login": "Intră în cont",
-    "messages": "Mesaje"
+    "messages": "Mesaje",
+    "admin": "Admin"
   },
   "language": {
     "label": "Limba",
@@ -196,7 +197,12 @@
     "ownListing": "Nu poți scrie la propriul anunț.",
     "listingNotDraft": "Anunțul a fost deja publicat.",
     "photosMissing": "Anunțul nu are destule poze pentru această categorie.",
-    "compatibilityMissing": "Piesa trebuie să aibă cel puțin o compatibilitate."
+    "compatibilityMissing": "Piesa trebuie să aibă cel puțin o compatibilitate.",
+    "referenceInUse": "Nu se poate șterge: este folosit în anunțuri, compatibilități sau în garajul cuiva. Îl poți redenumi.",
+    "cannotBlockSelf": "Nu te poți bloca singur.",
+    "cannotBlockAdmin": "Un administrator nu poate fi blocat.",
+    "userNotFound": "Utilizatorul nu a fost găsit.",
+    "duplicate": "Există deja."
   },
   "comingSoon": {
     "metaTitle": "În curând – Telauto.md",
@@ -590,5 +596,96 @@
     "send": "Trimite",
     "cannotReplyDeleted": "Celălalt utilizator și-a șters contul. Nu mai poți trimite mesaje în această conversație.",
     "cannotReplyBlocked": "Nu poți trimite mesaje: contul tău este blocat."
+  },
+  "reports": {
+    "titleListing": "Raportează anunțul",
+    "titleMessage": "Raportează mesajul",
+    "reasonLabel": "Ce nu este în regulă?",
+    "reasons": {
+      "scam": "Înșelătorie sau cerere de avans",
+      "prohibited": "Produs interzis",
+      "wrong_category": "Categorie greșită",
+      "duplicate": "Anunț duplicat",
+      "other": "Altceva"
+    },
+    "detailsLabel": "Detalii (opțional)",
+    "send": "Trimite raportarea",
+    "thanks": "Mulțumim! Un administrator va verifica. După 3 raportări de la persoane diferite, anunțul se ascunde automat până la verificare.",
+    "already": "Ai raportat deja acest lucru. Mulțumim!"
+  },
+  "admin": {
+    "metaTitle": "Administrare – Telauto.md",
+    "title": "Administrare",
+    "noAccessTitle": "Nu ai acces",
+    "noAccessText": "Această pagină este doar pentru administratori.",
+    "tabs": {
+      "reports": "Raportări",
+      "flagged": "Mesaje marcate",
+      "hidden": "Anunțuri ascunse",
+      "users": "Utilizatori",
+      "references": "Mărci și modele"
+    },
+    "status": {
+      "active": "Activ",
+      "hidden": "Ascuns",
+      "rejected": "Respins",
+      "sold": "Vândut",
+      "draft": "Ciornă"
+    },
+    "author": "Autor",
+    "messageFrom": "Mesaj de la",
+    "reports": {
+      "empty": "Nu există raportări deschise.",
+      "count_one": "{{count}} raportare",
+      "count_few": "{{count}} raportări",
+      "count_other": "{{count}} de raportări"
+    },
+    "actions": {
+      "allGood": "Totul e în regulă",
+      "hide": "Ascunde anunțul",
+      "reject": "Respinge",
+      "restore": "Repune activ",
+      "blockAuthor": "Blochează autorul",
+      "blockSender": "Blochează expeditorul",
+      "block": "Blochează",
+      "unblock": "Deblochează",
+      "closeReports": "Închide raportările"
+    },
+    "confirm": {
+      "reject": "Respingi definitiv anunțul?",
+      "block": "Blochezi utilizatorul? Nu va mai putea publica sau scrie, iar anunțurile lui dispar.",
+      "delete": "Ștergi?"
+    },
+    "flagged": {
+      "intro": "Mesaje din ultimele 30 de zile cu link-uri sau cuvinte suspecte (avans, card, curier, предоплата). Destinatarul a văzut un avertisment.",
+      "empty": "Nu există mesaje marcate."
+    },
+    "hidden": {
+      "empty": "Nu există anunțuri ascunse sau respinse."
+    },
+    "users": {
+      "searchLabel": "Caută utilizatori",
+      "searchPlaceholder": "Nume sau email",
+      "empty": "Niciun utilizator găsit.",
+      "since": "înscris pe {{date}}",
+      "activeListings_one": "{{count}} anunț activ",
+      "activeListings_few": "{{count}} anunțuri active",
+      "activeListings_other": "{{count}} de anunțuri active"
+    },
+    "references": {
+      "section": "Lista",
+      "vehicles": "Auto",
+      "phones": "Telefoane",
+      "hint": "Apasă pe o marcă ca să-i vezi modelele. Ștergerea merge doar dacă marca sau modelul nu sunt folosite nicăieri.",
+      "makes": "Mărci auto",
+      "brands": "Mărci de telefoane",
+      "modelsOf": "Modele {{name}}",
+      "chooseParent": "Alege o marcă din stânga.",
+      "newName": "Nume nou",
+      "add": "Adaugă",
+      "filter": "Filtrează lista",
+      "none": "Nimic aici.",
+      "rename": "Redenumește"
+    }
   }
 }

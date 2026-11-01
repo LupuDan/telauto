@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { useAuth } from '../features/auth/authContext'
 import { useLiveUnreadCounter, useUnreadCount } from '../features/messages/api'
+import { useProfile } from '../features/profile/hooks'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { SearchBar } from './SearchBar'
 
@@ -11,6 +12,21 @@ function UserIcon() {
       <circle cx="12" cy="8" r="4" />
       <path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
     </svg>
+  )
+}
+
+/** Shown only to admins (the panel itself is protected by the database). */
+function AdminLink({ userId }: { userId: string }) {
+  const { t } = useTranslation()
+  const profile = useProfile(userId)
+  if (profile.data?.role !== 'admin') return null
+  return (
+    <Link
+      to="/admin"
+      className="inline-flex min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+    >
+      {t('header.admin')}
+    </Link>
   )
 }
 
@@ -66,6 +82,7 @@ export function Header() {
           <LanguageSwitcher />
 
           {!loading && user && <MessagesLink />}
+          {!loading && user && <AdminLink userId={user.id} />}
 
           {!loading && (
             <Link

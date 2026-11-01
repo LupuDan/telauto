@@ -655,6 +655,43 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_counts: {
+        Args: never
+        Returns: {
+          flagged_messages: number
+          hidden_listings: number
+          open_reports: number
+        }[]
+      }
+      admin_delete_reference: {
+        Args: { p_id: number; p_kind: string }
+        Returns: undefined
+      }
+      admin_moderate_listing: {
+        Args: { p_action: string; p_listing_id: string }
+        Returns: undefined
+      }
+      admin_resolve_message_reports: {
+        Args: { p_message_id: string }
+        Returns: undefined
+      }
+      admin_search_users: {
+        Args: { p_limit?: number; p_query?: string }
+        Returns: {
+          active_listings: number
+          created_at: string
+          display_name: string
+          email: string
+          id: string
+          is_blocked: boolean
+          open_reports: number
+          role: string
+        }[]
+      }
+      admin_set_user_blocked: {
+        Args: { p_blocked: boolean; p_user_id: string }
+        Returns: undefined
+      }
       build_search_query: { Args: { p_text: string }; Returns: unknown }
       category_min_photos: { Args: { p_category_id: number }; Returns: number }
       count_unread_messages: { Args: never; Returns: number }

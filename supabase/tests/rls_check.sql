@@ -109,6 +109,18 @@ begin
   end;
   r := r || array['Cumpărător: NU își poate da singur rol de admin', 'acces refuzat', v_text];
 
+  -- added in phase 8 (0016): reporting used to fail with "infinite recursion detected in policy"
+  begin
+    insert into public.reports (reporter_id, listing_id, reason) values (v_buyer, v_listing, 'scam');
+    v_text := 'raportare trimisă';
+  exception when others then
+    v_text := sqlerrm;
+  end;
+  r := r || array['Cumpărător: poate raporta un anunț', 'raportare trimisă', v_text];
+
+  select count(*) into v_n from public.reports;
+  r := r || array['Cumpărător: NU citește raportările (doar adminii)', '0', v_n::text];
+
   reset role;
 
   -- ---------- 3) anti-spam: new account, max 3 listings in 24h ----------

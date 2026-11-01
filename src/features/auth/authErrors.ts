@@ -15,6 +15,11 @@ const DATABASE_ERROR_KEYS: Record<string, string> = {
   LISTING_COMPATIBILITY_MISSING: 'errors.compatibilityMissing',
   LISTING_STATUS_ADMIN_ONLY: 'errors.notAllowed',
   PROFILE_FIELD_ADMIN_ONLY: 'errors.notAllowed',
+  REFERENCE_IN_USE: 'errors.referenceInUse',
+  CANNOT_BLOCK_SELF: 'errors.cannotBlockSelf',
+  CANNOT_BLOCK_ADMIN: 'errors.cannotBlockAdmin',
+  USER_NOT_FOUND: 'errors.userNotFound',
+  INVALID_ACTION: 'errors.generic',
 }
 
 /** Supabase Auth error codes -> translation keys. */
@@ -61,6 +66,10 @@ export function errorToKey(error: unknown): string {
     const message = String((error as { message: unknown }).message)
     if (DATABASE_ERROR_KEYS[message]) {
       return DATABASE_ERROR_KEYS[message]
+    }
+    // unique_violation: the same thing already exists (name of a brand, a second report...)
+    if ('code' in error && (error as { code: unknown }).code === '23505') {
+      return 'errors.duplicate'
     }
     if (/failed to fetch|networkerror|load failed/i.test(message)) {
       return 'errors.network'

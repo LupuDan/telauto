@@ -8,6 +8,7 @@ import { useAuth } from '../auth/authContext'
 import { errorToKey } from '../auth/authErrors'
 import { FavoriteButton } from '../favorites/FavoriteButton'
 import { MessageButton } from '../messages/MessageButton'
+import { ReportButton } from '../reports/ReportButton'
 import { useLocalities } from '../reference/hooks'
 import { useListingContact, type ListingDetails } from './api'
 
@@ -99,7 +100,7 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
           <div className="grid grid-cols-3 gap-2">
             <MessageButton listingId={listing.id} />
             <FavoriteButton listingId={listing.id} variant="full" />
-            <ComingSoonAction action="report" />
+            <ReportButton target={{ listingId: listing.id }} />
           </div>
         )}
       </section>
@@ -113,22 +114,6 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
         </ul>
       </aside>
     </div>
-  )
-}
-
-/** Button of a later phase (reports: phase 8). */
-function ComingSoonAction({ action }: { action: 'report' }) {
-  const { t } = useTranslation()
-  return (
-    <button
-      type="button"
-      disabled
-      title={t('listing.comingSoon')}
-      className="flex min-h-11 flex-col items-center justify-center rounded-lg border border-slate-200 px-1 py-1 text-xs font-medium text-slate-400"
-    >
-      <span>{translateKey(t, `listing.actions.${action}`)}</span>
-      <span className="text-[10px]">{t('listing.comingSoon')}</span>
-    </button>
   )
 }
 
