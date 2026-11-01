@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Telauto.md",
+    "tagline": "Бесплатные объявления: телефоны, аксессуары, автомобили и автозапчасти",
+    "skipToContent": "Перейти к содержимому"
+  },
+  "header": {
+    "searchPlaceholder": "Ищите телефоны, машины, запчасти...",
+    "searchLabel": "Поиск",
+    "searchButton": "Найти",
+    "addListing": "Добавить объявление",
+    "homeLink": "Telauto.md – главная страница"
+  },
+  "language": {
+    "label": "Язык",
+    "ro": "Română",
+    "ru": "Русский",
+    "roShort": "RO",
+    "ruShort": "RU"
+  },
+  "footer": {
+    "rights": "© {{year}} Telauto.md",
+    "testVersion": "Тестовая версия",
+    "navLabel": "Информация",
+    "terms": "Условия использования",
+    "privacy": "Конфиденциальность",
+    "safety": "Советы по безопасности",
+    "help": "Помощь",
+    "contact": "Контакты"
+  },
+  "categories": {
+    "telefoane": "Мобильные телефоны",
+    "accesorii-telefoane": "Аксессуары для телефонов",
+    "autovehicule": "Автомобили",
+    "piese-auto": "Автозапчасти"
+  },
+  "home": {
+    "metaTitle": "Telauto.md – бесплатные объявления в Молдове",
+    "metaDescription": "Телефоны, аксессуары, автомобили и автозапчасти. Бесплатная публикация, безопасный поиск.",
+    "heading": "Покупайте и продавайте безопасно",
+    "categoriesHeading": "Категории",
+    "latestHeading": "Новые объявления",
+    "latestEmpty": "Объявлений пока нет. Скоро они появятся здесь."
+  },
+  "comingSoon": {
+    "metaTitle": "Скоро – Telauto.md",
+    "heading": "Скоро",
+    "text": "Эта страница будет доступна в следующей версии.",
+    "backHome": "Вернуться на главную"
+  },
+  "notFound": {
+    "metaTitle": "Страница не найдена – Telauto.md",
+    "heading": "Страница не найдена",
+    "text": "Адрес не существует или был перемещён.",
+    "backHome": "Вернуться на главную"
+  }
+}

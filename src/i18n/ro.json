@@ -1,0 +1,57 @@
+{
+  "app": {
+    "name": "Telauto.md",
+    "tagline": "Anunțuri gratuite: telefoane, accesorii, autovehicule și piese auto",
+    "skipToContent": "Sari la conținut"
+  },
+  "header": {
+    "searchPlaceholder": "Caută telefoane, mașini, piese...",
+    "searchLabel": "Căutare",
+    "searchButton": "Caută",
+    "addListing": "Adaugă anunț",
+    "homeLink": "Telauto.md – prima pagină"
+  },
+  "language": {
+    "label": "Limba",
+    "ro": "Română",
+    "ru": "Русский",
+    "roShort": "RO",
+    "ruShort": "RU"
+  },
+  "footer": {
+    "rights": "© {{year}} Telauto.md",
+    "testVersion": "Versiune de test",
+    "navLabel": "Informații",
+    "terms": "Termeni și condiții",
+    "privacy": "Confidențialitate",
+    "safety": "Sfaturi de siguranță",
+    "help": "Ajutor",
+    "contact": "Contact"
+  },
+  "categories": {
+    "telefoane": "Telefoane mobile",
+    "accesorii-telefoane": "Accesorii pentru telefoane",
+    "autovehicule": "Autovehicule",
+    "piese-auto": "Piese auto"
+  },
+  "home": {
+    "metaTitle": "Telauto.md – anunțuri gratuite în Moldova",
+    "metaDescription": "Telefoane, accesorii, autovehicule și piese auto. Publicare gratuită, căutare sigură.",
+    "heading": "Cumpără și vinde în siguranță",
+    "categoriesHeading": "Categorii",
+    "latestHeading": "Anunțuri noi",
+    "latestEmpty": "Încă nu sunt anunțuri. Vor apărea aici în curând."
+  },
+  "comingSoon": {
+    "metaTitle": "În curând – Telauto.md",
+    "heading": "În curând",
+    "text": "Această pagină va fi disponibilă într-o versiune următoare.",
+    "backHome": "Înapoi la prima pagină"
+  },
+  "notFound": {
+    "metaTitle": "Pagina nu a fost găsită – Telauto.md",
+    "heading": "Pagina nu a fost găsită",
+    "text": "Adresa nu există sau a fost mutată.",
+    "backHome": "Înapoi la prima pagină"
+  }
+}
