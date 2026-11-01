@@ -657,6 +657,7 @@ export type Database = {
     Functions: {
       build_search_query: { Args: { p_text: string }; Returns: unknown }
       category_min_photos: { Args: { p_category_id: number }; Returns: number }
+      count_unread_messages: { Args: never; Returns: number }
       delete_my_account: { Args: never; Returns: undefined }
       get_listing_badges: {
         Args: { p_listing_id: string }
@@ -671,6 +672,26 @@ export type Database = {
           imei: string
           phone: string
           vin: string
+        }[]
+      }
+      get_my_conversations: {
+        Args: { p_conversation_id?: string }
+        Returns: {
+          can_reply: boolean
+          i_am_seller: boolean
+          id: string
+          last_body: string
+          last_from_me: boolean
+          last_message_at: string
+          listing_available: boolean
+          listing_cover: string
+          listing_currency: string
+          listing_id: string
+          listing_price: number
+          listing_title: string
+          other_name: string
+          other_user_id: string
+          unread_count: number
         }[]
       }
       immutable_unaccent: { Args: { input: string }; Returns: string }

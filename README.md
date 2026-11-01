@@ -81,6 +81,7 @@ se creează un fișier nou, cu următorul număr.
 | `0011_delete_account.sql` | `delete_my_account()` – ștergerea propriului cont |
 | `0012_listing_drafts_phone_models.sql` | ciorne, `publish_listing()`, lista de modele de telefoane |
 | `0013_search.sql` | `search_listings()` – căutarea cu filtre, sortare și pagini; `get_listing_badges()` |
+| `0014_messaging_views.sql` | `get_my_conversations()` și `count_unread_messages()` pentru paginile de mesaje |
 | `seed.sql` | categoriile, municipiile și raioanele, mărcile de telefoane, mărcile și modelele auto |
 
 ### Prima conectare (o singură dată)
@@ -142,6 +143,16 @@ Etichetele „IMEI indicat” / „VIN indicat” arată doar *că* există valo
 - **„Doar piese pentru mașina mea”** apare pe pagina Piese auto pentru utilizatorii cu mașini în garaj și folosește
   filtrul de compatibilitate din `search_listings()` (`cmake`, `cmodel`, `cyear` în adresă).
   O piesă marcată „toate modelele” apare pentru orice model al mărcii; o mașină din garaj fără model vede piesele tuturor modelelor.
+
+### Mesagerie (faza 7)
+
+- „Scrie mesaj” apelează `start_conversation()`: o singură conversație pe cumpărător și anunț; nu poți scrie la propriul anunț.
+- Mesajele noi și bifele „citit” (✓✓) ajung **în timp real** prin Supabase Realtime, care aplică aceleași reguli RLS:
+  doar cei doi participanți primesc mesajele. Ca rezervă, site-ul recitește mesajele la 30 de secunde.
+- Lista conversațiilor și numărul de necitite din antet vin din `get_my_conversations()` / `count_unread_messages()`
+  (doar conversațiile proprii). Conversația rămâne și după ce anunțul e vândut sau șters.
+- Mesajele cu link-uri sau cuvinte ca „avans”, „card”, „curier”, „предоплата” primesc `is_flagged = true` (în baza de date);
+  destinatarul vede deasupra lor un avertisment. Limita: 30 de mesaje pe oră (`MESSAGE_LIMIT_REACHED`).
 
 ### Testul de securitate
 

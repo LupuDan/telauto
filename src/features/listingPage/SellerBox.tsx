@@ -7,6 +7,7 @@ import { formatMonthYear, localizedName } from '../../lib/format'
 import { useAuth } from '../auth/authContext'
 import { errorToKey } from '../auth/authErrors'
 import { FavoriteButton } from '../favorites/FavoriteButton'
+import { MessageButton } from '../messages/MessageButton'
 import { useLocalities } from '../reference/hooks'
 import { useListingContact, type ListingDetails } from './api'
 
@@ -96,7 +97,7 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
 
         {!isOwner && (
           <div className="grid grid-cols-3 gap-2">
-            <ComingSoonAction action="message" />
+            <MessageButton listingId={listing.id} />
             <FavoriteButton listingId={listing.id} variant="full" />
             <ComingSoonAction action="report" />
           </div>
@@ -115,8 +116,8 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
   )
 }
 
-/** Buttons of later phases (messages: phase 7, reports: phase 8). */
-function ComingSoonAction({ action }: { action: 'message' | 'report' }) {
+/** Button of a later phase (reports: phase 8). */
+function ComingSoonAction({ action }: { action: 'report' }) {
   const { t } = useTranslation()
   return (
     <button

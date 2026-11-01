@@ -19,7 +19,8 @@
     "addListingShort": "Adaugă",
     "homeLink": "Telauto.md – prima pagină",
     "account": "Contul meu",
-    "login": "Intră în cont"
+    "login": "Intră în cont",
+    "messages": "Mesaje"
   },
   "language": {
     "label": "Limba",
@@ -564,5 +565,30 @@
     "onlyMyCar": "Doar piese pentru mașina mea",
     "allParts": "Toate piesele",
     "manage": "Garajul meu"
+  },
+  "messages": {
+    "metaTitle": "Mesaje – Telauto.md",
+    "title": "Mesaje",
+    "empty": "Nu ai încă nicio conversație. Apasă „Scrie mesaj” pe un anunț ca să-i scrii vânzătorului.",
+    "listingDeleted": "Anunț șters",
+    "listingUnavailable": "anunț indisponibil",
+    "you": "Tu",
+    "noMessagesYet": "Încă nu ați scris nimic.",
+    "unread_one": "{{count}} mesaj necitit",
+    "unread_few": "{{count}} mesaje necitite",
+    "unread_other": "{{count}} de mesaje necitite",
+    "notFound": "Conversația nu a fost găsită",
+    "backToList": "Înapoi la mesaje",
+    "roleBuyer": "cumpărător",
+    "roleSeller": "vânzător",
+    "startHint": "Scrie primul mesaj. De ex.: „Bună ziua, anunțul mai este valabil?”",
+    "safetyNotice": "Nu plăti avans și nu trimite datele cardului. Întâlnește-te personal și verifică produsul înainte de plată.",
+    "flaggedWarning": "Atenție: mesajul de mai jos conține un link sau cuvinte folosite des în înșelătorii (avans, card, curier). Nu plăti nimic în avans.",
+    "sent": "trimis",
+    "read": "citit",
+    "placeholder": "Scrie un mesaj...",
+    "send": "Trimite",
+    "cannotReplyDeleted": "Celălalt utilizator și-a șters contul. Nu mai poți trimite mesaje în această conversație.",
+    "cannotReplyBlocked": "Nu poți trimite mesaje: contul tău este blocat."
   }
 }
