@@ -180,6 +180,13 @@ export function ListingWizard(props: Props) {
             if (step !== 'category') void next()
             return
           }
+          // Publishing happens only through the "Publică anunțul" button (data-publish), never through
+          // a button that was "Continuă" a moment before.
+          const submitter = (event.nativeEvent as SubmitEvent).submitter
+          if (!submitter?.hasAttribute('data-publish')) {
+            event.preventDefault()
+            return
+          }
           void handleSubmit(onSubmit, onInvalid)(event)
         }}
         noValidate
@@ -272,8 +279,15 @@ export function ListingWizard(props: Props) {
               ) : (
                 <span />
               )}
+              {/*
+                Two different buttons (key), never one button that changes its type: otherwise the
+                click on "Continuă" of step 4 turned the same button into "Publică" during that click
+                and the browser published the listing on its own.
+              */}
               {isLast ? (
                 <Button
+                  key="publish"
+                  data-publish=""
                   type="submit"
                   variant={willPublish ? 'action' : 'primary'}
                   loading={Boolean(progress)}
@@ -283,7 +297,7 @@ export function ListingWizard(props: Props) {
                   {willPublish ? t('listingForm.publish') : t('listingForm.saveChanges')}
                 </Button>
               ) : (
-                <Button onClick={() => void next()} className="w-full lg:w-auto lg:min-w-56">
+                <Button key="next" onClick={() => void next()} className="w-full lg:w-auto lg:min-w-56">
                   {t('listingForm.next')}
                 </Button>
               )}
@@ -616,6 +630,13 @@ function PhoneSection() {
             value={value}
             error={error}
             onChange={(e) => setValue(e.target.value)}
+            // Enter saves the phone; it must never send the whole form (that would publish the listing)
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                void save()
+              }
+            }}
           />
           <Button loading={saving} onClick={() => void save()}>
             {t('account.save')}
