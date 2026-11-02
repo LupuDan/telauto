@@ -135,7 +135,11 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
         </div>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
+      {/*
+        phones: the actions in a tidy grid of two equal columns (no button falls alone on a new row
+        under another one); from 640 px one row, "Șterge" at the right end
+      */}
+      <div className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3 *:w-full sm:flex sm:flex-wrap sm:*:w-auto">
         {group === 'draft' && (
           <>
             <LinkButton to={`/a/${listing.id}/edit`}>{t('myListings.finish')}</LinkButton>
@@ -162,7 +166,13 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
           </>
         )}
 
-        <Button variant="danger" size="compact" className="ml-auto" onClick={() => setConfirmDelete(true)}>
+        <Button
+          variant="danger"
+          size="compact"
+          // with an odd number of buttons "Șterge" takes the whole last row on phones
+          className={`sm:ml-auto ${group === 'active' ? '' : 'col-span-2'}`}
+          onClick={() => setConfirmDelete(true)}
+        >
           {t('myListings.delete')}
         </Button>
       </div>
