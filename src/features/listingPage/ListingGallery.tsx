@@ -125,23 +125,15 @@ export function ListingGallery({
 
         {photos.length > 1 && (
           <div className="absolute inset-x-0 bottom-2 flex justify-center">
-            {/* position dots; also buttons to jump to a photo */}
-            <div className="flex items-center gap-0.5 rounded-full bg-black/45 px-1.5">
+            {/* position dots: show where you are (photos change by swiping, arrows or thumbnails) */}
+            <div aria-hidden="true" className="flex items-center gap-1.5 rounded-full bg-black/45 px-2 py-1.5">
               {photos.map((path, photoIndex) => (
-                <button
+                <span
                   key={path}
-                  type="button"
-                  onClick={() => goTo(photoIndex)}
-                  aria-label={t('listing.showPhoto', { n: photoIndex + 1 })}
-                  aria-current={photoIndex === index ? 'true' : undefined}
-                  className="flex size-5 items-center justify-center"
-                >
-                  <span
-                    className={`block rounded-full bg-white transition-all ${
-                      photoIndex === index ? 'size-2' : 'size-1.5 opacity-60'
-                    }`}
-                  />
-                </button>
+                  className={`block rounded-full bg-white transition-all ${
+                    photoIndex === index ? 'size-2' : 'size-1.5 opacity-60'
+                  }`}
+                />
               ))}
             </div>
           </div>

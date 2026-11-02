@@ -142,7 +142,7 @@ export function FilterPanel({ category, filters, onApply, formId, onDraftChange,
               type="button"
               aria-pressed={draft.currency === currency}
               onClick={() => set({ currency })}
-              className={`min-h-9 rounded-full border px-3 text-sm ${
+              className={`min-h-11 min-w-11 rounded-full border px-3 text-sm lg:min-h-9 ${
                 draft.currency === currency
                   ? 'border-brand bg-brand-50 font-medium text-brand'
                   : 'border-line-strong text-ink hover:bg-paper'

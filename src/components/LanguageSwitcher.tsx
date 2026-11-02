@@ -22,7 +22,7 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
               type="button"
               lang={lng}
               aria-pressed={active}
-              aria-label={t(`language.${lng}`)}
+              aria-label={`${short(lng)} – ${t(`language.${lng}`)}`}
               onClick={() => void changeLanguage(lng)}
               className={`inline-flex min-h-11 min-w-9 items-center justify-center rounded-field px-1.5 text-sm ${
                 active ? 'font-semibold text-ink' : 'text-muted hover:text-ink'

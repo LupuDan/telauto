@@ -15,7 +15,8 @@
   --color-tag: #ffc233; /* Galben etichetă: "Adaugă anunț", safety notices (always with on-tag text) */
   --color-paper: #f5f7fa; /* Hârtie: page background */
   --color-surface: #ffffff; /* Alb: cards, fields, panels */
-  --color-muted: #64748b; /* Gri: secondary text */
+  /* Gri: secondary text. #64748B from the plan gave 4.43:1 on paper (below AA 4.5:1); a touch darker: 4.85:1 */
+  --color-muted: #5e6e84;
 
   /* --- derived colours --- */
   --color-brand-50: #edf2fc;
@@ -27,7 +28,8 @@
   --color-on-tag: #1f2a37; /* text on yellow: stays dark in both themes */
   --color-line: #dde3ea;
   --color-line-strong: #b9c3cf; /* field borders, so the box stays visible on white */
-  --color-success: #1f8a4c;
+  /* #1F8A4C from the plan gave 4.07:1 for small badge text on paper; a touch darker: 4.97:1 */
+  --color-success: #1a7a43;
   --color-success-50: #e8f5ee;
   --color-success-200: #b7dfc6;
   --color-danger: #c62828;
@@ -44,7 +46,7 @@
   --color-slate-200: #dde3ea;
   --color-slate-300: #c6cfd9;
   --color-slate-400: #97a3b3;
-  --color-slate-500: #64748b;
+  --color-slate-500: #5e6e84;
   --color-slate-600: #536173;
   --color-slate-700: #3a4757;
   --color-slate-800: #2a3644;

@@ -56,7 +56,7 @@ const BASE_COLORS = [
   ['Galben etichetă (tag)', '#FFC233', 'bg-tag'],
   ['Hârtie (paper)', '#F5F7FA', 'bg-paper'],
   ['Alb (surface)', '#FFFFFF', 'bg-surface'],
-  ['Gri (muted)', '#64748B', 'bg-muted'],
+  ['Gri (muted)', '#5E6E84', 'bg-muted'],
 ] as const
 
 const SUPPORT_COLORS = [
@@ -65,7 +65,7 @@ const SUPPORT_COLORS = [
   ['tag-600', '#E5A400', 'bg-tag-600'],
   ['tag-50', '#FFF6DB', 'bg-tag-50'],
   ['line', '#DDE3EA', 'bg-line'],
-  ['success', '#1F8A4C', 'bg-success'],
+  ['success', '#1A7A43', 'bg-success'],
   ['danger', '#C62828', 'bg-danger'],
 ] as const
 

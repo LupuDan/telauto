@@ -31,7 +31,7 @@ export function SafetyNotice({
         {title && <p className="font-semibold">{title}</p>}
         <div className={compact ? '' : 'text-sm'}>{children}</div>
         {!compact && (
-          <Link to="/p/safety" className="inline-block text-sm font-medium text-brand underline-offset-2 hover:underline">
+          <Link to="/p/safety" className="-my-2 inline-flex min-h-11 items-center text-sm font-medium text-brand underline-offset-2 hover:underline">
             {t('footer.safety')}
           </Link>
         )}

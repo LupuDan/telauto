@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
 import { ListingGrid, ListingGridSkeleton } from '../components/ListingCard'
+import { buttonClass } from '../components/ui/buttonStyles'
+import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
 import { useProfile } from '../features/profile/hooks'
@@ -26,13 +28,15 @@ export function PublicProfilePage() {
 
   if (!validId || !profile.data) {
     return (
-      <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="type-h1 text-ink">{t('profile.notFoundTitle')}</h1>
-        <p className="mt-2 text-muted">{t('profile.notFoundText')}</p>
-        <Link to="/" className="mt-6 inline-block font-semibold text-brand hover:underline">
-          {t('notFound.backHome')}
-        </Link>
-      </section>
+      <EmptyState
+        title={t('profile.notFoundTitle')}
+        text={t('profile.notFoundText')}
+        action={
+          <Link to="/" className={buttonClass('secondary')}>
+            {t('notFound.backHome')}
+          </Link>
+        }
+      />
     )
   }
 

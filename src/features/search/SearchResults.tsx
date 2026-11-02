@@ -160,7 +160,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           <label htmlFor="sort-mobile" className="sr-only">
             {t('search.sortButton')}
           </label>
-          {sortSelect('sort-mobile', 'absolute inset-0 size-full cursor-pointer opacity-0')}
+          {sortSelect('sort-mobile', 'absolute -inset-px cursor-pointer opacity-0')}
         </div>
       </div>
 

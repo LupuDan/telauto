@@ -47,6 +47,26 @@ export function Sheet({
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose()
       }}
+      onKeyDown={(event) => {
+        // Tab after the last control goes back to the first (and Shift+Tab the other way),
+        // so the focus never leaves the window for the browser bar
+        if (event.key !== 'Tab' || !ref.current) return
+        const focusable = [
+          ...ref.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        ].filter((element) => element.offsetParent !== null)
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+        if (!first || !last) return
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault()
+          last.focus()
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault()
+          first.focus()
+        }
+      }}
       className={`m-0 mt-auto w-full max-w-none overflow-hidden bg-surface p-0 text-ink shadow-float backdrop:bg-black/50 open:flex open:flex-col open:animate-[sheet-up_200ms_ease-out] sm:m-auto sm:w-[min(32rem,calc(100%-2rem))] sm:rounded-panel sm:open:animate-none ${
         full ? 'h-dvh max-h-none sm:h-[min(48rem,calc(100dvh-4rem))]' : 'max-h-[90dvh] rounded-t-panel'
       }`}

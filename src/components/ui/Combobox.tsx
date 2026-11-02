@@ -155,6 +155,8 @@ export function Combobox({
           id={listId}
           role="listbox"
           aria-label={label}
+          // the list is used with the arrow keys from the box; Tab must not stop on it
+          tabIndex={-1}
           className="absolute inset-x-0 top-full z-40 mt-1 max-h-64 overflow-y-auto rounded-field border border-line bg-surface py-1 shadow-float"
         >
           {shown.length === 0 || (shown.length === 1 && extraOption && query) ? (

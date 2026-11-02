@@ -117,13 +117,13 @@ export function ActiveFilters({
           key={chip.id}
           to={hrefFor(chip.next)}
           aria-label={t('search.removeFilter', { name: chip.text })}
-          className="inline-flex min-h-9 max-w-full items-center gap-1 rounded-full bg-brand-50 py-1 pr-2 pl-3 text-sm text-brand hover:bg-brand-100"
+          className="inline-flex min-h-11 max-w-full items-center gap-1 rounded-full bg-brand-50 py-1 pr-2 pl-3 text-sm text-brand hover:bg-brand-100 lg:min-h-9"
         >
           <span className="truncate tabular">{chip.label}</span>
           <X aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
         </Link>
       ))}
-      <Link to={clearHref} className="inline-flex min-h-9 items-center px-1 text-sm font-medium text-brand hover:underline">
+      <Link to={clearHref} className="inline-flex min-h-11 items-center px-1 text-sm font-medium text-brand hover:underline lg:min-h-9">
         {t('search.clearAll')}
       </Link>
     </div>

@@ -31,7 +31,7 @@ export function Button({
       {...rest}
     >
       {/* while loading the text stays (invisible) so the button keeps its width; the spinner sits on top */}
-      <span className={`inline-flex items-center justify-center gap-2 ${loading ? 'invisible' : ''}`}>{children}</span>
+      <span className={`inline-flex items-center justify-center gap-2 ${loading ? 'opacity-0' : ''}`}>{children}</span>
       {loading && (
         <span className="absolute inset-0 flex items-center justify-center">
           <Spinner className="size-5" />
