@@ -1,13 +1,11 @@
-import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { SpecSheet, type SpecRow } from '../../components/ui/SpecSheet'
 import { translateKey } from '../../i18n/translate'
 import type { CategoryConfig, ReferenceFieldDef, StoredAttributes } from '../../lib/categories'
 import { formatAttributeValue } from '../listings/attributeDisplay'
 import { useReferenceOptions } from '../reference/hooks'
 
-type Row = { key: string; label: string; value: ReactNode }
-
-/** Characteristics table, generated from src/lib/categories.ts. */
+/** Product sheet of a listing, generated from src/lib/categories.ts (plan de design: SpecSheet). */
 export function AttributeList({
   category,
   attributes,
@@ -15,15 +13,15 @@ export function AttributeList({
 }: {
   category: CategoryConfig
   attributes: StoredAttributes
-  /** rows that do not come from attributes (condition, locality) */
-  extraRows?: Row[]
+  /** rows that do not come from attributes (condition) */
+  extraRows?: SpecRow[]
 }) {
   const { t, i18n } = useTranslation()
   const lng = i18n.resolvedLanguage
 
-  const rows: Row[] = [...extraRows]
+  const rows: SpecRow[] = [...extraRows]
   for (const field of category.fields) {
-    let value: ReactNode = null
+    let value: SpecRow['value'] = null
     if (field.type === 'reference') {
       const other = field.otherKey ? attributes[field.otherKey] : undefined
       if (typeof other === 'string' && other) value = other
@@ -38,28 +36,23 @@ export function AttributeList({
         )
       }
     } else {
-      value = formatAttributeValue(t, field, attributes[field.key], lng)
+      const text = formatAttributeValue(t, field, attributes[field.key], lng)
+      // numbers with a unit read "180 000 km" in the sheet too
+      value =
+        text && field.type === 'number' && field.unit
+          ? `${text}${field.unit === '%' ? '' : ' '}${field.unit}`
+          : text
     }
     if (value !== null && value !== '') {
-      rows.push({ key: field.key, label: translateKey(t, `fields.${field.key}.label`), value })
+      const label = translateKey(t, `fields.${field.key}.label`).replace(/\s*\((km|%|l)\)$/, '')
+      rows.push({ key: field.key, label, value })
     }
   }
 
-  return (
-    <dl className="divide-y divide-slate-100 rounded-card border border-line bg-surface">
-      {rows.map((row) => (
-        <div key={row.key} className="grid grid-cols-2 gap-3 px-4 py-2.5 text-sm">
-          <dt className="text-slate-600">{row.label}</dt>
-          {/* user text: React shows it as plain text */}
-          <dd className="font-medium break-words whitespace-pre-line text-ink">{row.value}</dd>
-        </div>
-      ))}
-    </dl>
-  )
+  return <SpecSheet rows={rows} />
 }
 
 function ReferenceName({ field, id, parentId }: { field: ReferenceFieldDef; id: number; parentId: number | null }) {
   const options = useReferenceOptions(field.source, field.dependsOn ? parentId : null)
   return <>{options.data?.find((option) => option.id === id)?.name ?? '…'}</>
 }
-

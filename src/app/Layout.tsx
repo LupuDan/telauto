@@ -6,10 +6,13 @@ import { CookieBanner } from '../components/CookieBanner'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { LoadingState } from '../components/ui/LoadingState'
+import { Toaster } from '../components/ui/Toaster'
 import { useLiveUnreadCounter } from '../features/messages/api'
 
 /** Pages with their own bar at the bottom of the phone screen hide the main bottom bar. */
-const PAGES_WITHOUT_BOTTOM_NAV = ['/messages/:id']
+const PAGES_WITHOUT_BOTTOM_NAV = ['/messages/:id', '/a/:id']
+/** ...and of those, the ones whose bar covers the end of the page need the same free room at the bottom. */
+const PAGES_WITH_OWN_BAR = ['/a/:id']
 
 export function Layout() {
   const { t } = useTranslation()
@@ -17,6 +20,7 @@ export function Layout() {
   // one live connection for the unread counter (header and bottom bar read the same number)
   useLiveUnreadCounter()
   const showBottomNav = !PAGES_WITHOUT_BOTTOM_NAV.some((pattern) => matchPath(pattern, pathname))
+  const ownBar = PAGES_WITH_OWN_BAR.some((pattern) => matchPath(pattern, pathname))
 
   // Start every new page at the top, like a normal website.
   useEffect(() => {
@@ -26,7 +30,7 @@ export function Layout() {
   return (
     <div
       className={`flex min-h-dvh flex-col ${
-        showBottomNav ? 'pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0' : ''
+        showBottomNav || ownBar ? 'pb-[calc(4.5rem+env(safe-area-inset-bottom))] lg:pb-0' : ''
       }`}
     >
       <a
@@ -53,6 +57,7 @@ export function Layout() {
       <Footer />
       {showBottomNav && <BottomNav />}
       <CookieBanner aboveBottomNav={showBottomNav} />
+      <Toaster />
     </div>
   )
 }

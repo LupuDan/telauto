@@ -1,15 +1,21 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+﻿import { ArrowUpDown, SlidersHorizontal } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 import { ListingGrid, ListingGridSkeleton } from '../../components/ListingCard'
 import { Pagination } from '../../components/Pagination'
 import { Button } from '../../components/ui/Button'
+import { buttonClass } from '../../components/ui/buttonStyles'
+import { EmptyState } from '../../components/ui/EmptyState'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { inputClass } from '../../components/ui/fieldStyles'
+import { Sheet } from '../../components/ui/Sheet'
 import { translateKey } from '../../i18n/translate'
-import type { CategoryConfig } from '../../lib/categories'
+import { categoryBySlug, type CategoryConfig } from '../../lib/categories'
+import { formatNumber } from '../../lib/format'
 import { MyCarFilter } from '../garage/MyCarFilter'
-import { useSearchListings } from './api'
+import { ActiveFilters } from './ActiveFilters'
+import { searchListings, useSearchListings, type ListingSummary } from './api'
 import { FilterPanel } from './FilterPanel'
 import {
   countActiveFilters,
@@ -18,13 +24,31 @@ import {
   PAGE_SIZE,
   parseFilters,
   SORT_OPTIONS,
+  type SearchArgs,
   type SearchFilters,
   type SortOption,
 } from './filters'
 
-/** Results with filters, sorting and pages. Used by #/c/:slug (one category) and #/search (all). */
+/** Waits until the value stops changing (typing a price) before using it. */
+function useDebounced<T>(value: T, delay = 400): T {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebounced(value), delay)
+    return () => window.clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}
+
+/**
+ * Results with filters, sorting and pages (plan de design, 6.2).
+ * Used by #/c/:slug (one category) and #/search (all categories).
+ * Computers: 280 px filter column that stays in view + 3 columns of cards.
+ * Phones: "Filtre (2)" and "Sortare" buttons; the filters open in a full-screen panel from the
+ * bottom with the fixed button "Arată 1 240 de anunțuri".
+ */
 export function SearchResults({ category, heading }: { category?: CategoryConfig; heading: string }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lng = i18n.resolvedLanguage
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const [panelOpen, setPanelOpen] = useState(false)
@@ -48,86 +72,120 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
     navigate(hrefFor({ ...filters, sort, page: 1 }))
   }
 
+  // number of results of the filters being edited in the phone panel ("Arată 1 240 de anunțuri")
+  const [draftArgs, setDraftArgs] = useState<SearchArgs>(args)
+  const onDraftChange = useCallback(
+    (draft: SearchFilters, categorySlug: string) => {
+      const draftCategory = categoryBySlug(categorySlug) ?? category
+      setDraftArgs({ ...filtersToSearchArgs({ ...draft, page: 1 }, draftCategory), p_limit: 1, p_offset: 0 })
+    },
+    [category],
+  )
+  const debouncedDraftArgs = useDebounced(draftArgs)
+  const draftCount = useSearchListings(debouncedDraftArgs, panelOpen)
+
+  // phones: "Încarcă mai multe" adds the next pages under the ones already shown
+  const [more, setMore] = useState<{ key: string; items: ListingSummary[]; loading: boolean; error: boolean }>({
+    key: '',
+    items: [],
+    loading: false,
+    error: false,
+  })
+  const argsKey = JSON.stringify(args)
+  const extra = more.key === argsKey ? more.items : []
+  async function loadMore() {
+    setMore({ key: argsKey, items: extra, loading: true, error: false })
+    try {
+      const next = await searchListings({ ...args, p_offset: (args.p_offset ?? 0) + PAGE_SIZE + extra.length })
+      setMore({ key: argsKey, items: [...extra, ...next.items], loading: false, error: false })
+    } catch {
+      setMore({ key: argsKey, items: extra, loading: false, error: true })
+    }
+  }
+
   // new page or new filters: start at the top of the list
   useEffect(() => {
     window.scrollTo({ top: 0 })
   }, [params])
 
-  // mobile panel: Esc closes it and the page behind does not scroll
-  useEffect(() => {
-    if (!panelOpen) return
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setPanelOpen(false)
-    }
-    document.addEventListener('keydown', onKey)
-    document.body.classList.add('overflow-hidden', 'lg:overflow-auto')
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.classList.remove('overflow-hidden', 'lg:overflow-auto')
-    }
-  }, [panelOpen])
-
   const total = result.data?.total ?? 0
   const pageCount = Math.min(Math.ceil(total / PAGE_SIZE), 400)
   const activeCount = countActiveFilters(filters)
+  const countText = (count: number) =>
+    t('search.resultCount', { count }).replace(String(count), formatNumber(count, lng))
+  const panelKey = `${category?.slug ?? 'all'}?${params.toString()}`
+
+  const sortSelect = (id: string, className: string) => (
+    <select
+      id={id}
+      value={filters.sort}
+      onChange={(event) => changeSort(event.target.value as SortOption)}
+      className={className}
+    >
+      {SORT_OPTIONS.map((option) => (
+        <option key={option} value={option}>
+          {translateKey(t, `search.sort.${option}`)}
+        </option>
+      ))}
+    </select>
+  )
 
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">{heading}</h1>
-        <p className="text-sm text-slate-600" aria-live="polite">
-          {result.data ? t('search.resultCount', { count: total }) : 'Â '}
-        </p>
+      <div className="space-y-1">
+        <h1 className="type-h1 break-words text-ink">{heading}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <p className="text-muted tabular" aria-live="polite">
+            {result.data ? countText(total) : ' '}
+          </p>
+          <div className="hidden items-center gap-2 lg:flex">
+            <label htmlFor="sort-desktop" className="text-sm text-muted">
+              {t('search.sortButton')}:
+            </label>
+            {sortSelect('sort-desktop', inputClass(false, 'w-auto'))}
+          </div>
+        </div>
       </div>
 
-      <div className="lg:grid lg:grid-cols-[18rem_1fr] lg:gap-6">
+      {/* phones and tablets: two equal buttons */}
+      <div className="grid grid-cols-2 gap-2 lg:hidden">
+        <Button variant="secondary" onClick={() => setPanelOpen(true)}>
+          <SlidersHorizontal aria-hidden="true" className="size-5" strokeWidth={1.75} />
+          {activeCount > 0 ? `${t('search.filtersButton')} (${activeCount})` : t('search.filtersButton')}
+        </Button>
+        <div className={`${buttonClass('secondary')} relative`}>
+          <ArrowUpDown aria-hidden="true" className="size-5" strokeWidth={1.75} />
+          <span aria-hidden="true">{t('search.sortButton')}</span>
+          {/* the real list covers the button, so tapping opens the phone's own picker */}
+          <label htmlFor="sort-mobile" className="sr-only">
+            {t('search.sortButton')}
+          </label>
+          {sortSelect('sort-mobile', 'absolute inset-0 size-full cursor-pointer opacity-0')}
+        </div>
+      </div>
+
+      <ActiveFilters filters={filters} category={category} hrefFor={(next) => hrefFor(next)} clearHref={basePath} />
+
+      <div className="lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-6">
+        {/* computers: the column stays in view below the header and scrolls inside if taller than the screen */}
         <aside
-          className={
-            panelOpen
-              ? 'fixed inset-0 z-50 overflow-y-auto bg-surface p-4 lg:static lg:z-auto lg:overflow-visible lg:p-0'
-              : 'hidden lg:block'
-          }
-          role={panelOpen ? 'dialog' : undefined}
-          aria-modal={panelOpen ? true : undefined}
           aria-label={t('search.filtersTitle')}
+          className="hidden lg:sticky lg:top-[5.25rem] lg:flex lg:max-h-[calc(100dvh-6.5rem)] lg:flex-col lg:overflow-hidden lg:rounded-panel lg:border lg:border-line lg:bg-surface"
         >
-          {/* desktop: stays visible while scrolling, below the sticky header; scrolls inside if taller than the screen */}
-          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-sm">
+          <h2 className="border-b border-line px-4 py-3 type-h2">{t('search.filtersTitle')}</h2>
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">
             <FilterPanel
-              key={`${category?.slug ?? 'all'}?${params.toString()}`}
+              key={panelKey}
+              formId="filters-desktop"
               category={category}
               filters={filters}
               onApply={applyFilters}
-              onClose={() => setPanelOpen(false)}
+              showButtons
             />
           </div>
         </aside>
 
         <section className="min-w-0 space-y-4" aria-label={t('search.results')}>
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" className="lg:hidden" onClick={() => setPanelOpen(true)}>
-              {t('search.filtersButton')}
-              {activeCount > 0 && (
-                <span className="rounded-full bg-brand px-2 text-xs text-white">{activeCount}</span>
-              )}
-            </Button>
-            <label htmlFor="sort" className="ml-auto text-sm text-slate-600">
-              {t('search.sortLabel')}
-            </label>
-            <select
-              id="sort"
-              value={filters.sort}
-              onChange={(event) => changeSort(event.target.value as SortOption)}
-              className={inputClass(false, 'w-auto')}
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {translateKey(t, `search.sort.${option}`)}
-                </option>
-              ))}
-            </select>
-          </div>
-
           {category?.hasCompatibility && (
             <MyCarFilter
               filters={filters}
@@ -146,32 +204,65 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           )}
 
           {result.isPending ? (
-            <ListingGridSkeleton />
+            <ListingGridSkeleton columns={3} count={9} />
           ) : result.isError ? (
             <ErrorState error={result.error} onRetry={() => void result.refetch()} />
           ) : result.data.items.length === 0 ? (
-            <div className="rounded-card border border-dashed border-line-strong bg-surface p-8 text-center">
-              <p className="font-semibold text-slate-800">{t('search.emptyTitle')}</p>
-              <p className="mt-1 text-slate-600">{t('search.emptyText')}</p>
-              {(activeCount > 0 || filters.q) && (
-                <Link to={basePath} className="mt-4 inline-block font-semibold text-brand hover:underline">
-                  {t('search.clearAll')}
-                </Link>
-              )}
-            </div>
+            <EmptyState
+              text={t('search.emptyText')}
+              action={
+                (activeCount > 0 || filters.q) && (
+                  <Link to={basePath} className={buttonClass('secondary')}>
+                    {t('search.clearAll')}
+                  </Link>
+                )
+              }
+            />
           ) : (
             <div className={result.isPlaceholderData ? 'opacity-60 transition-opacity' : undefined}>
-              <ListingGrid listings={result.data.items} />
+              <ListingGrid listings={[...result.data.items, ...extra]} columns={3} />
             </div>
           )}
 
-          <Pagination
-            page={filters.page}
-            pageCount={pageCount}
-            hrefFor={(page) => hrefFor({ ...filters, page })}
-          />
+          {result.data && (filters.page - 1) * PAGE_SIZE + PAGE_SIZE + extra.length < total && (
+            <div className="flex flex-col items-center gap-2 lg:hidden">
+              <Button variant="secondary" fullWidth loading={more.loading && more.key === argsKey} onClick={() => void loadMore()}>
+                {t('search.loadMore')}
+              </Button>
+              {more.error && more.key === argsKey && <p className="text-sm text-danger">{t('errors.network')}</p>}
+            </div>
+          )}
+          <div className="hidden lg:block">
+            <Pagination page={filters.page} pageCount={pageCount} hrefFor={(page) => hrefFor({ ...filters, page })} />
+          </div>
         </section>
       </div>
+
+      <Sheet
+        open={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        title={t('search.filtersTitle')}
+        full
+        footer={
+          <Button type="submit" form="filters-mobile" fullWidth loading={draftCount.isFetching && !draftCount.data}>
+            {draftCount.data ? t('search.show', { count: draftCount.data.total }).replace(
+              String(draftCount.data.total),
+              formatNumber(draftCount.data.total, lng),
+            ) : t('search.apply')}
+          </Button>
+        }
+      >
+        {panelOpen && (
+          <FilterPanel
+            key={panelKey}
+            formId="filters-mobile"
+            category={category}
+            filters={filters}
+            onApply={applyFilters}
+            onDraftChange={onDraftChange}
+          />
+        )}
+      </Sheet>
     </div>
   )
 }

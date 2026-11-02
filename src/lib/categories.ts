@@ -32,6 +32,8 @@ export type NumberFieldDef = BaseField & {
   /** function for limits that depend on today's date (e.g. year) */
   max: number | (() => number)
   integer: boolean
+  /** unit shown inside the field and the filter (plan de design, section 5) */
+  unit?: 'km' | 'l' | '%'
 }
 export type TextFieldDef = BaseField & { type: 'text' | 'textarea'; maxLength: number }
 export type YesNoFieldDef = BaseField & { type: 'yesno' }
@@ -53,18 +55,31 @@ export type FieldDef =
   | DateFieldDef
   | ReferenceFieldDef
 
+/** Icon names from lucide-react; drawn by <CategoryIcon> (src/components/CategoryIcon.tsx). */
+export type CategoryIconName = 'Smartphone' | 'Headphones' | 'Car' | 'Cog' | 'Refrigerator'
+
+/** Trust badges a category can show ("IMEI indicat", "VIN indicat"); the seller entered the value. */
+export type TrustField = 'imei' | 'vin'
+
+/** Optional modules a category adds to the home page / "Contul meu" (plan de design, section 10). */
+export type CategoryModule = 'garage'
+
 export type CategoryConfig = {
   slug: CategorySlug
   /** categories.id in the database (seed.sql) */
   id: number
-  icon: string
+  icon: CategoryIconName
   minPhotos: number
   /** translation group for the condition labels (parts: "new / from dismantling") */
   conditionLabels: 'default' | 'parts'
   privateField?: 'imei' | 'vin'
   hasCompatibility: boolean
-  /** attribute keys shown on the result card, in this order */
-  cardFields: readonly string[]
+  /** at most 3 attribute keys shown as spec pills on the result card, in this order */
+  keySpecs: readonly string[]
+  /** trust badges shown under the price (none = no badges) */
+  trustFields: readonly TrustField[]
+  /** panel on the home page (e.g. "Garajul meu" for auto) */
+  homeModule?: CategoryModule
   fields: readonly FieldDef[]
 }
 
@@ -75,12 +90,13 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   telefoane: {
     slug: 'telefoane',
     id: 1,
-    icon: '📱',
+    icon: 'Smartphone',
     minPhotos: 3,
     conditionLabels: 'default',
     privateField: 'imei',
     hasCompatibility: false,
-    cardFields: ['storage_gb', 'network_lock', 'battery_health'],
+    keySpecs: ['storage_gb', 'battery_health', 'network_lock'],
+    trustFields: ['imei'],
     fields: [
       { key: 'brand_id', type: 'reference', source: 'phoneBrand', required: true, filter: 'reference' },
       {
@@ -101,7 +117,7 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
       },
       { key: 'network_lock', type: 'select', options: ['unlocked', 'locked'], required: true, filter: 'select' },
       { key: 'color', type: 'text', maxLength: 30, required: false },
-      { key: 'battery_health', type: 'number', min: 1, max: 100, integer: true, required: false, filter: 'range' },
+      { key: 'battery_health', type: 'number', min: 1, max: 100, integer: true, unit: '%', required: false, filter: 'range' },
       { key: 'warranty', type: 'yesno', required: false, filter: 'select' },
       { key: 'warranty_until', type: 'date', required: false, showIf: { key: 'warranty', equals: 'yes' } },
     ],
@@ -109,11 +125,12 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   'accesorii-telefoane': {
     slug: 'accesorii-telefoane',
     id: 2,
-    icon: '🎧',
+    icon: 'Headphones',
     minPhotos: 1,
     conditionLabels: 'default',
     hasCompatibility: false,
-    cardFields: ['accessory_type'],
+    keySpecs: ['accessory_type'],
+    trustFields: [],
     fields: [
       {
         key: 'accessory_type',
@@ -129,12 +146,14 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   autovehicule: {
     slug: 'autovehicule',
     id: 3,
-    icon: '🚗',
+    icon: 'Car',
     minPhotos: 5,
     conditionLabels: 'default',
     privateField: 'vin',
     hasCompatibility: false,
-    cardFields: ['year', 'mileage_km', 'fuel', 'transmission'],
+    keySpecs: ['year', 'mileage_km', 'fuel'],
+    trustFields: ['vin'],
+    homeModule: 'garage',
     fields: [
       {
         key: 'make_id',
@@ -154,7 +173,16 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
         filter: 'reference',
       },
       { key: 'year', type: 'number', min: MIN_YEAR, max: () => maxYear(), integer: true, required: true, filter: 'range' },
-      { key: 'mileage_km', type: 'number', min: 0, max: 2_000_000, integer: true, required: true, filter: 'range' },
+      {
+        key: 'mileage_km',
+        type: 'number',
+        min: 0,
+        max: 2_000_000,
+        integer: true,
+        unit: 'km',
+        required: true,
+        filter: 'range',
+      },
       {
         key: 'fuel',
         type: 'select',
@@ -171,7 +199,16 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
         filter: 'select',
       },
       { key: 'steering', type: 'select', options: ['left', 'right'], required: false, filter: 'select' },
-      { key: 'engine_volume_l', type: 'number', min: 0.5, max: 10, integer: false, required: false, filter: 'range' },
+      {
+        key: 'engine_volume_l',
+        type: 'number',
+        min: 0.5,
+        max: 10,
+        integer: false,
+        unit: 'l',
+        required: false,
+        filter: 'range',
+      },
       { key: 'color', type: 'text', maxLength: 30, required: false },
       { key: 'registered_md', type: 'yesno', required: false, filter: 'select' },
       { key: 'history', type: 'textarea', maxLength: 1000, required: false },
@@ -180,11 +217,12 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   'piese-auto': {
     slug: 'piese-auto',
     id: 4,
-    icon: '⚙️',
+    icon: 'Cog',
     minPhotos: 1,
     conditionLabels: 'parts',
     hasCompatibility: true,
-    cardFields: ['part_type'],
+    keySpecs: ['part_type'],
+    trustFields: [],
     fields: [
       {
         key: 'part_type',
@@ -209,9 +247,10 @@ export const CATEGORIES: Record<CategorySlug, CategoryConfig> = {
   },
 }
 
-export const CATEGORY_ICONS: Record<CategorySlug, string> = Object.fromEntries(
-  CATEGORY_SLUGS.map((slug) => [slug, CATEGORIES[slug].icon]),
-) as Record<CategorySlug, string>
+/** Trust badges a listing earns: the category's trustFields the seller filled in. */
+export function trustBadges(category: CategoryConfig, listing: { hasImei: boolean; hasVin: boolean }): TrustField[] {
+  return category.trustFields.filter((field) => (field === 'imei' ? listing.hasImei : listing.hasVin))
+}
 
 export function categoryBySlug(slug: string | null | undefined): CategoryConfig | undefined {
   return isCategorySlug(slug) ? CATEGORIES[slug] : undefined

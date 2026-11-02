@@ -1,16 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CategoryIcon } from '../../components/CategoryIcon'
+import type { CategoryIconName } from '../../lib/categories'
 import { publicPhotoUrl } from '../listings/photos'
 
 /**
- * Photo gallery: swipe on phones (CSS scroll-snap), arrows and thumbnails on computers,
- * and a full-screen view (native <dialog>, Esc closes it).
+ * Photo gallery (plan de design, section 5): swipe with the finger (CSS scroll-snap), position dots,
+ * arrows on computers, a full-screen view (native <dialog>: Esc closes it, arrow keys change photo).
+ * `actions` sit over the photo, top right ("Salvează", "Distribuie").
+ * Phones: the gallery uses the whole screen width.
  */
-export function ListingGallery({ photos, title, fallbackIcon }: { photos: string[]; title: string; fallbackIcon?: string }) {
+export function ListingGallery({
+  photos,
+  title,
+  fallbackIcon,
+  actions,
+}: {
+  photos: string[]
+  title: string
+  fallbackIcon: CategoryIconName
+  actions?: ReactNode
+}) {
   const { t } = useTranslation()
   const [index, setIndex] = useState(0)
   const stripRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const alt = (n: number) => t('listing.photoAlt', { n: n + 1, total: photos.length, title })
 
   function goTo(next: number) {
     const target = Math.max(0, Math.min(photos.length - 1, next))
@@ -19,7 +35,7 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
     setIndex(target)
   }
 
-  // keep the counter right while swiping
+  // keep the dots right while swiping
   function handleScroll() {
     const strip = stripRef.current
     if (!strip || strip.clientWidth === 0) return
@@ -38,24 +54,31 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
     return () => dialog.removeEventListener('keydown', onKey)
   }, [photos.length])
 
+  const frame = '-mx-4 overflow-hidden bg-paper sm:mx-0 sm:rounded-card md:-mx-0'
+
   if (photos.length === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-card bg-slate-100 text-6xl" aria-hidden="true">
-        {fallbackIcon}
+      <div className={`relative ${frame}`}>
+        <div className="flex aspect-[4/3] items-center justify-center text-muted">
+          <CategoryIcon name={fallbackIcon} className="size-16" />
+        </div>
+        {actions && <div className="absolute top-2 right-2 flex gap-1">{actions}</div>}
       </div>
     )
   }
 
   const arrowClass =
-    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-xl shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-0 sm:flex'
+    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/95 text-ink shadow-float hover:bg-surface disabled:hidden lg:flex'
+  const fullArrowClass =
+    'absolute top-1/2 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/25'
 
   return (
     <div className="space-y-2">
-      <div className="relative overflow-hidden rounded-card bg-neutral-900">
+      <div className={`relative ${frame}`}>
         <div
           ref={stripRef}
           onScroll={handleScroll}
-          className="flex aspect-[4/3] snap-x snap-mandatory overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex aspect-[4/3] snap-x snap-mandatory overflow-x-auto bg-ink [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {photos.map((path, photoIndex) => (
             <button
@@ -65,12 +88,12 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
                 setIndex(photoIndex)
                 dialogRef.current?.showModal()
               }}
-              className="size-full shrink-0 snap-center"
+              className="size-full shrink-0 snap-center focus-visible:outline-offset-[-4px]"
               aria-label={t('listing.openPhoto', { n: photoIndex + 1, total: photos.length })}
             >
               <img
                 src={publicPhotoUrl(path)}
-                alt={photoIndex === 0 ? title : ''}
+                alt={alt(photoIndex)}
                 loading={photoIndex === 0 ? 'eager' : 'lazy'}
                 decoding="async"
                 className="size-full object-contain"
@@ -78,31 +101,55 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
             </button>
           ))}
         </div>
+
+        {actions && <div className="absolute top-2 right-2 flex gap-1">{actions}</div>}
+
         <button
           type="button"
-          className={`${arrowClass} left-2`}
+          className={`${arrowClass} left-3`}
           onClick={() => goTo(index - 1)}
           disabled={index === 0}
           aria-label={t('listing.previousPhoto')}
         >
-          ←
+          <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={1.75} />
         </button>
         <button
           type="button"
-          className={`${arrowClass} right-2`}
+          className={`${arrowClass} right-3`}
           onClick={() => goTo(index + 1)}
           disabled={index === photos.length - 1}
           aria-label={t('listing.nextPhoto')}
         >
-          →
+          <ChevronRight aria-hidden="true" className="size-6" strokeWidth={1.75} />
         </button>
-        <span className="absolute right-2 bottom-2 rounded-md bg-black/60 px-2 py-0.5 text-xs text-white" aria-live="polite">
-          {index + 1} / {photos.length}
-        </span>
+
+        {photos.length > 1 && (
+          <div className="absolute inset-x-0 bottom-2 flex justify-center">
+            {/* position dots; also buttons to jump to a photo */}
+            <div className="flex items-center gap-0.5 rounded-full bg-black/45 px-1.5">
+              {photos.map((path, photoIndex) => (
+                <button
+                  key={path}
+                  type="button"
+                  onClick={() => goTo(photoIndex)}
+                  aria-label={t('listing.showPhoto', { n: photoIndex + 1 })}
+                  aria-current={photoIndex === index ? 'true' : undefined}
+                  className="flex size-5 items-center justify-center"
+                >
+                  <span
+                    className={`block rounded-full bg-white transition-all ${
+                      photoIndex === index ? 'size-2' : 'size-1.5 opacity-60'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {photos.length > 1 && (
-        <ul className="flex gap-2 overflow-x-auto pb-1">
+        <ul className="hidden gap-2 overflow-x-auto pb-1 lg:flex">
           {photos.map((path, photoIndex) => (
             <li key={path} className="shrink-0">
               <button
@@ -135,36 +182,36 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
         }}
       >
         <div className="relative flex h-full items-center justify-center">
-          <img src={publicPhotoUrl(photos[index])} alt="" className="max-h-full max-w-full object-contain" />
+          <img src={publicPhotoUrl(photos[index])} alt={alt(index)} className="max-h-full max-w-full object-contain" />
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
+            className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-white/15 hover:bg-white/25"
             aria-label={t('listing.closePhoto')}
           >
-            ×
+            <X aria-hidden="true" className="size-6" strokeWidth={1.75} />
           </button>
           {index > 0 && (
             <button
               type="button"
               onClick={() => setIndex(index - 1)}
-              className="absolute left-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
+              className={`${fullArrowClass} left-3`}
               aria-label={t('listing.previousPhoto')}
             >
-              ←
+              <ChevronLeft aria-hidden="true" className="size-7" strokeWidth={1.75} />
             </button>
           )}
           {index < photos.length - 1 && (
             <button
               type="button"
               onClick={() => setIndex(index + 1)}
-              className="absolute right-3 flex size-12 items-center justify-center rounded-full bg-white/20 text-2xl hover:bg-surface/30"
+              className={`${fullArrowClass} right-3`}
               aria-label={t('listing.nextPhoto')}
             >
-              →
+              <ChevronRight aria-hidden="true" className="size-7" strokeWidth={1.75} />
             </button>
           )}
-          <span className="absolute bottom-3 rounded-md bg-black/60 px-2 py-0.5 text-sm">
+          <span className="absolute bottom-4 rounded-full bg-black/60 px-3 py-1 text-sm tabular">
             {index + 1} / {photos.length}
           </span>
         </div>

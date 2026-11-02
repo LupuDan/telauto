@@ -1,37 +1,48 @@
-import { useId, useState, type FormEvent, type InputHTMLAttributes } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../components/ui/Button'
+import { ChipGroup } from '../../components/ui/ChipGroup'
+import { RangeInput } from '../../components/ui/RangeInput'
 import { SelectField } from '../../components/ui/SelectField'
-import { inputClass } from '../../components/ui/fieldStyles'
+import { TextField } from '../../components/ui/TextField'
 import { translateKey } from '../../i18n/translate'
-import {
-  CATEGORY_SLUGS,
-  type CategoryConfig,
-  type FieldDef,
-  type ReferenceSource,
-} from '../../lib/categories'
-import { localizedName } from '../../lib/format'
+import { CATEGORY_SLUGS, type CategoryConfig, type FieldDef, type ReferenceSource } from '../../lib/categories'
+import { currencyUnit, localizedName } from '../../lib/format'
 import { MIN_YEAR, maxYear } from '../../lib/validators'
 import { useLocalities, useReferenceOptions } from '../reference/hooks'
 import { EMPTY_FILTERS, filterableFields, type SearchFilters } from './filters'
+
+/** Lists with at most this many options are shown as pills (plan de design, section 5: ChipGroup). */
+const MAX_CHIPS = 5
 
 type FilterPanelProps = {
   category: CategoryConfig | undefined
   filters: SearchFilters
   /** categorySlug is only set on the all-categories search page when a category is chosen */
   onApply: (filters: SearchFilters, categorySlug?: string) => void
-  onClose?: () => void
+  /** id of the form, so a button outside it (fixed bar of the phone panel) can submit it */
+  formId: string
+  /** the phone panel shows the number of results of the filters being edited */
+  onDraftChange?: (draft: SearchFilters, categorySlug: string) => void
+  /** computers: "Aplică" and "Resetează" at the bottom of the column */
+  showButtons?: boolean
 }
 
 /**
  * General filters + the filters of the category (generated from src/lib/categories.ts).
- * Changes are kept locally until "Show results" is pressed, so the page does not reload on every keystroke.
+ * Changes are kept locally until "Aplică" / "Arată N anunțuri" is pressed, so the page does not
+ * reload on every keystroke.
  */
-export function FilterPanel({ category, filters, onApply, onClose }: FilterPanelProps) {
+export function FilterPanel({ category, filters, onApply, formId, onDraftChange, showButtons = false }: FilterPanelProps) {
   const { t, i18n } = useTranslation()
+  const lng = i18n.resolvedLanguage
   const localities = useLocalities()
   const [draft, setDraft] = useState<SearchFilters>(filters)
   const [categorySlug, setCategorySlug] = useState('')
+
+  useEffect(() => {
+    onDraftChange?.(draft, categorySlug)
+  }, [draft, categorySlug, onDraftChange])
 
   const set = (patch: Partial<SearchFilters>) => setDraft((current) => ({ ...current, ...patch }))
 
@@ -48,11 +59,12 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
     })
   }
 
-  function setRange(key: string, bound: 'min' | 'max', value: string) {
+  function setRange(key: string, range: { from: string; to: string }, decimal: boolean) {
+    const clean = (value: string) => value.replace(decimal ? /[^\d.,\s]/g : /[^\d\s]/g, '').slice(0, 12)
     setDraft((current) => {
-      const range = { ...(current.ranges[key] ?? { min: '', max: '' }), [bound]: value }
       const ranges = { ...current.ranges }
-      if (range.min || range.max) ranges[key] = range
+      const next = { min: clean(range.from), max: clean(range.to) }
+      if (next.min || next.max) ranges[key] = next
       else delete ranges[key]
       return { ...current, ranges }
     })
@@ -71,29 +83,16 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
   }
 
   const conditionGroup = category?.conditionLabels ?? 'default'
+  const cleanPrice = (value: string) => value.replace(/[^\d.,\s]/g, '').slice(0, 12)
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" aria-label={t('search.filtersTitle')}>
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{t('search.filtersTitle')}</h2>
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex size-11 items-center justify-center rounded-field text-2xl text-slate-600 hover:bg-slate-100 lg:hidden"
-            aria-label={t('search.closeFilters')}
-          >
-            ×
-          </button>
-        )}
-      </div>
-
-      <TextInput
+    <form id={formId} onSubmit={handleSubmit} className="space-y-5" aria-label={t('search.filtersTitle')}>
+      <TextField
         label={t('search.keywords')}
         value={draft.q}
         maxLength={100}
         type="search"
-        onChange={(q) => set({ q })}
+        onChange={(event) => set({ q: event.target.value })}
       />
 
       {!category && (
@@ -119,69 +118,64 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
         <option value="">{t('search.allLocalities')}</option>
         {localities.data?.map((locality) => (
           <option key={locality.id} value={String(locality.id)}>
-            {localizedName(locality, i18n.resolvedLanguage)}
+            {localizedName(locality, lng)}
           </option>
         ))}
       </SelectField>
 
-      <SelectField
-        label={t('listingForm.condition')}
-        value={draft.condition}
-        onChange={(event) => set({ condition: event.target.value })}
-      >
-        <option value="">{t('search.any')}</option>
-        <option value="new">{t(`listingForm.conditionOptions.${conditionGroup}.new`)}</option>
-        <option value="used">{t(`listingForm.conditionOptions.${conditionGroup}.used`)}</option>
-      </SelectField>
+      <div>
+        <RangeInput
+          label={t('listingForm.price')}
+          unit={currencyUnit(draft.currency, lng)}
+          unitInLabel
+          inputMode="decimal"
+          from={draft.priceMin}
+          to={draft.priceMax}
+          onChange={({ from, to }) => set({ priceMin: cleanPrice(from), priceMax: cleanPrice(to) })}
+        />
+        {/* the currency of the price filter: "lei | €" */}
+        <div role="group" aria-label={t('listingForm.currency')} className="mt-2 flex gap-2">
+          {(['MDL', 'EUR'] as const).map((currency) => (
+            <button
+              key={currency}
+              type="button"
+              aria-pressed={draft.currency === currency}
+              onClick={() => set({ currency })}
+              className={`min-h-9 rounded-full border px-3 text-sm ${
+                draft.currency === currency
+                  ? 'border-brand bg-brand-50 font-medium text-brand'
+                  : 'border-line-strong text-ink hover:bg-paper'
+              }`}
+            >
+              {currencyUnit(currency, lng)}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-sm text-muted">{t('search.priceHint')}</p>
+      </div>
 
-      {/* "from" and "to" share the width; the currency is a small MDL | EUR switch next to the title */}
-      <fieldset>
-        <div className="mb-1 flex items-center justify-between gap-2">
-          <legend className="text-sm font-medium text-slate-700">{t('listingForm.price')}</legend>
-          <div role="group" aria-label={t('listingForm.currency')} className="flex rounded-field border border-line-strong p-0.5">
-            {(['MDL', 'EUR'] as const).map((currency) => (
-              <button
-                key={currency}
-                type="button"
-                aria-pressed={draft.currency === currency}
-                onClick={() => set({ currency })}
-                className={`rounded-md px-2 py-0.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand ${
-                  draft.currency === currency ? 'bg-brand text-white' : 'text-slate-600 hover:bg-slate-100'
-                }`}
-              >
-                {currency}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <RangeInputs
-            label={`${t('listingForm.price')} (${draft.currency})`}
-            min={draft.priceMin}
-            max={draft.priceMax}
-            decimal
-            onChange={(bound, value) => set(bound === 'min' ? { priceMin: value } : { priceMax: value })}
-          />
-        </div>
-        <p className="mt-1 text-xs text-slate-500">{t('search.priceHint')}</p>
-      </fieldset>
+      <ChipGroup
+        label={t('listingForm.condition')}
+        options={[
+          { value: 'new', label: t(`listingForm.conditionOptions.${conditionGroup}.new`) },
+          { value: 'used', label: t(`listingForm.conditionOptions.${conditionGroup}.used`) },
+        ]}
+        value={draft.condition}
+        onChange={(condition) => set({ condition: String(condition) })}
+      />
 
       {filterableFields(category).map((field) =>
         field.filter === 'range' ? (
-          <fieldset key={field.key}>
-            <legend className="mb-1 block text-sm font-medium text-slate-700">
-              {translateKey(t, `fields.${field.key}.label`)}
-            </legend>
-            <div className="grid grid-cols-2 gap-2">
-              <RangeInputs
-                label={translateKey(t, `fields.${field.key}.label`)}
-                min={draft.ranges[field.key]?.min ?? ''}
-                max={draft.ranges[field.key]?.max ?? ''}
-                decimal={field.type === 'number' && !field.integer}
-                onChange={(bound, value) => setRange(field.key, bound, value)}
-              />
-            </div>
-          </fieldset>
+          <RangeInput
+            key={field.key}
+            label={translateKey(t, `fields.${field.key}.label`)}
+            unit={field.type === 'number' ? field.unit : undefined}
+            unitInLabel
+            inputMode={field.type === 'number' && !field.integer ? 'decimal' : 'numeric'}
+            from={draft.ranges[field.key]?.min ?? ''}
+            to={draft.ranges[field.key]?.max ?? ''}
+            onChange={(range) => setRange(field.key, range, field.type === 'number' && !field.integer)}
+          />
         ) : (
           <ChoiceFilter
             key={field.key}
@@ -196,8 +190,8 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
       )}
 
       {category?.hasCompatibility && (
-        <fieldset className="space-y-3 rounded-field border border-line p-3">
-          <legend className="px-1 text-sm font-semibold text-slate-700">{t('search.compatibleWith')}</legend>
+        <fieldset className="space-y-4 rounded-card border border-line p-3">
+          <legend className="px-1 text-sm font-semibold text-ink">{t('search.compatibleWith')}</legend>
           <ReferenceSelect
             label={t('listingForm.compatibilityMake')}
             source="vehicleMake"
@@ -213,86 +207,29 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
             emptyLabel={t('listingForm.compatibilityAllModels')}
             onChange={(compatModel) => set({ compatModel })}
           />
-          <TextInput
+          <TextField
             label={t('search.compatibleYear')}
             value={draft.compatYear}
             inputMode="numeric"
             maxLength={4}
             disabled={!draft.compatMake}
             placeholder={`${MIN_YEAR}–${maxYear()}`}
-            onChange={(compatYear) => set({ compatYear: compatYear.replace(/\D/g, '') })}
+            onChange={(event) => set({ compatYear: event.target.value.replace(/\D/g, '') })}
           />
         </fieldset>
       )}
 
-      {/* -bottom-4 + pb-4: the bar also covers the bottom padding of the scrolling panel */}
-      <div className="sticky -bottom-4 flex gap-2 bg-surface pt-2 pb-4">
-        <Button type="submit" className="flex-1">
-          {t('search.apply')}
-        </Button>
-        <Button variant="secondary" onClick={handleReset}>
-          {t('search.reset')}
-        </Button>
-      </div>
+      {showButtons && (
+        <div className="sticky bottom-0 -mx-4 -mb-4 flex gap-2 border-t border-line bg-surface px-4 py-3">
+          <Button type="submit" size="compact" className="flex-1">
+            {t('search.applyShort')}
+          </Button>
+          <Button variant="secondary" size="compact" onClick={handleReset}>
+            {t('search.reset')}
+          </Button>
+        </div>
+      )}
     </form>
-  )
-}
-
-function TextInput({
-  label,
-  onChange,
-  ...rest
-}: { label: string; onChange: (value: string) => void } & Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange'
->) {
-  const id = useId()
-  return (
-    <div>
-      <label htmlFor={id} className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
-      <input id={id} className={inputClass(false)} onChange={(event) => onChange(event.target.value)} {...rest} />
-    </div>
-  )
-}
-
-function RangeInputs({
-  label,
-  min,
-  max,
-  decimal = false,
-  onChange,
-}: {
-  label: string
-  min: string
-  max: string
-  decimal?: boolean
-  onChange: (bound: 'min' | 'max', value: string) => void
-}) {
-  const { t } = useTranslation()
-  const clean = (value: string) => value.replace(decimal ? /[^\d.,\s]/g : /[^\d\s]/g, '')
-  return (
-    <>
-      <input
-        aria-label={`${label}: ${t('search.from')}`}
-        placeholder={t('search.from')}
-        inputMode={decimal ? 'decimal' : 'numeric'}
-        maxLength={12}
-        value={min}
-        onChange={(event) => onChange('min', clean(event.target.value))}
-        className={`${inputClass(false)} min-w-0`}
-      />
-      <input
-        aria-label={`${label}: ${t('search.to')}`}
-        placeholder={t('search.to')}
-        inputMode={decimal ? 'decimal' : 'numeric'}
-        maxLength={12}
-        value={max}
-        onChange={(event) => onChange('max', clean(event.target.value))}
-        className={`${inputClass(false)} min-w-0`}
-      />
-    </>
   )
 }
 
@@ -323,21 +260,26 @@ function ChoiceFilter({
     )
   }
 
+  const options =
+    field.type === 'select'
+      ? field.options.map((option) => ({ value: option, label: translateKey(t, `fields.${field.key}.options.${option}`) }))
+      : [
+          { value: 'yes', label: t('common.yes') },
+          { value: 'no', label: t('common.no') },
+        ]
+
+  if (options.length <= MAX_CHIPS) {
+    return <ChipGroup label={label} options={options} value={value} onChange={(next) => onChange(String(next))} />
+  }
+
   return (
     <SelectField label={label} value={value} onChange={(event) => onChange(event.target.value)}>
       <option value="">{t('search.any')}</option>
-      {field.type === 'select' &&
-        field.options.map((option) => (
-          <option key={option} value={option}>
-            {translateKey(t, `fields.${field.key}.options.${option}`)}
-          </option>
-        ))}
-      {field.type === 'yesno' && (
-        <>
-          <option value="yes">{t('common.yes')}</option>
-          <option value="no">{t('common.no')}</option>
-        </>
-      )}
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </SelectField>
   )
 }

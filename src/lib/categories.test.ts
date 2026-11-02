@@ -3,6 +3,7 @@ import {
   attributesToForm,
   buildAttributes,
   CATEGORIES,
+  CATEGORY_SLUGS,
   categoryById,
   categoryBySlug,
   OTHER_VALUE,
@@ -102,5 +103,17 @@ describe('Salvare și editare (formular <-> baza de date)', () => {
     const form = { brand_id: '3', model_id: OTHER_VALUE, model_other: 'X100', storage_gb: '64', network_lock: 'unlocked', warranty: 'no' }
     const back = attributesToForm(phones, buildAttributes(phones, form))
     expect(back).toMatchObject(form)
+  })
+})
+
+describe('Configurarea de design a categoriilor (plan de design, secțiunea 10)', () => {
+  it('fiecare categorie are cel mult 3 keySpecs, toate câmpuri existente', () => {
+    for (const slug of CATEGORY_SLUGS) {
+      const category = CATEGORIES[slug]
+      expect(category.keySpecs.length).toBeLessThanOrEqual(3)
+      for (const key of category.keySpecs) {
+        expect(category.fields.some((field) => field.key === key), `${slug}.${key}`).toBe(true)
+      }
+    }
   })
 })

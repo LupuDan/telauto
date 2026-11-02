@@ -12,7 +12,8 @@
     "no": "Нет",
     "optional": "необязательно",
     "rangeFrom": "от",
-    "rangeTo": "до"
+    "rangeTo": "до",
+    "close": "Закрыть"
   },
   "header": {
     "searchPlaceholder": "Что вы ищете?",
@@ -57,14 +58,21 @@
     "autovehicule": "Автомобили",
     "piese-auto": "Автозапчасти"
   },
+  "categoriesShort": {
+    "telefoane": "Телефоны",
+    "accesorii-telefoane": "Аксессуары",
+    "autovehicule": "Авто",
+    "piese-auto": "Запчасти"
+  },
   "home": {
     "metaTitle": "Telauto.md – бесплатные объявления в Молдове",
     "metaDescription": "Телефоны, аксессуары, автомобили и автозапчасти. Бесплатная публикация, безопасный поиск.",
-    "heading": "Покупайте и продавайте безопасно",
+    "heading": "Покупайте и продавайте легко по всей Молдове",
     "categoriesHeading": "Категории",
     "latestHeading": "Новые объявления",
     "latestEmpty": "Объявлений пока нет. Скоро они появятся здесь.",
-    "seeAll": "Смотреть все"
+    "seeAll": "Смотреть все",
+    "allCategories": "Все категории"
   },
   "auth": {
     "loginMetaTitle": "Вход – Telauto.md",
@@ -369,6 +377,10 @@
       "options": {
         "unlocked": "Разблокирован (любой оператор)",
         "locked": "Привязан к оператору"
+      },
+      "cardOptions": {
+        "unlocked": "Разблокирован",
+        "locked": "Привязан к оператору"
       }
     },
     "color": {
@@ -376,7 +388,7 @@
     },
     "battery_health": {
       "label": "Состояние батареи (%)",
-      "card": "батарея {{value}}%"
+      "card": "Батарея {{value}}%"
     },
     "warranty": {
       "label": "Гарантия"
@@ -474,6 +486,18 @@
     },
     "manufacturer": {
       "label": "Производитель"
+    },
+    "appliance_type": {
+      "label": "Тип",
+      "options": {
+        "fridge": "Холодильник",
+        "washer": "Стиральная машина",
+        "oven": "Духовка",
+        "other": "Другое"
+      }
+    },
+    "appliance_brand": {
+      "label": "Марка"
     }
   },
   "listing": {
@@ -509,7 +533,26 @@
     "notPublic": "Это объявление не видно другим (продано, истекло или скрыто). Только вы его видите.",
     "publishedOn": "опубликовано {{date}}",
     "characteristics": "Характеристики",
-    "similar": "Похожие объявления"
+    "similar": "Похожие объявления",
+    "showAll": "Показать полностью",
+    "showLess": "Свернуть",
+    "share": "Поделиться",
+    "linkCopied": "Ссылка скопирована",
+    "reportListing": "Пожаловаться на объявление",
+    "sellerProfile": "Профиль продавца",
+    "activeListings_one": "{{count}} активное объявление",
+    "activeListings_few": "{{count}} активных объявления",
+    "activeListings_many": "{{count}} активных объявлений",
+    "activeListings_other": "{{count}} активных объявления",
+    "loginModalTitle": "Войдите, чтобы увидеть номер телефона",
+    "loginModalTitlePrivate": "Войдите, чтобы увидеть номер телефона и {{field}}",
+    "createAccount": "Создать аккаунт",
+    "safetyShort": "Никогда не вносите предоплату и не вводите данные карты по ссылкам из сообщений.",
+    "fitsTitle": "Подходит к",
+    "fitsMyCar": "Подходит к вашей машине: {{car}}",
+    "photoAlt": "Фото {{n}} из {{total}}: {{title}}",
+    "description": "Описание",
+    "contact": "Связаться с продавцом"
   },
   "search": {
     "categoryMetaTitle": "{{name}} – объявления в Молдове – Telauto.md",
@@ -543,12 +586,21 @@
       "expensive": "Сначала дорогие"
     },
     "emptyTitle": "Объявления не найдены",
-    "emptyText": "Попробуйте другие слова или меньше фильтров.",
-    "clearAll": "Сбросить все фильтры",
+    "emptyText": "Объявлений не найдено. Попробуйте убрать часть фильтров.",
+    "clearAll": "Сбросить фильтры",
     "pagination": "Страницы",
     "previous": "Назад",
     "next": "Вперёд",
-    "pageN": "Страница {{n}}"
+    "pageN": "Страница {{n}}",
+    "sortButton": "Сортировка",
+    "removeFilter": "Убрать фильтр: {{name}}",
+    "activeFilters": "Активные фильтры",
+    "show_one": "Показать {{count}} объявление",
+    "show_few": "Показать {{count}} объявления",
+    "show_many": "Показать {{count}} объявлений",
+    "show_other": "Показать {{count}} объявления",
+    "loadMore": "Загрузить ещё",
+    "applyShort": "Применить"
   },
   "favorites": {
     "save": "Сохранить",
@@ -575,9 +627,14 @@
     "cancel": "Отмена",
     "showParts": "Совместимые запчасти",
     "deleteConfirm": "Удалить машину из гаража?",
-    "onlyMyCar": "Только запчасти для моей машины",
+    "onlyMyCar": "Только для моей машины",
     "allParts": "Все запчасти",
-    "manage": "Мой гараж"
+    "manage": "Мой гараж",
+    "moduleTitle": "Мой гараж",
+    "moduleEmpty": "Добавьте свой автомобиль и смотрите только подходящие запчасти.",
+    "moduleWithCar": "Запчасти, подходящие для {{car}}.",
+    "addCar": "Добавить автомобиль",
+    "seeMatchingParts": "Подходящие запчасти"
   },
   "messages": {
     "metaTitle": "Сообщения – Telauto.md",

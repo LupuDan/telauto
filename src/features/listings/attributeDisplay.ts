@@ -18,8 +18,13 @@ export function formatAttributeValue(
   if (value === undefined || value === null || value === '') return null
 
   switch (field.type) {
-    case 'select':
-      return translateKey(t, `fields.${field.key}.options.${String(value)}`)
+    case 'select': {
+      const full = translateKey(t, `fields.${field.key}.options.${String(value)}`)
+      // on the card a shorter text may exist: fields.<key>.cardOptions.<value>
+      return mode === 'card'
+        ? translateKey(t, `fields.${field.key}.cardOptions.${String(value)}`, { defaultValue: full })
+        : full
+    }
     case 'yesno':
       return value === true ? t('common.yes') : value === false ? t('common.no') : null
     case 'number': {
@@ -39,14 +44,14 @@ export function formatAttributeValue(
   }
 }
 
-/** Short facts for the result card, e.g. "2015 · 180 000 km · Motorină". */
+/** Spec pills of the result card (category keySpecs), e.g. ["2015", "180 000 km", "Motorină"]. */
 export function cardFacts(
   t: TFunction,
   category: CategoryConfig,
   attributes: StoredAttributes,
   lng: string | undefined,
 ): string[] {
-  return category.cardFields
+  return category.keySpecs
     .map((key) => category.fields.find((field) => field.key === key))
     .map((field) => (field ? formatAttributeValue(t, field, attributes[field.key], lng, 'card') : null))
     .filter((text): text is string => Boolean(text))

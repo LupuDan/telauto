@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState, type ReactNode } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { CategoryIcon } from '../../components/CategoryIcon'
 import { useNavigate } from 'react-router'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
@@ -303,8 +304,8 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
               selected === slug ? 'border-brand bg-brand-50' : 'border-line bg-surface'
             }`}
           >
-            <span aria-hidden="true" className="text-3xl">
-              {CATEGORIES[slug].icon}
+            <span className="text-brand">
+              <CategoryIcon name={CATEGORIES[slug].icon} className="size-7" />
             </span>
             <span>{t(`categories.${slug}`)}</span>
             <span className="text-xs font-normal text-slate-500">

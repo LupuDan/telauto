@@ -12,7 +12,8 @@
     "no": "Nu",
     "optional": "opțional",
     "rangeFrom": "de la",
-    "rangeTo": "până la"
+    "rangeTo": "până la",
+    "close": "Închide"
   },
   "header": {
     "searchPlaceholder": "Ce cauți?",
@@ -57,14 +58,21 @@
     "autovehicule": "Autovehicule",
     "piese-auto": "Piese auto"
   },
+  "categoriesShort": {
+    "telefoane": "Telefoane",
+    "accesorii-telefoane": "Accesorii",
+    "autovehicule": "Auto",
+    "piese-auto": "Piese auto"
+  },
   "home": {
     "metaTitle": "Telauto.md – anunțuri gratuite în Moldova",
     "metaDescription": "Telefoane, accesorii, autovehicule și piese auto. Publicare gratuită, căutare sigură.",
-    "heading": "Cumpără și vinde în siguranță",
+    "heading": "Cumpără și vinde ușor, în toată Moldova",
     "categoriesHeading": "Categorii",
     "latestHeading": "Anunțuri noi",
     "latestEmpty": "Încă nu sunt anunțuri. Vor apărea aici în curând.",
-    "seeAll": "Vezi toate"
+    "seeAll": "Vezi toate",
+    "allCategories": "Toate categoriile"
   },
   "auth": {
     "loginMetaTitle": "Intră în cont – Telauto.md",
@@ -368,6 +376,10 @@
       "options": {
         "unlocked": "Deblocat (orice operator)",
         "locked": "Legat de operator"
+      },
+      "cardOptions": {
+        "unlocked": "Deblocat",
+        "locked": "Legat de operator"
       }
     },
     "color": {
@@ -375,7 +387,7 @@
     },
     "battery_health": {
       "label": "Sănătatea bateriei (%)",
-      "card": "baterie {{value}}%"
+      "card": "Baterie {{value}}%"
     },
     "warranty": {
       "label": "Garanție"
@@ -473,6 +485,18 @@
     },
     "manufacturer": {
       "label": "Producător"
+    },
+    "appliance_type": {
+      "label": "Tip",
+      "options": {
+        "fridge": "Frigider",
+        "washer": "Mașină de spălat",
+        "oven": "Cuptor",
+        "other": "Altele"
+      }
+    },
+    "appliance_brand": {
+      "label": "Marcă"
     }
   },
   "listing": {
@@ -508,7 +532,25 @@
     "notPublic": "Acest anunț nu este vizibil pentru alții (vândut, expirat sau ascuns). Doar tu îl vezi.",
     "publishedOn": "publicat pe {{date}}",
     "characteristics": "Caracteristici",
-    "similar": "Anunțuri asemănătoare"
+    "similar": "Anunțuri asemănătoare",
+    "showAll": "Arată tot",
+    "showLess": "Arată mai puțin",
+    "share": "Distribuie",
+    "linkCopied": "Linkul a fost copiat",
+    "reportListing": "Raportează anunțul",
+    "sellerProfile": "Vezi profilul",
+    "activeListings_one": "{{count}} anunț activ",
+    "activeListings_few": "{{count}} anunțuri active",
+    "activeListings_other": "{{count}} de anunțuri active",
+    "loginModalTitle": "Intră în cont ca să vezi numărul de telefon",
+    "loginModalTitlePrivate": "Intră în cont ca să vezi numărul de telefon și {{field}}",
+    "createAccount": "Creează cont",
+    "safetyShort": "Nu trimite niciodată avans și nu introduce datele cardului pe linkuri primite în mesaje.",
+    "fitsTitle": "Se potrivește la",
+    "fitsMyCar": "Se potrivește cu mașina ta: {{car}}",
+    "photoAlt": "Poza {{n}} din {{total}}: {{title}}",
+    "description": "Descriere",
+    "contact": "Contactează vânzătorul"
   },
   "search": {
     "categoryMetaTitle": "{{name}} – anunțuri în Moldova – Telauto.md",
@@ -541,12 +583,20 @@
       "expensive": "Cele mai scumpe"
     },
     "emptyTitle": "Nu am găsit anunțuri",
-    "emptyText": "Încearcă alte cuvinte sau mai puține filtre.",
-    "clearAll": "Șterge toate filtrele",
+    "emptyText": "Nu am găsit anunțuri. Încearcă să scoți câteva filtre.",
+    "clearAll": "Șterge filtrele",
     "pagination": "Pagini",
     "previous": "Înapoi",
     "next": "Înainte",
-    "pageN": "Pagina {{n}}"
+    "pageN": "Pagina {{n}}",
+    "sortButton": "Sortare",
+    "removeFilter": "Elimină filtrul: {{name}}",
+    "activeFilters": "Filtre active",
+    "show_one": "Arată {{count}} anunț",
+    "show_few": "Arată {{count}} anunțuri",
+    "show_other": "Arată {{count}} de anunțuri",
+    "loadMore": "Încarcă mai multe",
+    "applyShort": "Aplică"
   },
   "favorites": {
     "save": "Salvează",
@@ -573,9 +623,14 @@
     "cancel": "Renunță",
     "showParts": "Vezi piese compatibile",
     "deleteConfirm": "Ștergi mașina din garaj?",
-    "onlyMyCar": "Doar piese pentru mașina mea",
+    "onlyMyCar": "Doar pentru mașina mea",
     "allParts": "Toate piesele",
-    "manage": "Garajul meu"
+    "manage": "Garajul meu",
+    "moduleTitle": "Garajul meu",
+    "moduleEmpty": "Adaugă mașina ta și vezi doar piesele care i se potrivesc.",
+    "moduleWithCar": "Vezi piesele care se potrivesc cu {{car}}.",
+    "addCar": "Adaugă o mașină",
+    "seeMatchingParts": "Vezi piesele potrivite"
   },
   "messages": {
     "metaTitle": "Mesaje – Telauto.md",

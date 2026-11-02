@@ -3,7 +3,21 @@
 // in one place (TELAUTO_PLAN_DESIGN_v1.md, section 0). The texts here are sample data for the
 // developer page, not site texts, so they are written directly in the file.
 import { useState, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CategoryIcon } from '../components/CategoryIcon'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
+import { ListingCard, ListingGridSkeleton } from '../components/ListingCard'
+import { Avatar } from '../components/ui/Avatar'
+import { EmptyState } from '../components/ui/EmptyState'
+import { SafetyNotice } from '../components/ui/SafetyNotice'
+import { Sheet } from '../components/ui/Sheet'
+import { SpecSheet } from '../components/ui/SpecSheet'
+import { TrustBadge } from '../components/ui/TrustBadge'
+import type { ListingSummary } from '../features/search/api'
+import { FilterPanel } from '../features/search/FilterPanel'
+import { EMPTY_FILTERS } from '../features/search/filters'
+import { CATEGORIES, CATEGORY_SLUGS, type CategoryConfig, type CategorySlug } from '../lib/categories'
+import { toast } from '../lib/toast'
 import { Logo } from '../components/Logo'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Alert } from '../components/ui/Alert'
@@ -82,7 +96,75 @@ const FUEL = [
   { value: 'electric', label: 'Electric' },
 ]
 
+/** Fictitious category (plan de design, section 10): checks tiles, card, filters and sheet with other data. */
+const TEST_CATEGORY: CategoryConfig = {
+  slug: 'telefoane' as CategorySlug, // only the type needs a slug; the page shows the name directly
+  id: 999,
+  icon: 'Refrigerator',
+  minPhotos: 1,
+  conditionLabels: 'default',
+  hasCompatibility: false,
+  keySpecs: ['appliance_type', 'appliance_brand'],
+  trustFields: [],
+  fields: [
+    { key: 'appliance_type', type: 'select', options: ['fridge', 'washer', 'oven', 'other'], required: true, filter: 'select' },
+    { key: 'appliance_brand', type: 'text', maxLength: 40, required: false },
+  ],
+}
+
+const NOW = new Date().toISOString()
+const YESTERDAY = new Date(Date.now() - 86_400_000).toISOString()
+const card = (patch: Partial<ListingSummary>): ListingSummary => ({
+  id: String(Math.random()),
+  userId: 'styleguide',
+  categoryId: 3,
+  title: '',
+  price: 0,
+  currency: 'MDL',
+  negotiable: false,
+  condition: 'used',
+  localityId: 0,
+  attributes: {},
+  createdAt: NOW,
+  coverPath: null,
+  hasImei: false,
+  hasVin: false,
+  ...patch,
+})
+const SAMPLE_CARDS: { listing: ListingSummary; category?: CategoryConfig }[] = [
+  {
+    listing: card({
+      title: 'Toyota RAV4 2.0, stare foarte bună, întreținută la reprezentanță',
+      price: 8900,
+      currency: 'EUR',
+      attributes: { year: 2015, mileage_km: 180000, fuel: 'diesel' },
+      hasVin: true,
+    }),
+  },
+  {
+    listing: card({
+      categoryId: 1,
+      title: 'iPhone 13 Pro 256 GB',
+      price: 12500,
+      attributes: { storage_gb: 256, battery_health: 87, network_lock: 'unlocked' },
+      hasImei: true,
+      createdAt: YESTERDAY,
+    }),
+  },
+  {
+    listing: card({
+      title: 'Frigider Bosch, 2 uși',
+      price: 3200,
+      attributes: { appliance_type: 'fridge', appliance_brand: 'Bosch' },
+      createdAt: '2026-10-03T10:00:00Z',
+    }),
+    category: TEST_CATEGORY,
+  },
+]
+
 export function StyleguidePage() {
+  const { t } = useTranslation()
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [fuel, setFuel] = useState<string | string[]>('diesel')
   const [fuels, setFuels] = useState<string | string[]>(['petrol', 'hybrid'])
   const [range, setRange] = useState({ from: '2015', to: '' })
@@ -240,6 +322,101 @@ export function StyleguidePage() {
         <ChipGroup label="Combustibil (mai multe variante)" options={FUEL} value={fuels} onChange={setFuels} multiple />
         <ChipGroup label="Stare" options={FUEL.slice(0, 2)} value="" onChange={() => {}} error="Alege o variantă." />
         <CheckboxField label="Prețul este negociabil" />
+      </Section>
+
+      <Section title="Plăci de categorie (cu categoria de test „Electrocasnice”)">
+        <ul className="grid grid-cols-4 gap-2 sm:gap-3 lg:grid-cols-8">
+          {[...CATEGORY_SLUGS.map((slug) => CATEGORIES[slug]), TEST_CATEGORY].map((category) => (
+            <li key={category.id}>
+              <div className="flex h-full min-h-24 flex-col items-center gap-2 rounded-card border border-line bg-surface px-1.5 py-3 text-center sm:px-3">
+                <span className="text-brand">
+                  <CategoryIcon name={category.icon} className="size-7" />
+                </span>
+                <span className="w-full text-xs leading-4 font-medium break-words hyphens-auto sm:text-sm sm:leading-5">
+                  {category === TEST_CATEGORY ? 'Electrocasnice' : t(`categories.${category.slug as CategorySlug}`)}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="Carduri de anunț">
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4">
+          {SAMPLE_CARDS.map(({ listing, category }) => (
+            <li key={listing.id}>
+              <ListingCard listing={listing} categoryConfig={category} preview />
+            </li>
+          ))}
+          <li className="[&_ul]:grid-cols-1">
+            <ListingGridSkeleton count={1} />
+          </li>
+        </ul>
+      </Section>
+
+      <Section title="Insigne, fișa produsului, siguranță">
+        <div className="flex flex-wrap gap-2">
+          <TrustBadge field="imei" />
+          <TrustBadge field="vin" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <SpecSheet
+            rows={[
+              { key: 'make', label: 'Marcă', value: 'Toyota' },
+              { key: 'model', label: 'Model', value: 'RAV4' },
+              { key: 'year', label: 'Anul fabricației', value: '2015' },
+              { key: 'km', label: 'Kilometraj', value: '180 000 km' },
+              { key: 'fuel', label: 'Combustibil', value: 'Motorină' },
+              { key: 'long', label: 'Istoric', value: 'Întreținută la reprezentanță, toate reviziile la zi.' },
+            ]}
+          />
+          <SpecSheet
+            rows={[
+              { key: 'type', label: 'Tip', value: 'Frigider' },
+              { key: 'brand', label: 'Marcă', value: 'Bosch' },
+              { key: 'cond', label: 'Stare', value: 'Folosit' },
+            ]}
+          />
+        </div>
+        <SafetyNotice>{t('listing.safetyShort')}</SafetyNotice>
+        <SafetyNotice compact>Acest mesaj conține un link sau o cerere de plată în avans. Fii atent.</SafetyNotice>
+      </Section>
+
+      <Section title="Filtre pentru categoria de test">
+        <div className="max-w-sm rounded-panel border border-line p-4">
+          <FilterPanel formId="styleguide-filters" category={TEST_CATEGORY} filters={EMPTY_FILTERS} onApply={() => {}} />
+        </div>
+      </Section>
+
+      <Section title="Avatar, ecran gol, fereastră, notificare">
+        <div className="flex items-center gap-3">
+          <Avatar name="Ion Popescu" size="sm" />
+          <Avatar name="Мария" />
+          <Avatar name="Telauto" size="lg" />
+        </div>
+        <div className="rounded-card border border-dashed border-line">
+          <EmptyState
+            text="Nu am găsit anunțuri. Încearcă să scoți câteva filtre."
+            action={<Button variant="secondary">Șterge filtrele</Button>}
+          />
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="secondary" onClick={() => setSheetOpen(true)}>
+            Deschide fereastra
+          </Button>
+          <Button variant="secondary" onClick={() => toast('Linkul a fost copiat')}>
+            Arată o notificare
+          </Button>
+        </div>
+        <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Intră în cont ca să vezi numărul de telefon">
+          <p className="text-muted">Pe telefon fereastra glisează de jos; pe calculator stă în centru.</p>
+          <div className="mt-5 grid gap-2 sm:grid-cols-2">
+            <Button fullWidth>Intră în cont</Button>
+            <Button variant="secondary" fullWidth>
+              Creează cont
+            </Button>
+          </div>
+        </Sheet>
       </Section>
 
       <Section title="Mesaje și încărcare">

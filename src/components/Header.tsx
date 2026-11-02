@@ -1,7 +1,7 @@
 import { Mail, Plus, Settings, UserRound } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useSearchParams } from 'react-router'
+import { Link, useLocation, useSearchParams } from 'react-router'
 import { useAuth } from '../features/auth/authContext'
 import { useProfile } from '../features/profile/hooks'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -67,6 +67,8 @@ export function Header() {
   const { user, loading } = useAuth()
   const [params] = useSearchParams()
   const searchQuery = params.get('q') ?? ''
+  // the home page has its own big search box: phones do not need a second one in the header
+  const isHome = useLocation().pathname === '/'
   const ref = useRef<HTMLElement>(null)
   const [hidden, setHidden] = useHideOnScroll(ref)
 
@@ -98,7 +100,9 @@ export function Header() {
           </span>
         </Link>
 
-        <div className="order-last w-full sm:order-none sm:w-auto sm:min-w-0 sm:flex-1 lg:max-w-xl">
+        <div
+          className={`order-last w-full sm:order-none sm:block sm:w-auto sm:min-w-0 sm:flex-1 lg:max-w-xl ${isHome ? 'hidden' : ''}`}
+        >
           {/* key: the box shows the new words after every search (also searches started elsewhere) */}
           <SearchBar key={searchQuery} />
         </div>

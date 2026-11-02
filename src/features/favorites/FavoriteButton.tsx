@@ -1,16 +1,15 @@
+import { Heart } from 'lucide-react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router'
 import { useAuth } from '../auth/authContext'
 import { useFavoriteIds, useToggleFavorite } from './api'
 
-type FavoriteButtonProps = {
-  listingId: string
-  /** "icon": round ♡ over the card photo; "full": button with text on the listing page */
-  variant?: 'icon' | 'full'
-}
-
-/** "Salvează": logged-in users save a listing; visitors are sent to the login page and come back. */
-export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonProps) {
+/**
+ * "Salvează": round heart over a photo (card or gallery), 44 × 44 px pressable area.
+ * Logged-in users save the listing (the heart pulses once); visitors go to the login page and come back.
+ */
+export function FavoriteButton({ listingId }: { listingId: string }) {
   const { t } = useTranslation()
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -18,48 +17,35 @@ export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonPr
   const ids = useFavoriteIds()
   const toggle = useToggleFavorite()
   const saved = ids.data?.has(listingId) ?? false
+  const [pulse, setPulse] = useState(0)
 
   function handleClick() {
     if (!user) {
       navigate(`/login?next=${encodeURIComponent(location.pathname + location.search)}`)
       return
     }
+    if (!saved) setPulse((value) => value + 1)
     toggle.mutate({ listingId, save: !saved })
   }
 
   const label = saved ? t('favorites.remove') : t('favorites.save')
-  const heart = (
-    <span aria-hidden="true" className={saved ? 'text-danger' : ''}>
-      {saved ? '♥' : '♡'}
-    </span>
-  )
-
-  if (variant === 'icon') {
-    return (
-      <button
-        type="button"
-        onClick={handleClick}
-        aria-pressed={saved}
-        aria-label={label}
-        title={label}
-        className="flex size-10 items-center justify-center rounded-full bg-surface/90 text-xl leading-none text-slate-700 shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand"
-      >
-        {heart}
-      </button>
-    )
-  }
-
   return (
     <button
       type="button"
       onClick={handleClick}
       aria-pressed={saved}
-      className={`flex min-h-11 flex-col items-center justify-center rounded-field border px-1 py-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-brand ${
-        saved ? 'border-danger-200 bg-danger-50 text-danger' : 'border-line-strong text-slate-700 hover:bg-paper'
-      }`}
+      aria-label={label}
+      title={label}
+      className="group/fav flex size-11 items-center justify-center rounded-full"
     >
-      <span className="text-lg leading-none">{heart}</span>
-      <span>{saved ? t('favorites.saved') : t('favorites.save')}</span>
+      <span className="flex size-9 items-center justify-center rounded-full bg-surface/95 text-ink shadow-float group-hover/fav:bg-surface">
+        <Heart
+          key={pulse}
+          aria-hidden="true"
+          className={`size-5 ${saved ? 'fill-danger text-danger' : ''} ${pulse ? 'animate-[heart-pulse_300ms_ease-out]' : ''}`}
+          strokeWidth={1.75}
+        />
+      </span>
     </button>
   )
 }

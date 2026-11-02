@@ -13,6 +13,8 @@ type RangeInputProps = {
   error?: string
   className?: string
   inputMode?: 'numeric' | 'decimal'
+  /** narrow places (filter column): the unit goes after the label ("Preț, lei") instead of inside the boxes */
+  unitInLabel?: boolean
 }
 
 /** Two boxes, "de la" and "până la", for price, year, kilometres (plan de design, section 5). */
@@ -25,7 +27,9 @@ export function RangeInput({
   error,
   className = '',
   inputMode = 'numeric',
+  unitInLabel = false,
 }: RangeInputProps) {
+  const innerUnit = unitInLabel ? undefined : unit
   const { t } = useTranslation()
   const id = useId()
   const errorId = `${id}-error`
@@ -43,11 +47,11 @@ export function RangeInput({
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? errorId : undefined}
         onChange={(event) => onChange(which === 'from' ? { from: event.target.value, to } : { from, to: event.target.value })}
-        className={`${inputClass(Boolean(error))} tabular ${unit ? 'pr-12' : ''}`}
+        className={`${inputClass(Boolean(error))} tabular ${innerUnit ? 'pr-12' : ''}`}
       />
-      {unit && (
+      {innerUnit && (
         <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted">
-          {unit}
+          {innerUnit}
         </span>
       )}
     </div>
@@ -56,7 +60,7 @@ export function RangeInput({
   return (
     <div role="group" aria-labelledby={`${id}-label`} className={className}>
       <span id={`${id}-label`}>
-        <FieldLabel label={label} />
+        <FieldLabel label={unitInLabel && unit ? `${label}, ${unit}` : label} />
       </span>
       <div className="flex items-center gap-2">
         {box('from')}

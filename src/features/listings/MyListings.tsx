@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { CategoryIcon } from '../../components/CategoryIcon'
 import { Link } from 'react-router'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
@@ -102,14 +103,14 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
               className="size-full object-cover"
             />
           ) : (
-            <div aria-hidden="true" className="flex size-full items-center justify-center text-2xl">
-              {category?.icon}
+            <div className="flex size-full items-center justify-center text-muted">
+              {category && <CategoryIcon name={category.icon} className="size-7" />}
             </div>
           )}
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">{listing.title}</p>
-          <p className="font-semibold text-brand">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
+          <p className="font-semibold text-ink tabular">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
           <p className="text-xs text-slate-500">
             {category ? t(`categories.${category.slug}`) : ''}
             {group === 'active' &&
