@@ -113,7 +113,7 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
             {Array.from({ length: processing }, (_, i) => (
               <li
                 key={`processing-${i}`}
-                className="flex aspect-[4/3] items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-500"
+                className="flex aspect-[4/3] items-center justify-center rounded-field border border-line bg-slate-100 text-slate-500"
               >
                 <Spinner />
                 <span className="sr-only">{t('listingForm.photoProcessing')}</span>
@@ -124,7 +124,7 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-slate-300 bg-surface text-sm font-semibold text-brand-700 hover:border-brand-600 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                  className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 rounded-field border-2 border-dashed border-line-strong bg-surface text-sm font-semibold text-brand hover:border-brand hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 >
                   <span aria-hidden="true" className="text-2xl">
                     +
@@ -170,8 +170,8 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`relative overflow-hidden rounded-lg border bg-surface ${
-        isDragging ? 'z-10 border-brand-600 shadow-lg' : 'border-slate-200'
+      className={`relative overflow-hidden rounded-field border bg-surface ${
+        isDragging ? 'z-10 border-brand shadow-lg' : 'border-line'
       }`}
     >
       <div
@@ -189,12 +189,12 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
       </div>
 
       {index === 0 && (
-        <span className="absolute top-1.5 left-1.5 rounded bg-brand-700 px-1.5 py-0.5 text-xs font-semibold text-white">
+        <span className="absolute top-1.5 left-1.5 rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-white">
           {t('listingForm.mainPhoto')}
         </span>
       )}
 
-      <div className="flex items-center justify-between gap-1 border-t border-slate-200 p-1">
+      <div className="flex items-center justify-between gap-1 border-t border-line p-1">
         <div className="flex gap-1">
           <IconButton label={t('listingForm.photoMoveLeft')} disabled={index === 0} onClick={() => onMove(-1)}>
             ←
@@ -231,8 +231,8 @@ function IconButton({
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className={`flex size-9 items-center justify-center rounded-md text-base font-bold disabled:opacity-30 ${
-        danger ? 'text-red-700 hover:bg-red-50' : 'text-slate-700 hover:bg-slate-100'
+      className={`flex size-9 items-center justify-center rounded-md text-base font-semibold disabled:opacity-30 ${
+        danger ? 'text-danger hover:bg-danger-50' : 'text-slate-700 hover:bg-slate-100'
       }`}
     >
       <span aria-hidden="true">{children}</span>

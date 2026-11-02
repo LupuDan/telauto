@@ -1,22 +1,23 @@
 import { useId, type Ref, type SelectHTMLAttributes } from 'react'
+import { FieldError, FieldLabel } from './FieldMessage'
 import { inputClass } from './fieldStyles'
 
 type SelectFieldProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string
   error?: string
+  optional?: boolean
   ref?: Ref<HTMLSelectElement>
 }
 
-export function SelectField({ label, error, id, className = '', children, ref, ...rest }: SelectFieldProps) {
+/** Plain list for short choices (plan de design, section 5: Select). */
+export function SelectField({ label, error, optional, id, className = '', children, ref, ...rest }: SelectFieldProps) {
   const autoId = useId()
   const selectId = id ?? autoId
   const errorId = `${selectId}-error`
 
   return (
     <div className={className}>
-      <label htmlFor={selectId} className="mb-1 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
+      <FieldLabel htmlFor={selectId} label={label} optional={optional} />
       <select
         ref={ref}
         id={selectId}
@@ -27,11 +28,7 @@ export function SelectField({ label, error, id, className = '', children, ref, .
       >
         {children}
       </select>
-      {error && (
-        <p id={errorId} className="mt-1 text-sm text-red-700">
-          {error}
-        </p>
-      )}
+      {error && <FieldError id={errorId}>{error}</FieldError>}
     </div>
   )
 }

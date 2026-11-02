@@ -110,7 +110,7 @@ function AttributeField({ field, category }: { field: FieldDef; category: Catego
             className={inputClass(Boolean(error))}
             {...register(name)}
           />
-          {error && <p className="mt-1 text-sm text-red-700">{error}</p>}
+          {error && <p className="mt-1 text-sm text-danger">{error}</p>}
         </div>
       )
 

@@ -52,7 +52,7 @@ export function GarageList() {
       {remove.isError && <Alert kind="error">{translateKey(t, errorToKey(remove.error))}</Alert>}
 
       {list.length === 0 && editing !== 'new' && (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
+        <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-slate-500">
           {t('garage.empty')}
         </p>
       )}
@@ -65,19 +65,19 @@ export function GarageList() {
                 <VehicleForm vehicle={vehicle} onDone={() => setEditing(null)} />
               </li>
             ) : (
-              <li key={vehicle.id} className="rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">
+              <li key={vehicle.id} className="rounded-card border border-line bg-surface p-4 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     {/* user text: plain text */}
                     {vehicle.label && <p className="truncate text-sm text-slate-500">{vehicle.label}</p>}
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-ink">
                       <span aria-hidden="true">🚗 </span>
                       {vehicleTitle(vehicle, allModels)}
                     </p>
                   </div>
                   <Link
                     to={compatiblePartsHref(vehicle)}
-                    className="text-sm font-semibold text-brand-700 hover:underline"
+                    className="text-sm font-semibold text-brand hover:underline"
                   >
                     {t('garage.showParts')}
                   </Link>
@@ -169,7 +169,7 @@ function VehicleForm({ vehicle, onDone }: { vehicle?: Vehicle; onDone: () => voi
     <form
       onSubmit={onSubmit}
       noValidate
-      className="space-y-4 rounded-xl border border-brand-100 bg-brand-50/40 p-4"
+      className="space-y-4 rounded-card border border-brand-100 bg-brand-50/40 p-4"
       aria-label={vehicle ? t('garage.editTitle') : t('garage.addTitle')}
     >
       <h2 className="font-semibold">{vehicle ? t('garage.editTitle') : t('garage.addTitle')}</h2>

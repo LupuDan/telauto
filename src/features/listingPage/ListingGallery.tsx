@@ -40,18 +40,18 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
 
   if (photos.length === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-xl bg-slate-100 text-6xl" aria-hidden="true">
+      <div className="flex aspect-[4/3] items-center justify-center rounded-card bg-slate-100 text-6xl" aria-hidden="true">
         {fallbackIcon}
       </div>
     )
   }
 
   const arrowClass =
-    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-xl shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand-600 disabled:opacity-0 sm:flex'
+    'absolute top-1/2 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full bg-surface/90 text-xl shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-0 sm:flex'
 
   return (
     <div className="space-y-2">
-      <div className="relative overflow-hidden rounded-xl bg-neutral-900">
+      <div className="relative overflow-hidden rounded-card bg-neutral-900">
         <div
           ref={stripRef}
           onScroll={handleScroll}
@@ -110,8 +110,8 @@ export function ListingGallery({ photos, title, fallbackIcon }: { photos: string
                 onClick={() => goTo(photoIndex)}
                 aria-label={t('listing.showPhoto', { n: photoIndex + 1 })}
                 aria-current={photoIndex === index ? 'true' : undefined}
-                className={`block size-16 overflow-hidden rounded-lg border-2 ${
-                  photoIndex === index ? 'border-brand-700' : 'border-transparent opacity-70 hover:opacity-100'
+                className={`block size-16 overflow-hidden rounded-field border-2 ${
+                  photoIndex === index ? 'border-brand' : 'border-transparent opacity-70 hover:opacity-100'
                 }`}
               >
                 <img src={publicPhotoUrl(path)} alt="" loading="lazy" className="size-full object-cover" />

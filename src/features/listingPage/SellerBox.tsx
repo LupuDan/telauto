@@ -27,16 +27,16 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
 
   return (
     <div className="space-y-4">
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-surface p-4 shadow-sm" aria-label={t('listing.sellerTitle')}>
-        <Link to={`/u/${listing.userId}`} className="flex items-center gap-3 rounded-lg hover:bg-slate-50">
+      <section className="space-y-4 rounded-card border border-line bg-surface p-4 shadow-sm" aria-label={t('listing.sellerTitle')}>
+        <Link to={`/u/${listing.userId}`} className="flex items-center gap-3 rounded-field hover:bg-paper">
           <span
             aria-hidden="true"
-            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-lg font-bold text-brand-700"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-brand-100 text-lg font-semibold text-brand"
           >
             {sellerName.charAt(0).toLocaleUpperCase()}
           </span>
           <span className="min-w-0">
-            <span className="block truncate font-semibold text-slate-900">{sellerName}</span>
+            <span className="block truncate font-semibold text-ink">{sellerName}</span>
             {seller && (
               <span className="block text-xs text-slate-500">
                 {t('profile.memberSince', { date: formatMonthYear(seller.createdAt, i18n.resolvedLanguage) })}
@@ -51,11 +51,11 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
             <p className="text-sm text-slate-600">{t('listing.ownListing')}</p>
             <Link
               to={`/a/${listing.id}/edit`}
-              className="flex min-h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-sm font-semibold text-white hover:bg-brand-800"
+              className="flex min-h-11 items-center justify-center rounded-field bg-brand px-4 text-sm font-semibold text-white hover:bg-brand-700"
             >
               {t('myListings.edit')}
             </Link>
-            <Link to="/account" className="block text-center text-sm font-semibold text-brand-700 hover:underline">
+            <Link to="/account" className="block text-center text-sm font-semibold text-brand hover:underline">
               {t('listingForm.backToMyListings')}
             </Link>
           </div>
@@ -63,7 +63,7 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
           <div className="space-y-2">
             <Link
               to={loginHref}
-              className="flex min-h-11 items-center justify-center rounded-lg bg-brand-700 px-4 text-center text-sm font-semibold text-white hover:bg-brand-800"
+              className="flex min-h-11 items-center justify-center rounded-field bg-brand px-4 text-center text-sm font-semibold text-white hover:bg-brand-700"
             >
               {t('listing.loginToSeePhone')}
             </Link>
@@ -76,13 +76,13 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
             {contact.data.phone ? (
               <a
                 href={`tel:${contact.data.phone}`}
-                className="flex min-h-11 items-center justify-center gap-2 rounded-lg border-2 border-brand-700 px-4 text-lg font-bold text-brand-800 hover:bg-brand-50"
+                className="flex min-h-11 items-center justify-center gap-2 rounded-field border-2 border-brand px-4 text-lg font-semibold text-brand-700 hover:bg-brand-50"
               >
                 <span aria-hidden="true">📞</span>
                 {contact.data.phone}
               </a>
             ) : (
-              <p className="rounded-lg bg-slate-50 p-3 text-sm text-slate-600">{t('listing.noPhone')}</p>
+              <p className="rounded-field bg-paper p-3 text-sm text-slate-600">{t('listing.noPhone')}</p>
             )}
             {contact.data.imei && <PrivateValue label="IMEI" value={contact.data.imei} />}
             {contact.data.vin && <PrivateValue label="VIN" value={contact.data.vin} />}
@@ -105,7 +105,7 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
         )}
       </section>
 
-      <aside className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+      <aside className="rounded-card border border-tag bg-tag-50 p-4 text-sm text-ink">
         <h2 className="mb-1 font-semibold">{t('listing.safetyTitle')}</h2>
         <ul className="list-disc space-y-1 pl-5">
           <li>{t('listing.safety1')}</li>
@@ -119,9 +119,9 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
 
 function PrivateValue({ label, value }: { label: string; value: string }) {
   return (
-    <p className="flex items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm">
+    <p className="flex items-center justify-between gap-2 rounded-field bg-paper px-3 py-2 text-sm">
       <span className="text-slate-600">{label}</span>
-      <span className="font-mono font-semibold break-all text-slate-900 select-all">{value}</span>
+      <span className="font-mono font-semibold break-all text-ink select-all">{value}</span>
     </p>
   )
 }

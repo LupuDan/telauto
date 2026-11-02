@@ -19,8 +19,8 @@ export function HomePage() {
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl bg-brand-700 p-5 text-white sm:p-8">
-        <h1 className="text-2xl font-bold sm:text-3xl">{t('home.heading')}</h1>
+      <section className="rounded-panel bg-brand p-5 text-white sm:p-8">
+        <h1 className="text-2xl font-semibold sm:text-3xl">{t('home.heading')}</h1>
         <p className="mt-1 text-brand-100">{t('app.tagline')}</p>
         <HomeSearch />
       </section>
@@ -34,7 +34,7 @@ export function HomePage() {
             <li key={slug}>
               <Link
                 to={`/c/${slug}`}
-                className="flex h-full flex-col items-center gap-2 rounded-xl border border-slate-200 bg-surface p-4 text-center font-medium shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+                className="flex h-full flex-col items-center gap-2 rounded-card border border-line bg-surface p-4 text-center font-medium shadow-sm transition hover:border-brand hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               >
                 <span aria-hidden="true" className="text-3xl">
                   {CATEGORY_ICONS[slug]}
@@ -51,7 +51,7 @@ export function HomePage() {
           <h2 id="latest-heading" className="text-lg font-semibold">
             {t('home.latestHeading')}
           </h2>
-          <Link to="/search" className="text-sm font-semibold text-brand-700 hover:underline">
+          <Link to="/search" className="text-sm font-semibold text-brand hover:underline">
             {t('home.seeAll')}
           </Link>
         </div>
@@ -60,7 +60,7 @@ export function HomePage() {
         ) : latest.isError ? (
           <ErrorState error={latest.error} onRetry={() => void latest.refetch()} />
         ) : latest.data.items.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
+          <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-slate-500">
             {t('home.latestEmpty')}
           </p>
         ) : (
@@ -100,7 +100,7 @@ function HomeSearch() {
         maxLength={100}
         onChange={(event) => setQ(event.target.value)}
         placeholder={t('header.searchPlaceholder')}
-        className={`${inputClass(false)} text-slate-900 sm:flex-1`}
+        className={`${inputClass(false)} text-ink sm:flex-1`}
       />
       <label htmlFor="home-locality" className="sr-only">
         {t('listingForm.locality')}
@@ -109,7 +109,7 @@ function HomeSearch() {
         id="home-locality"
         value={locality}
         onChange={(event) => setLocality(event.target.value)}
-        className={`${inputClass(false)} text-slate-900 sm:w-56`}
+        className={`${inputClass(false)} text-ink sm:w-56`}
       >
         <option value="">{t('search.allLocalities')}</option>
         {localities.data?.map((item) => (
@@ -120,7 +120,7 @@ function HomeSearch() {
       </select>
       <button
         type="submit"
-        className="min-h-11 rounded-lg bg-surface px-6 font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        className="min-h-11 rounded-field bg-surface px-6 font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
       >
         {t('header.searchButton')}
       </button>

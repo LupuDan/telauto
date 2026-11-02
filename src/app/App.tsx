@@ -46,6 +46,8 @@ const PublicProfilePage = page(() => import('../pages/PublicProfilePage'), 'Publ
 const RegisterPage = page(() => import('../pages/RegisterPage'), 'RegisterPage')
 const ResetPage = page(() => import('../pages/ResetPage'), 'ResetPage')
 const StaticPage = page(() => import('../pages/StaticPage'), 'StaticPage')
+// design check page, only while developing (npm run dev); not part of the published site
+const StyleguidePage = import.meta.env.DEV ? page(() => import('../pages/StyleguidePage'), 'StyleguidePage') : null
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,6 +73,7 @@ export function App() {
               <Route path="/search" element={<SearchPage />} />
               <Route path="/a/:id" element={<ListingPage />} />
               <Route path="/p/:page" element={<StaticPage />} />
+              {StyleguidePage && <Route path="/styleguide" element={<StyleguidePage />} />}
 
               <Route element={<RequireAuth />}>
                 <Route path="/account" element={<AccountPage />} />

@@ -1,64 +1,65 @@
+import { Mail, Plus, Settings, UserRound } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
 import { useAuth } from '../features/auth/authContext'
-import { useLiveUnreadCounter, useUnreadCount } from '../features/messages/api'
 import { useProfile } from '../features/profile/hooks'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { Logo } from './Logo'
 import { SearchBar } from './SearchBar'
 import { ThemeToggle } from './ThemeToggle'
+import { buttonClass } from './ui/buttonStyles'
+import { UnreadBadge } from './UnreadBadge'
+import { useMessagesLabel } from './useMessagesLabel'
 
-function UserIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5" aria-hidden="true">
-      <circle cx="12" cy="8" r="4" />
-      <path d="M4 21c0-4 4-6 8-6s8 2 8 6" strokeLinecap="round" />
-    </svg>
-  )
-}
+/** Square icon button of the header (44 × 44 px). */
+export const headerIconClass =
+  'relative inline-flex size-11 shrink-0 items-center justify-center rounded-field text-ink hover:bg-paper'
 
-/** Shown only to admins (the panel itself is protected by the database). */
+/** Shown only to admins (the panel itself is protected by the database). Computers only. */
 function AdminLink({ userId }: { userId: string }) {
   const { t } = useTranslation()
   const profile = useProfile(userId)
   if (profile.data?.role !== 'admin') return null
   return (
-    <Link
-      to="/admin"
-      aria-label={t('header.admin')}
-      className="hidden min-h-10 items-center rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-2 sm:inline-flex text-sm font-semibold text-amber-900 hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-    >
-      <span aria-hidden="true">⚙</span>
-      <span className="ml-1 hidden md:inline">{t('header.admin')}</span>
+    <Link to="/admin" aria-label={t('header.admin')} title={t('header.admin')} className={headerIconClass}>
+      <Settings aria-hidden="true" className="size-5" strokeWidth={1.75} />
     </Link>
   )
 }
 
 function MessagesLink() {
   const { t } = useTranslation()
-  const unread = useUnreadCount()
-  useLiveUnreadCounter()
-  const count = unread.data ?? 0
-
+  const label = useMessagesLabel(t('header.messages'), (count) => t('messages.unread', { count }))
   return (
-    <Link
-      to="/messages"
-      aria-label={count > 0 ? `${t('header.messages')} – ${t('messages.unread', { count })}` : t('header.messages')}
-      className="relative inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-surface px-2 py-2 text-slate-700 sm:px-2.5 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-5" aria-hidden="true">
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="m3 7 9 6 9-6" strokeLinejoin="round" />
-      </svg>
-      {count > 0 && (
-        <span
-          aria-hidden="true"
-          className="absolute -top-1.5 -right-1.5 min-w-5 rounded-full bg-red-600 px-1 text-center text-xs leading-5 font-bold text-white"
-        >
-          {count > 99 ? '99+' : count}
-        </span>
-      )}
+    <Link to="/messages" aria-label={label} title={t('header.messages')} className={headerIconClass}>
+      <Mail aria-hidden="true" className="size-5" strokeWidth={1.75} />
+      <UnreadBadge className="top-0.5 right-0" />
     </Link>
   )
+}
+
+/**
+ * Phones: hide the header while scrolling down, bring it back when scrolling up (plan de design, 4).
+ * Not while something inside the header has focus (e.g. typing in the search box).
+ */
+function useHideOnScroll(ref: React.RefObject<HTMLElement | null>) {
+  const [hidden, setHidden] = useState(false)
+  useEffect(() => {
+    const phone = window.matchMedia('(max-width: 639px)')
+    let last = window.scrollY
+    function onScroll() {
+      const y = window.scrollY
+      const height = ref.current?.offsetHeight ?? 0
+      const focused = ref.current?.contains(document.activeElement) ?? false
+      if (!phone.matches || focused || y < height) setHidden(false)
+      else if (Math.abs(y - last) > 6) setHidden(y > last)
+      last = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [ref])
+  return [hidden, setHidden] as const
 }
 
 export function Header() {
@@ -66,65 +67,73 @@ export function Header() {
   const { user, loading } = useAuth()
   const [params] = useSearchParams()
   const searchQuery = params.get('q') ?? ''
+  const ref = useRef<HTMLElement>(null)
+  const [hidden, setHidden] = useHideOnScroll(ref)
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-surface/95 backdrop-blur">
+    <header
+      ref={ref}
+      onFocusCapture={() => setHidden(false)}
+      className={`sticky top-0 z-30 border-b border-line bg-surface transition-transform duration-200 ${
+        hidden ? '-translate-y-full' : ''
+      }`}
+    >
       {/*
-        Phones: row 1 = logo + buttons (never wraps; the logo is shortened before anything overlaps),
-                row 2 = search.
-        Computers (lg+): the row-1 wrapper becomes "display: contents", so logo, search and buttons
-                share one line (ordered with lg:order-*).
+        under 640 px: row 1 = compact logo + language; row 2 = search (the rest is in the bottom bar)
+        640–1023 px: logo, search, language, account (one row)
+        1024 px +:   logo, wide search, "Adaugă anunț", messages, account, language
       */}
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2 sm:py-3">
-        <div className="flex w-full min-w-0 items-center gap-2 lg:contents">
-          <Link
-            to="/"
-            aria-label={t('header.homeLink')}
-            className="min-w-0 truncate text-lg font-extrabold min-[360px]:text-xl tracking-tight text-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 lg:order-1 lg:shrink-0"
-          >
-            {t('app.name')}
-          </Link>
+      <div className="mx-auto flex max-w-page flex-wrap items-center gap-x-2 gap-y-2 px-4 py-2 sm:flex-nowrap sm:gap-x-3 md:px-6 lg:py-3">
+        <Link
+          to="/"
+          aria-label={t('header.homeLink')}
+          className="mr-auto flex min-h-11 shrink-0 items-center rounded-logo sm:mr-0"
+        >
+          {/* the wrappers decide which logo shows (the logo itself is always inline-flex) */}
+          <span className="sm:hidden">
+            <Logo variant="compact" />
+          </span>
+          <span className="hidden sm:block">
+            <Logo variant="full" />
+          </span>
+        </Link>
 
-          <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:order-3 lg:ml-0">
-            <LanguageSwitcher />
-            {/* phones narrower than 400 px have it in the footer (not enough room here) */}
-            <span className="hidden min-[400px]:contents">
-              <ThemeToggle />
+        <div className="order-last w-full sm:order-none sm:w-auto sm:min-w-0 sm:flex-1 lg:max-w-xl">
+          {/* key: the box shows the new words after every search (also searches started elsewhere) */}
+          <SearchBar key={searchQuery} />
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1 lg:ml-auto">
+          {!loading && (
+            <span className="hidden lg:contents">
+              <Link to="/new" className={`${buttonClass('action', 'compact')} mr-1 whitespace-nowrap`}>
+                <Plus aria-hidden="true" className="size-5" strokeWidth={2} />
+                {t('header.addListing')}
+              </Link>
             </span>
-
-            {!loading && user && <MessagesLink />}
-            {/* on phones the admin panel is opened from "Contul meu" (less crowded header) */}
-            {!loading && user && <AdminLink userId={user.id} />}
-
-            {!loading && (
+          )}
+          {!loading && user && (
+            <span className="hidden lg:contents">
+              <MessagesLink />
+              <AdminLink userId={user.id} />
+            </span>
+          )}
+          {!loading && (
+            <span className="hidden sm:contents">
               <Link
                 to={user ? '/account' : '/login'}
                 aria-label={user ? t('header.account') : t('header.login')}
-                className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-surface px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-2.5"
+                title={user ? t('header.account') : t('header.login')}
+                className={headerIconClass}
               >
-                <UserIcon />
-                <span className="hidden md:inline">{user ? t('header.account') : t('header.login')}</span>
+                <UserRound aria-hidden="true" className="size-5" strokeWidth={1.75} />
               </Link>
-            )}
-
-            <Link
-              to="/new"
-              aria-label={t('header.addListing')}
-              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg bg-brand-700 px-2.5 py-2 text-sm font-semibold whitespace-nowrap text-white hover:bg-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 sm:px-3"
-            >
-              <span aria-hidden="true" className="text-lg leading-none min-[480px]:text-sm">
-                +
-              </span>
-              {/* phones under 480 px: only "+" */}
-              <span className="ml-1 hidden min-[480px]:inline md:hidden">{t('header.addListingShort')}</span>
-              <span className="ml-1 hidden md:inline">{t('header.addListing')}</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="w-full lg:order-2 lg:w-auto lg:flex-1">
-          {/* key: the box shows the new words after every search (also searches started elsewhere) */}
-          <SearchBar key={searchQuery} />
+            </span>
+          )}
+          <LanguageSwitcher />
+          <span className="hidden sm:contents">
+            <ThemeToggle />
+          </span>
         </div>
       </div>
     </header>

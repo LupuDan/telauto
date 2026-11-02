@@ -87,7 +87,7 @@ export function RegisterPage() {
             </Button>
           )}
           <p className="text-center text-sm">
-            <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+            <Link to="/login" className="font-semibold text-brand hover:underline">
               {t('auth.goToLogin')}
             </Link>
           </p>
@@ -136,11 +136,11 @@ export function RegisterPage() {
           label={
             <>
               {t('auth.acceptTermsPrefix')}{' '}
-              <Link to="/p/terms" target="_blank" className="text-brand-700 underline">
+              <Link to="/p/terms" target="_blank" className="text-brand underline">
                 {t('auth.termsLink')}
               </Link>{' '}
               {t('auth.and')}{' '}
-              <Link to="/p/privacy" target="_blank" className="text-brand-700 underline">
+              <Link to="/p/privacy" target="_blank" className="text-brand underline">
                 {t('auth.privacyLink')}
               </Link>
             </>
@@ -156,7 +156,7 @@ export function RegisterPage() {
 
       <p className="mt-6 text-center text-sm text-slate-600">
         {t('auth.haveAccount')}{' '}
-        <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+        <Link to="/login" className="font-semibold text-brand hover:underline">
           {t('auth.loginLink')}
         </Link>
       </p>

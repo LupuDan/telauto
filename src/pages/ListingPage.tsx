@@ -49,9 +49,9 @@ export function ListingPage() {
   if (!data || !category) {
     return (
       <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="text-2xl font-bold">{t('errors.listingNotFound')}</h1>
+        <h1 className="text-2xl font-semibold">{t('errors.listingNotFound')}</h1>
         <p className="mt-2 text-slate-600">{t('listing.notFoundText')}</p>
-        <Link to="/" className="mt-6 inline-block font-semibold text-brand-700 hover:underline">
+        <Link to="/" className="mt-6 inline-block font-semibold text-brand hover:underline">
           {t('notFound.backHome')}
         </Link>
       </section>
@@ -100,8 +100,8 @@ function ListingView({
 
           <div className="space-y-2">
             {/* user text: React shows it as plain text, never as HTML */}
-            <h1 className="text-2xl font-bold break-words">{listing.title}</h1>
-            <p className="text-3xl font-bold text-slate-900">
+            <h1 className="text-2xl font-semibold break-words">{listing.title}</h1>
+            <p className="text-3xl font-semibold text-ink">
               {formatPrice(listing.price, listing.currency, lng)}
               {listing.negotiable && (
                 <span className="ml-2 align-middle text-sm font-medium text-slate-600">{t('listingForm.negotiable')}</span>
@@ -143,7 +143,7 @@ function ListingView({
               <h2 id="compat-heading" className="text-lg font-semibold">
                 {t('listingForm.compatibilityTitle')}
               </h2>
-              <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-surface text-sm">
+              <ul className="divide-y divide-slate-100 rounded-card border border-line bg-surface text-sm">
                 {listing.compatibility.map((row, index) => (
                   <li key={index} className="flex justify-between gap-3 px-4 py-2.5">
                     <span className="font-medium">
@@ -163,7 +163,7 @@ function ListingView({
               <h2 id="description-heading" className="text-lg font-semibold">
                 {t('listingForm.description')}
               </h2>
-              <p className="rounded-xl border border-slate-200 bg-surface p-4 break-words whitespace-pre-line text-slate-800">
+              <p className="rounded-card border border-line bg-surface p-4 break-words whitespace-pre-line text-slate-800">
                 {listing.description}
               </p>
             </section>
@@ -182,7 +182,7 @@ function ListingView({
 
 function Badge({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-sm font-semibold text-emerald-800 ring-1 ring-emerald-200">
+    <span className="inline-flex items-center gap-1 rounded-md bg-success-50 px-2 py-0.5 text-sm font-semibold text-success ring-1 ring-success-200">
       <span aria-hidden="true">✓</span>
       {children}
     </span>

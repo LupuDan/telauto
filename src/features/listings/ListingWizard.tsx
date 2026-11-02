@@ -183,8 +183,8 @@ export function ListingWizard(props: Props) {
           </div>
         )}
 
-        <section className="rounded-xl border border-slate-200 bg-surface p-4 shadow-sm sm:p-6">
-          <h2 className="mb-4 text-xl font-bold">{translateKey(t, `listingForm.steps.${step}`)}</h2>
+        <section className="rounded-card border border-line bg-surface p-4 shadow-sm sm:p-6">
+          <h2 className="mb-4 text-xl font-semibold">{translateKey(t, `listingForm.steps.${step}`)}</h2>
 
           {step === 'category' && <CategoryStep selected={categorySlug} onChoose={chooseCategory} />}
 
@@ -282,7 +282,7 @@ function StepIndicator({ steps, current }: { steps: WizardStep[]; current: numbe
       </p>
       <ol className="flex gap-1" aria-hidden="true">
         {steps.map((s, i) => (
-          <li key={s} className={`h-1.5 flex-1 rounded-full ${i <= current ? 'bg-brand-700' : 'bg-slate-200'}`} />
+          <li key={s} className={`h-1.5 flex-1 rounded-full ${i <= current ? 'bg-brand' : 'bg-slate-200'}`} />
         ))}
       </ol>
     </div>
@@ -299,8 +299,8 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
             type="button"
             onClick={() => onChoose(slug)}
             aria-pressed={selected === slug}
-            className={`flex w-full flex-col items-center gap-2 rounded-xl border p-4 text-center font-medium transition hover:border-brand-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${
-              selected === slug ? 'border-brand-700 bg-brand-50' : 'border-slate-200 bg-surface'
+            className={`flex w-full flex-col items-center gap-2 rounded-card border p-4 text-center font-medium transition hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+              selected === slug ? 'border-brand bg-brand-50' : 'border-line bg-surface'
             }`}
           >
             <span aria-hidden="true" className="text-3xl">
@@ -373,14 +373,14 @@ function DetailsStep({ category }: { category: CategoryConfig }) {
           {(['new', 'used'] as const).map((value) => (
             <label
               key={value}
-              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-300 bg-surface px-4 has-[:checked]:border-brand-700 has-[:checked]:bg-brand-50"
+              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-field border border-line-strong bg-surface px-4 has-[:checked]:border-brand has-[:checked]:bg-brand-50"
             >
-              <input type="radio" value={value} className="accent-brand-700" {...register('condition')} />
+              <input type="radio" value={value} className="accent-brand" {...register('condition')} />
               {translateKey(t, `listingForm.conditionOptions.${category.conditionLabels}.${value}`)}
             </label>
           ))}
         </div>
-        {errors.condition && <p className="mt-1 text-sm text-red-700">{fieldError(errors.condition)}</p>}
+        {errors.condition && <p className="mt-1 text-sm text-danger">{fieldError(errors.condition)}</p>}
       </fieldset>
 
       <SelectField
@@ -408,7 +408,7 @@ function PrivateField({ field }: { field: 'imei' | 'vin' }) {
   } = useFormContext<ListingFormValues>()
 
   return (
-    <div className="rounded-lg border border-brand-100 bg-brand-50/50 p-4">
+    <div className="rounded-field border border-brand-100 bg-brand-50/50 p-4">
       <TextField
         label={t(field === 'imei' ? 'listingForm.imei' : 'listingForm.vin')}
         hint={t(field === 'imei' ? 'listingForm.imeiHint' : 'listingForm.vinHint')}
@@ -433,7 +433,7 @@ function PublishStep({ category, photosCount }: { category: CategoryConfig; phot
       <PhoneSection />
       <div>
         <h3 className="mb-2 font-semibold">{t('listingForm.summary')}</h3>
-        <dl className="divide-y divide-slate-100 rounded-lg border border-slate-200 text-sm">
+        <dl className="divide-y divide-slate-100 rounded-field border border-line text-sm">
           <SummaryRow label={t('listingForm.summaryCategory')}>{t(`categories.${category.slug}`)}</SummaryRow>
           <SummaryRow label={t('listingForm.title')}>{title}</SummaryRow>
           <SummaryRow label={t('listingForm.price')}>
@@ -507,14 +507,14 @@ function PhoneSection() {
           </Button>
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-field border border-line p-3">
           <span className="text-sm">
             {phone.data ? (
               <>
                 {t('account.phone')}: <strong>{phone.data}</strong>
               </>
             ) : (
-              <span className="text-amber-800">{t('listingForm.noPhone')}</span>
+              <span className="text-ink">{t('listingForm.noPhone')}</span>
             )}
           </span>
           <Button

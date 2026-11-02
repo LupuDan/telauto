@@ -57,10 +57,10 @@ export function UsersTab() {
                     {row.display_name || t('profile.unnamed')}
                   </Link>
                   {row.role === 'admin' && (
-                    <span className="ml-2 rounded bg-brand-100 px-1.5 py-0.5 text-xs font-bold text-brand-800">admin</span>
+                    <span className="ml-2 rounded bg-brand-100 px-1.5 py-0.5 text-xs font-semibold text-brand-700">admin</span>
                   )}
                   {row.is_blocked && (
-                    <span className="ml-2 rounded bg-red-100 px-1.5 py-0.5 text-xs font-bold text-red-800">
+                    <span className="ml-2 rounded bg-danger-50 px-1.5 py-0.5 text-xs font-semibold text-danger">
                       {t('profile.blocked')}
                     </span>
                   )}
@@ -69,7 +69,7 @@ export function UsersTab() {
                     {t('admin.users.since', { date: formatDate(row.created_at, i18n.resolvedLanguage) })} ·{' '}
                     {t('admin.users.activeListings', { count: row.active_listings })}
                     {row.open_reports > 0 && (
-                      <span className="font-semibold text-red-700"> · {t('admin.reports.count', { count: row.open_reports })}</span>
+                      <span className="font-semibold text-danger"> · {t('admin.reports.count', { count: row.open_reports })}</span>
                     )}
                   </p>
                 </div>

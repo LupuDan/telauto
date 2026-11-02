@@ -59,7 +59,7 @@ function CompatibilityRow({ index, onRemove }: { index: number; onRemove: () => 
   const err = (message?: string) => (message ? translateKey(t, message) : undefined)
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+    <div className="rounded-field border border-line bg-paper p-3">
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_6rem_6rem]">
         <SelectField
           label={`${t('listingForm.compatibilityMake')} *`}
@@ -102,7 +102,7 @@ function CompatibilityRow({ index, onRemove }: { index: number; onRemove: () => 
         />
       </div>
       <div className="mt-2 text-right">
-        <Button variant="ghost" onClick={onRemove} className="text-red-700">
+        <Button variant="ghost" onClick={onRemove} className="text-danger">
           {t('listingForm.compatibilityRemove')}
         </Button>
       </div>

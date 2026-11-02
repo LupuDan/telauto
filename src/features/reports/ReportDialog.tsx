@@ -62,7 +62,7 @@ export function ReportDialog({ target, onClose }: { target: ReportTarget; onClos
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby={`${detailsId}-title`}
-      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/50"
+      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-card p-0 shadow-xl backdrop:bg-black/50"
     >
       <form onSubmit={handleSubmit} className="space-y-4 p-5">
         <div className="flex items-start justify-between gap-2">
@@ -72,7 +72,7 @@ export function ReportDialog({ target, onClose }: { target: ReportTarget; onClos
           <button
             type="button"
             onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-lg text-xl text-slate-500 hover:bg-slate-100"
+            className="flex size-9 items-center justify-center rounded-field text-xl text-slate-500 hover:bg-slate-100"
             aria-label={t('listing.closePhoto')}
           >
             ×
@@ -91,14 +91,14 @@ export function ReportDialog({ target, onClose }: { target: ReportTarget; onClos
             <fieldset className="space-y-2">
               <legend className="mb-1 text-sm font-medium text-slate-700">{t('reports.reasonLabel')}</legend>
               {REPORT_REASONS.map((value) => (
-                <label key={value} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-slate-200 px-3 hover:bg-slate-50">
+                <label key={value} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-field border border-line px-3 hover:bg-paper">
                   <input
                     type="radio"
                     name="reason"
                     value={value}
                     checked={reason === value}
                     onChange={() => setReason(value)}
-                    className="size-4 accent-brand-700"
+                    className="size-4 accent-brand"
                   />
                   <span className="text-sm">{translateKey(t, `reports.reasons.${value}`)}</span>
                 </label>

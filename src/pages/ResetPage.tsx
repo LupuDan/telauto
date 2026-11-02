@@ -84,7 +84,7 @@ function RequestForm() {
         </form>
       )}
       <p className="mt-6 text-center text-sm">
-        <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+        <Link to="/login" className="font-semibold text-brand hover:underline">
           {t('auth.goToLogin')}
         </Link>
       </p>
@@ -146,7 +146,7 @@ function LinkInvalid() {
     <AuthCard title={t('auth.confirmErrorTitle')}>
       <p className="text-slate-600">{t('auth.recoveryOtherDevice')}</p>
       <p className="mt-6 text-center text-sm">
-        <Link to="/reset" className="font-semibold text-brand-700 hover:underline">
+        <Link to="/reset" className="font-semibold text-brand hover:underline">
           {t('auth.resetRequestAgain')}
         </Link>
       </p>

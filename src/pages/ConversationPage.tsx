@@ -40,8 +40,8 @@ export function ConversationPage() {
   if (!validId || !conversation.data) {
     return (
       <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="text-2xl font-bold">{t('messages.notFound')}</h1>
-        <Link to="/messages" className="mt-6 inline-block font-semibold text-brand-700 hover:underline">
+        <h1 className="text-2xl font-semibold">{t('messages.notFound')}</h1>
+        <Link to="/messages" className="mt-6 inline-block font-semibold text-brand hover:underline">
           {t('messages.backToList')}
         </Link>
       </section>
@@ -74,7 +74,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
 
   const listing = (
     <>
-      <span className="size-12 shrink-0 overflow-hidden rounded-lg bg-slate-100">
+      <span className="size-12 shrink-0 overflow-hidden rounded-field bg-slate-100">
         {c.listingCover && <img src={publicPhotoUrl(c.listingCover)} alt="" className="size-full object-cover" />}
       </span>
       <span className="min-w-0">
@@ -92,11 +92,11 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
   )
 
   return (
-    <div className="space-y-2 border-b border-slate-200 bg-slate-50 py-3">
+    <div className="space-y-2 border-b border-line bg-paper py-3">
       <div className="flex items-center gap-2">
         <Link
           to="/messages"
-          className="flex size-10 items-center justify-center rounded-lg text-xl text-slate-600 hover:bg-slate-100"
+          className="flex size-10 items-center justify-center rounded-field text-xl text-slate-600 hover:bg-slate-100"
           aria-label={t('messages.backToList')}
         >
           ←
@@ -111,7 +111,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
         <span className="text-xs text-slate-500">{c.iAmSeller ? t('messages.roleBuyer') : t('messages.roleSeller')}</span>
       </div>
       {c.listingId && c.listingAvailable ? (
-        <Link to={`/a/${c.listingId}`} className="flex items-center gap-3 rounded-lg p-1 hover:bg-slate-100">
+        <Link to={`/a/${c.listingId}`} className="flex items-center gap-3 rounded-field p-1 hover:bg-slate-100">
           {listing}
         </Link>
       ) : (
@@ -154,15 +154,15 @@ function MessageList({ messages }: { messages: Message[] }) {
           <div key={message.id}>
             {showDay && <p className="my-3 text-center text-xs font-medium text-slate-500">{day}</p>}
             {!mine && message.isFlagged && (
-              <div className="mb-1 max-w-[85%] rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800" role="note">
+              <div className="mb-1 max-w-[85%] rounded-field border border-danger-200 bg-danger-50 px-3 py-2 text-xs text-danger" role="note">
                 <span aria-hidden="true">⚠️ </span>
                 {t('messages.flaggedWarning')}
               </div>
             )}
             <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-sm ${
-                  mine ? 'rounded-br-sm bg-brand-700 text-white' : 'rounded-bl-sm border border-slate-200 bg-surface text-slate-900'
+                className={`max-w-[85%] rounded-panel px-3 py-2 shadow-sm ${
+                  mine ? 'rounded-br-sm bg-brand text-white' : 'rounded-bl-sm border border-line bg-surface text-ink'
                 }`}
               >
                 {/* user text: React shows it as plain text, never as HTML */}
@@ -198,7 +198,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
 
   if (!conversation.canReply) {
     return (
-      <p className="border-t border-slate-200 p-3 text-center text-sm text-slate-600">
+      <p className="border-t border-line p-3 text-center text-sm text-slate-600">
         {conversation.otherUserId ? t('messages.cannotReplyBlocked') : t('messages.cannotReplyDeleted')}
       </p>
     )
@@ -230,7 +230,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
 
   return (
     // same background as the page: only the text box stands out
-    <form onSubmit={handleSubmit} className="space-y-2 border-t border-slate-200 bg-slate-50 pt-3 pb-1">
+    <form onSubmit={handleSubmit} className="space-y-2 border-t border-line bg-paper pt-3 pb-1">
       {send.isError && <Alert kind="error">{translateKey(t, errorToKey(send.error))}</Alert>}
       <div className="flex items-end gap-2">
         <label htmlFor="message-text" className="sr-only">
@@ -245,7 +245,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
           maxLength={MAX_MESSAGE_LENGTH}
           rows={Math.min(5, Math.max(1, text.split('\n').length))}
           placeholder={t('messages.placeholder')}
-          className="block min-h-11 w-full flex-1 resize-none rounded-xl border border-slate-300 bg-surface px-3 py-2 text-base outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
+          className="block min-h-11 w-full flex-1 resize-none rounded-card border border-line-strong bg-surface px-3 py-2 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-100"
         />
         <Button type="submit" loading={send.isPending} disabled={!text.trim()} aria-label={t('messages.send')}>
           <span aria-hidden="true">➤</span>

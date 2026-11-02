@@ -17,7 +17,7 @@ function wasClosed(): boolean {
  * Information banner: the site uses no advertising or tracking cookies, only the browser storage it needs
  * (login session, language, listing draft). Closed once, it does not come back.
  */
-export function CookieBanner() {
+export function CookieBanner({ aboveBottomNav = false }: { aboveBottomNav?: boolean }) {
   const { t } = useTranslation()
   const [visible, setVisible] = useState(() => !wasClosed())
 
@@ -36,13 +36,14 @@ export function CookieBanner() {
     <div
       role="region"
       aria-label={t('cookies.more')}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-surface/95 p-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] backdrop-blur sm:p-4"
+      className={`fixed inset-x-0 z-40 border-t border-line bg-surface p-3 shadow-float sm:p-4 lg:bottom-0 ${
+        aboveBottomNav ? 'bottom-[calc(4rem+env(safe-area-inset-bottom))]' : 'bottom-0'
+      }`}
     >
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 text-sm text-slate-700 sm:flex-row sm:items-center">
+      <div className="mx-auto flex max-w-page flex-col gap-3 text-sm text-ink sm:flex-row sm:items-center">
         <p className="flex-1">
-          <span aria-hidden="true">🍪 </span>
           {t('cookies.text')}{' '}
-          <Link to="/p/privacy" className="font-semibold text-brand-700 hover:underline">
+          <Link to="/p/privacy" className="font-semibold text-brand hover:underline">
             {t('cookies.more')}
           </Link>
         </p>

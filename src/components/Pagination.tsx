@@ -21,7 +21,7 @@ function visiblePages(page: number, pageCount: number): (number | 'gap')[] {
 }
 
 const itemClass =
-  'flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600'
+  'flex min-h-11 min-w-11 items-center justify-center rounded-field border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
 
 export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
   const { t } = useTranslation()
@@ -30,7 +30,7 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
   return (
     <nav aria-label={t('search.pagination')} className="flex flex-wrap items-center justify-center gap-2">
       {page > 1 && (
-        <Link to={hrefFor(page - 1)} className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}>
+        <Link to={hrefFor(page - 1)} className={`${itemClass} border-line-strong bg-surface hover:bg-paper`}>
           <span aria-hidden="true">←</span>
           <span className="sr-only sm:not-sr-only sm:ml-1">{t('search.previous')}</span>
         </Link>
@@ -41,7 +41,7 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
             …
           </span>
         ) : item === page ? (
-          <span key={item} aria-current="page" className={`${itemClass} border-brand-700 bg-brand-700 text-white`}>
+          <span key={item} aria-current="page" className={`${itemClass} border-brand bg-brand text-white`}>
             {item}
           </span>
         ) : (
@@ -49,14 +49,14 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
             key={item}
             to={hrefFor(item)}
             aria-label={t('search.pageN', { n: item })}
-            className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}
+            className={`${itemClass} border-line-strong bg-surface hover:bg-paper`}
           >
             {item}
           </Link>
         ),
       )}
       {page < pageCount && (
-        <Link to={hrefFor(page + 1)} className={`${itemClass} border-slate-300 bg-surface hover:bg-slate-50`}>
+        <Link to={hrefFor(page + 1)} className={`${itemClass} border-line-strong bg-surface hover:bg-paper`}>
           <span className="sr-only sm:not-sr-only sm:mr-1">{t('search.next')}</span>
           <span aria-hidden="true">→</span>
         </Link>

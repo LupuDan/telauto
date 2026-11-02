@@ -23,7 +23,7 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
     <div className="relative h-full">
       <Link
         to={`/a/${listing.id}`}
-        className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-surface shadow-sm transition hover:border-brand-600 hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
+        className="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-surface shadow-sm transition hover:border-brand hover:shadow focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         {/* fixed 4:3 box; the photo is cropped to fill it, so tall or wide photos never change the card size */}
         <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-slate-100">
@@ -41,20 +41,20 @@ export function ListingCard({ listing }: { listing: ListingSummary }) {
             </span>
           )}
           {(listing.hasImei || listing.hasVin) && (
-            <span className="absolute top-2 left-2 rounded-md bg-emerald-700/90 px-1.5 py-0.5 text-xs font-semibold text-white">
+            <span className="absolute top-2 left-2 rounded-md bg-success/90 px-1.5 py-0.5 text-xs font-semibold text-white">
               {listing.hasImei ? t('listing.imeiBadge') : t('listing.vinBadge')}
             </span>
           )}
         </div>
         <div className="flex flex-1 flex-col gap-1 p-3">
-          <p className="truncate text-lg font-bold text-slate-900">
+          <p className="truncate text-lg font-semibold text-ink">
             {formatPrice(listing.price, listing.currency, lng)}
             {listing.negotiable && (
               <span className="ml-1 text-xs font-normal text-slate-500">{t('listing.negotiableShort')}</span>
             )}
           </p>
           {/* user text: React shows it as plain text */}
-          <h3 className="line-clamp-2 min-h-10 text-sm font-medium text-slate-800 group-hover:text-brand-700">{listing.title}</h3>
+          <h3 className="line-clamp-2 min-h-10 text-sm font-medium text-slate-800 group-hover:text-brand">{listing.title}</h3>
           <p className="line-clamp-1 min-h-4 text-xs text-slate-600">{facts.join(' · ')}</p>
           <p className="mt-auto pt-1 text-xs text-slate-500">
             {locality ? localizedName(locality, lng) : ''}
@@ -89,7 +89,7 @@ export function ListingGridSkeleton({ count = 8 }: { count?: number }) {
   return (
     <ul aria-hidden="true" className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: count }, (_, index) => (
-        <li key={index} className="overflow-hidden rounded-xl border border-slate-200 bg-surface">
+        <li key={index} className="overflow-hidden rounded-card border border-line bg-surface">
           <div className="aspect-[4/3] animate-pulse bg-slate-100" />
           <div className="space-y-2 p-3">
             <div className="h-5 w-1/2 animate-pulse rounded bg-slate-100" />

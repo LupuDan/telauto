@@ -9,10 +9,13 @@
     "retry": "Повторить",
     "errorTitle": "Произошла ошибка",
     "yes": "Да",
-    "no": "Нет"
+    "no": "Нет",
+    "optional": "необязательно",
+    "rangeFrom": "от",
+    "rangeTo": "до"
   },
   "header": {
-    "searchPlaceholder": "Ищите телефоны, машины, запчасти...",
+    "searchPlaceholder": "Что вы ищете?",
     "searchLabel": "Поиск",
     "searchButton": "Найти",
     "addListing": "Добавить объявление",
@@ -22,6 +25,14 @@
     "login": "Войти",
     "messages": "Сообщения",
     "admin": "Админ"
+  },
+  "nav": {
+    "label": "Основная навигация",
+    "home": "Главная",
+    "search": "Поиск",
+    "add": "Добавить",
+    "messages": "Чаты",
+    "account": "Профиль"
   },
   "language": {
     "label": "Язык",

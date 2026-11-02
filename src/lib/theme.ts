@@ -5,7 +5,8 @@
 export type Theme = 'light' | 'dark'
 
 export const THEME_STORAGE_KEY = 'telauto.theme'
-const THEME_COLORS: Record<Theme, string> = { light: '#1d4ed8', dark: '#0b1120' }
+// same as the header background (--color-surface in src/styles/tokens.css)
+const THEME_COLORS: Record<Theme, string> = { light: '#ffffff', dark: '#162032' }
 
 export function currentTheme(): Theme {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light'

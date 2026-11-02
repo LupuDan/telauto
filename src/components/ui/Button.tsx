@@ -1,23 +1,19 @@
 import type { ButtonHTMLAttributes } from 'react'
+import { buttonClass, type ButtonSize, type ButtonVariant } from './buttonStyles'
 import { Spinner } from './Spinner'
 
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
-
-const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-brand-700 text-white hover:bg-brand-800 disabled:bg-brand-700/60',
-  secondary: 'border border-slate-300 bg-surface text-slate-800 hover:bg-slate-50 disabled:text-slate-400',
-  danger: 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-600/60',
-  ghost: 'text-brand-700 hover:bg-brand-50 disabled:text-slate-400',
-}
+export type { ButtonSize, ButtonVariant }
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: Variant
+  variant?: ButtonVariant
+  size?: ButtonSize
   loading?: boolean
   fullWidth?: boolean
 }
 
 export function Button({
   variant = 'primary',
+  size = 'normal',
   loading = false,
   fullWidth = false,
   disabled,
@@ -31,13 +27,16 @@ export function Button({
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 disabled:cursor-not-allowed ${
-        VARIANTS[variant]
-      } ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={`${buttonClass(variant, size, fullWidth)} ${className}`}
       {...rest}
     >
-      {loading && <Spinner className="size-4" />}
-      {children}
+      {/* while loading the text stays (invisible) so the button keeps its width; the spinner sits on top */}
+      <span className={`inline-flex items-center justify-center gap-2 ${loading ? 'invisible' : ''}`}>{children}</span>
+      {loading && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="size-5" />
+        </span>
+      )}
     </button>
   )
 }

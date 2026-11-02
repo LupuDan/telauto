@@ -49,8 +49,8 @@ export function MyListings({ userId }: { userId: string }) {
               onClick={() => setGroup(g)}
               className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
                 group === g
-                  ? 'border-brand-700 bg-brand-700 text-white'
-                  : 'border-slate-300 bg-surface text-slate-700 hover:bg-slate-50'
+                  ? 'border-brand bg-brand text-white'
+                  : 'border-line-strong bg-surface text-slate-700 hover:bg-paper'
               }`}
             >
               {translateKey(t, `myListings.groups.${g}`)} ({counts[g]})
@@ -59,14 +59,14 @@ export function MyListings({ userId }: { userId: string }) {
         </div>
         <Link
           to="/new"
-          className="rounded-lg bg-brand-700 px-3 py-2 text-sm font-semibold text-white hover:bg-brand-800"
+          className="rounded-field bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700"
         >
           + {t('header.addListing')}
         </Link>
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">
+        <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-slate-500">
           {t('myListings.empty')}
         </p>
       ) : (
@@ -91,9 +91,9 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
     action.mutate({ type, listingId: listing.id })
 
   return (
-    <li className="rounded-xl border border-slate-200 bg-surface p-3 shadow-sm">
+    <li className="rounded-card border border-line bg-surface p-3 shadow-sm">
       <div className="flex gap-3">
-        <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-slate-100 sm:size-24">
+        <div className="size-20 shrink-0 overflow-hidden rounded-field bg-slate-100 sm:size-24">
           {listing.coverPath ? (
             <img
               src={publicPhotoUrl(listing.coverPath)}
@@ -109,7 +109,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold">{listing.title}</p>
-          <p className="font-bold text-brand-700">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
+          <p className="font-semibold text-brand">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
           <p className="text-xs text-slate-500">
             {category ? t(`categories.${category.slug}`) : ''}
             {group === 'active' &&
@@ -119,7 +119,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
             {group !== 'draft' && ` · ${t('myListings.views', { count: listing.views })}`}
           </p>
           {group === 'hidden' && (
-            <p className="mt-1 text-xs font-medium text-red-700">
+            <p className="mt-1 text-xs font-medium text-danger">
               {listing.status === 'rejected' ? t('myListings.rejectedNotice') : t('myListings.hiddenNotice')}
             </p>
           )}
@@ -170,7 +170,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
             </Button>
           </span>
         ) : (
-          <Button variant="ghost" className="ml-auto text-red-700" onClick={() => setConfirmDelete(true)}>
+          <Button variant="ghost" className="ml-auto text-danger" onClick={() => setConfirmDelete(true)}>
             {t('myListings.delete')}
           </Button>
         )}
@@ -183,7 +183,7 @@ function LinkButton({ to, children }: { to: string; children: string }) {
   return (
     <Link
       to={to}
-      className="inline-flex min-h-11 items-center rounded-lg border border-slate-300 bg-surface px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+      className="inline-flex min-h-11 items-center rounded-field border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-paper"
     >
       {children}
     </Link>

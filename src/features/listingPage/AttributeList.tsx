@@ -46,12 +46,12 @@ export function AttributeList({
   }
 
   return (
-    <dl className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-surface">
+    <dl className="divide-y divide-slate-100 rounded-card border border-line bg-surface">
       {rows.map((row) => (
         <div key={row.key} className="grid grid-cols-2 gap-3 px-4 py-2.5 text-sm">
           <dt className="text-slate-600">{row.label}</dt>
           {/* user text: React shows it as plain text */}
-          <dd className="font-medium break-words whitespace-pre-line text-slate-900">{row.value}</dd>
+          <dd className="font-medium break-words whitespace-pre-line text-ink">{row.value}</dd>
         </div>
       ))}
     </dl>

@@ -46,7 +46,7 @@ export function ReportsTab() {
 function ReportList({ reports }: { reports: ReportRow[] }) {
   const { t, i18n } = useTranslation()
   return (
-    <ul className="space-y-1 rounded-lg bg-slate-50 p-3 text-sm">
+    <ul className="space-y-1 rounded-field bg-paper p-3 text-sm">
       {reports.map((report) => (
         <li key={report.id}>
           <span className="font-semibold">{translateKey(t, `reports.reasons.${report.reason}`)}</span>
@@ -72,7 +72,7 @@ function ListingReportCard({ group }: { group: ListingReportGroup }) {
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <Link to={`/a/${group.listingId}`} className="font-semibold break-words text-brand-700 hover:underline">
+          <Link to={`/a/${group.listingId}`} className="font-semibold break-words text-brand hover:underline">
             {group.title}
           </Link>
           <p className="text-sm text-slate-600">
@@ -84,10 +84,10 @@ function ListingReportCard({ group }: { group: ListingReportGroup }) {
             ) : (
               t('profile.deletedUser')
             )}
-            {group.authorBlocked && <span className="ml-1 font-semibold text-red-700">({t('profile.blocked')})</span>}
+            {group.authorBlocked && <span className="ml-1 font-semibold text-danger">({t('profile.blocked')})</span>}
           </p>
         </div>
-        <span className="rounded-full bg-red-100 px-2 py-0.5 text-sm font-bold text-red-800">
+        <span className="rounded-full bg-danger-50 px-2 py-0.5 text-sm font-semibold text-danger">
           {t('admin.reports.count', { count: group.reports.length })}
         </span>
       </div>
@@ -132,12 +132,12 @@ function MessageReportCard({ group }: { group: MessageReportGroup }) {
           <SenderName id={group.senderId} name={group.senderName} blocked={group.senderBlocked} /> ·{' '}
           {formatDate(group.sentAt, i18n.resolvedLanguage)}
         </p>
-        <span className="rounded-full bg-red-100 px-2 py-0.5 text-sm font-bold text-red-800">
+        <span className="rounded-full bg-danger-50 px-2 py-0.5 text-sm font-semibold text-danger">
           {t('admin.reports.count', { count: group.reports.length })}
         </span>
       </div>
       {/* user text: plain text */}
-      <p className="rounded-lg border border-slate-200 p-3 break-words whitespace-pre-wrap">{group.body}</p>
+      <p className="rounded-field border border-line p-3 break-words whitespace-pre-wrap">{group.body}</p>
       <ReportList reports={group.reports} />
       <ActionError error={resolve.error ?? block.error} />
       <div className="flex flex-wrap gap-2">
@@ -169,7 +169,7 @@ function SenderName({ id, name, blocked }: { id: string | null; name: string | n
       <Link to={`/u/${id}`} className="font-medium hover:underline">
         {name || t('profile.unnamed')}
       </Link>
-      {blocked && <span className="ml-1 font-semibold text-red-700">({t('profile.blocked')})</span>}
+      {blocked && <span className="ml-1 font-semibold text-danger">({t('profile.blocked')})</span>}
     </>
   )
 }
@@ -202,7 +202,7 @@ export function FlaggedTab() {
                 {formatDate(message.createdAt, i18n.resolvedLanguage)}
               </p>
               {/* user text: plain text */}
-              <p className="rounded-lg border border-slate-200 p-3 break-words whitespace-pre-wrap">{message.body}</p>
+              <p className="rounded-field border border-line p-3 break-words whitespace-pre-wrap">{message.body}</p>
               {message.senderId && !message.senderBlocked && (
                 <ConfirmButton
                   confirmText={t('admin.confirm.block')}
@@ -240,7 +240,7 @@ export function HiddenTab() {
         {listings.data.map((listing) => (
           <Card key={listing.id}>
             <div className="min-w-0">
-              <Link to={`/a/${listing.id}`} className="font-semibold break-words text-brand-700 hover:underline">
+              <Link to={`/a/${listing.id}`} className="font-semibold break-words text-brand hover:underline">
                 {listing.title}
               </Link>
               <p className="text-sm text-slate-600">

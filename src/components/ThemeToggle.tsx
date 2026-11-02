@@ -1,26 +1,27 @@
+import { Moon, Sun } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
 import { useTranslation } from 'react-i18next'
 import { currentTheme, setTheme, subscribeTheme } from '../lib/theme'
 
 /**
- * ☀/🌙 button: switches between light and dark pages.
- * "icon": small square button (header); "full": button with text (footer).
+ * Moon / sun button: switches between light and dark pages.
+ * "icon": square button (header); "full": button with text (footer).
  */
 export function ThemeToggle({ variant = 'icon', className = '' }: { variant?: 'icon' | 'full'; className?: string }) {
   const { t } = useTranslation()
   const theme = useSyncExternalStore(subscribeTheme, currentTheme, () => 'light' as const)
   const next = theme === 'dark' ? 'light' : 'dark'
   const label = next === 'dark' ? t('theme.toDark') : t('theme.toLight')
-  const icon = next === 'dark' ? '🌙' : '☀️'
+  const Icon = next === 'dark' ? Moon : Sun
 
   if (variant === 'full') {
     return (
       <button
         type="button"
         onClick={() => setTheme(next)}
-        className={`inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-300 bg-surface px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${className}`}
+        className={`inline-flex min-h-11 items-center gap-2 rounded-field border border-line-strong bg-surface px-3 text-sm font-medium text-ink hover:bg-paper ${className}`}
       >
-        <span aria-hidden="true">{icon}</span>
+        <Icon aria-hidden="true" className="size-5" strokeWidth={1.75} />
         {label}
       </button>
     )
@@ -32,9 +33,9 @@ export function ThemeToggle({ variant = 'icon', className = '' }: { variant?: 'i
       onClick={() => setTheme(next)}
       aria-label={label}
       title={label}
-      className={`inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg border border-slate-300 bg-surface px-2 text-base leading-none hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 ${className}`}
+      className={`inline-flex size-11 shrink-0 items-center justify-center rounded-field text-ink hover:bg-paper ${className}`}
     >
-      <span aria-hidden="true">{icon}</span>
+      <Icon aria-hidden="true" className="size-5" strokeWidth={1.75} />
     </button>
   )
 }

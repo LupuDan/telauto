@@ -30,7 +30,7 @@ export function StaticPage() {
   return (
     <article className="mx-auto max-w-3xl space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-bold sm:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
         <p className="text-sm text-slate-500">
           {t('pages.common.updated', { date: formatDate(LAST_UPDATED, i18n.resolvedLanguage) })}
         </p>
@@ -38,9 +38,9 @@ export function StaticPage() {
       </header>
 
       {name === 'contact' && (
-        <p className="rounded-xl border border-brand-100 bg-brand-50 p-4">
+        <p className="rounded-card border border-brand-100 bg-brand-50 p-4">
           <span className="block text-sm text-slate-600">{t('pages.common.contactEmail')}</span>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="text-lg font-semibold break-all text-brand-700 hover:underline">
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-lg font-semibold break-all text-brand hover:underline">
             {CONTACT_EMAIL}
           </a>
         </p>
@@ -58,11 +58,11 @@ export function StaticPage() {
           </section>
         ))}
 
-      <nav aria-label={t('footer.navLabel')} className="border-t border-slate-200 pt-4">
+      <nav aria-label={t('footer.navLabel')} className="border-t border-line pt-4">
         <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
           {STATIC_PAGES.filter((item) => item !== name).map((item) => (
             <li key={item}>
-              <Link to={`/p/${item}`} className="text-brand-700 hover:underline">
+              <Link to={`/p/${item}`} className="text-brand hover:underline">
                 {translateKey(t, `pages.${item}.title`)}
               </Link>
             </li>

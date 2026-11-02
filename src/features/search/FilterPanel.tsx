@@ -80,7 +80,7 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
           <button
             type="button"
             onClick={onClose}
-            className="flex size-11 items-center justify-center rounded-lg text-2xl text-slate-600 hover:bg-slate-100 lg:hidden"
+            className="flex size-11 items-center justify-center rounded-field text-2xl text-slate-600 hover:bg-slate-100 lg:hidden"
             aria-label={t('search.closeFilters')}
           >
             ×
@@ -138,15 +138,15 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
       <fieldset>
         <div className="mb-1 flex items-center justify-between gap-2">
           <legend className="text-sm font-medium text-slate-700">{t('listingForm.price')}</legend>
-          <div role="group" aria-label={t('listingForm.currency')} className="flex rounded-lg border border-slate-300 p-0.5">
+          <div role="group" aria-label={t('listingForm.currency')} className="flex rounded-field border border-line-strong p-0.5">
             {(['MDL', 'EUR'] as const).map((currency) => (
               <button
                 key={currency}
                 type="button"
                 aria-pressed={draft.currency === currency}
                 onClick={() => set({ currency })}
-                className={`rounded-md px-2 py-0.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand-600 ${
-                  draft.currency === currency ? 'bg-brand-700 text-white' : 'text-slate-600 hover:bg-slate-100'
+                className={`rounded-md px-2 py-0.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-brand ${
+                  draft.currency === currency ? 'bg-brand text-white' : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
                 {currency}
@@ -196,7 +196,7 @@ export function FilterPanel({ category, filters, onApply, onClose }: FilterPanel
       )}
 
       {category?.hasCompatibility && (
-        <fieldset className="space-y-3 rounded-lg border border-slate-200 p-3">
+        <fieldset className="space-y-3 rounded-field border border-line p-3">
           <legend className="px-1 text-sm font-semibold text-slate-700">{t('search.compatibleWith')}</legend>
           <ReferenceSelect
             label={t('listingForm.compatibilityMake')}

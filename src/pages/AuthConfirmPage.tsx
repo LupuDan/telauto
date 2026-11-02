@@ -81,11 +81,11 @@ export function AuthConfirmPage() {
         <p className="text-slate-700">{t('auth.confirmSuccessText')}</p>
         <p className="mt-6 text-center">
           {result === 'confirmed' ? (
-            <Link to="/account" className="font-semibold text-brand-700 hover:underline">
+            <Link to="/account" className="font-semibold text-brand hover:underline">
               {t('auth.goToAccount')}
             </Link>
           ) : (
-            <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+            <Link to="/login" className="font-semibold text-brand hover:underline">
               {t('auth.goToLogin')}
             </Link>
           )}
@@ -100,10 +100,10 @@ export function AuthConfirmPage() {
         {result === 'recovery-other-device' ? t('auth.recoveryOtherDevice') : t('auth.confirmErrorText')}
       </p>
       <div className="mt-6 flex flex-col items-center gap-2 text-sm">
-        <Link to="/login" className="font-semibold text-brand-700 hover:underline">
+        <Link to="/login" className="font-semibold text-brand hover:underline">
           {t('auth.goToLogin')}
         </Link>
-        <Link to="/reset" className="text-brand-700 hover:underline">
+        <Link to="/reset" className="text-brand hover:underline">
           {t('auth.resetRequestAgain')}
         </Link>
       </div>

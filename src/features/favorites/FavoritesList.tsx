@@ -22,9 +22,9 @@ export function FavoritesList() {
 
   if (favorites.data.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center">
+      <div className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center">
         <p className="text-slate-600">{t('favorites.empty')}</p>
-        <Link to="/search" className="mt-3 inline-block font-semibold text-brand-700 hover:underline">
+        <Link to="/search" className="mt-3 inline-block font-semibold text-brand hover:underline">
           {t('favorites.browse')}
         </Link>
       </div>
@@ -46,7 +46,7 @@ export function FavoritesList() {
           <h2 id="unavailable-heading" className="text-base font-semibold">
             {t('favorites.unavailableHeading')}
           </h2>
-          <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-surface">
+          <ul className="divide-y divide-slate-100 rounded-card border border-line bg-surface">
             {unavailable.map((item) => (
               <li key={item.listingId} className="flex items-center justify-between gap-3 px-4 py-3">
                 <span className="min-w-0">

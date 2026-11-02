@@ -1,14 +1,22 @@
 import { Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Outlet, useLocation } from 'react-router'
+import { matchPath, Outlet, useLocation } from 'react-router'
+import { BottomNav } from '../components/BottomNav'
 import { CookieBanner } from '../components/CookieBanner'
 import { Footer } from '../components/Footer'
 import { Header } from '../components/Header'
 import { LoadingState } from '../components/ui/LoadingState'
+import { useLiveUnreadCounter } from '../features/messages/api'
+
+/** Pages with their own bar at the bottom of the phone screen hide the main bottom bar. */
+const PAGES_WITHOUT_BOTTOM_NAV = ['/messages/:id']
 
 export function Layout() {
   const { t } = useTranslation()
   const { pathname } = useLocation()
+  // one live connection for the unread counter (header and bottom bar read the same number)
+  useLiveUnreadCounter()
+  const showBottomNav = !PAGES_WITHOUT_BOTTOM_NAV.some((pattern) => matchPath(pattern, pathname))
 
   // Start every new page at the top, like a normal website.
   useEffect(() => {
@@ -16,26 +24,35 @@ export function Layout() {
   }, [pathname])
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div
+      className={`flex min-h-dvh flex-col ${
+        showBottomNav ? 'pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0' : ''
+      }`}
+    >
       <a
         href="#main"
         onClick={(e) => {
           e.preventDefault()
           document.getElementById('main')?.focus()
         }}
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-surface focus:px-3 focus:py-2 focus:shadow"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-field focus:bg-surface focus:px-3 focus:py-2 focus:shadow-float"
       >
         {t('app.skipToContent')}
       </a>
       <Header />
-      <main id="main" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 outline-none">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-page flex-1 px-4 py-6 outline-none md:px-6"
+      >
         {/* pages that are downloaded on first use (see App.tsx) show a spinner meanwhile */}
         <Suspense fallback={<LoadingState />}>
           <Outlet />
         </Suspense>
       </main>
       <Footer />
-      <CookieBanner />
+      {showBottomNav && <BottomNav />}
+      <CookieBanner aboveBottomNav={showBottomNav} />
     </div>
   )
 }

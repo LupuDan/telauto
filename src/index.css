@@ -1,14 +1,25 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
-@theme {
-  --color-brand-50: #eff6ff;
-  --color-brand-100: #dbeafe;
-  --color-brand-600: #2563eb;
-  --color-brand-700: #1d4ed8;
-  --color-brand-800: #1e40af;
-  /* background of cards, boxes and inputs (white in light mode, dark blue-grey in dark mode) */
-  --color-surface: #ffffff;
-}
+/*
+  Fonts are served by the site itself (no request to Google). Only the weights the design uses,
+  in the alphabets the site needs: latin, latin-ext (ș ț ă â î), cyrillic. font-display: swap.
+*/
+@import "@fontsource/golos-text/latin-400.css";
+@import "@fontsource/golos-text/latin-ext-400.css";
+@import "@fontsource/golos-text/cyrillic-400.css";
+@import "@fontsource/golos-text/latin-500.css";
+@import "@fontsource/golos-text/latin-ext-500.css";
+@import "@fontsource/golos-text/cyrillic-500.css";
+@import "@fontsource/golos-text/latin-600.css";
+@import "@fontsource/golos-text/latin-ext-600.css";
+@import "@fontsource/golos-text/cyrillic-600.css";
+@import "@fontsource/unbounded/latin-500.css";
+@import "@fontsource/unbounded/latin-ext-500.css";
+@import "@fontsource/unbounded/cyrillic-500.css";
+@import "@fontsource/unbounded/latin-600.css";
+@import "@fontsource/unbounded/latin-ext-600.css";
+@import "@fontsource/unbounded/cyrillic-600.css";
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -16,65 +27,58 @@ html {
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply bg-paper font-sans text-ink antialiased;
 }
 
-/*
-  Dark mode (button ☀/🌙, src/lib/theme.ts adds class "dark" on <html>).
-  Instead of writing dark: variants on hundreds of elements, the colours themselves change:
-  - the grey scale (slate) is reversed: light backgrounds become dark, dark text becomes light;
-  - light tints (brand-50, red-50, ...) become dark tints;
-  - text colours that were dark on light backgrounds get light versions below.
-  Strong colours used as button backgrounds with white text (brand-700, red-600, emerald-700) stay strong.
-*/
-.dark {
-  color-scheme: dark;
-
-  --color-surface: #131c2e;
-
-  --color-slate-50: #0b1120;
-  --color-slate-100: #1b2537;
-  --color-slate-200: #273247;
-  --color-slate-300: #374359;
-  --color-slate-400: #7d8ba1;
-  --color-slate-500: #94a3b8;
-  --color-slate-600: #aab7c9;
-  --color-slate-700: #cbd5e1;
-  --color-slate-800: #e2e8f0;
-  --color-slate-900: #f1f5f9;
-
-  --color-brand-50: #14213f;
-  --color-brand-100: #1d2f5c;
-  --color-brand-600: #60a5fa;
-  --color-brand-700: #3b82f6;
-  --color-brand-800: #2563eb;
-
-  --color-red-50: #3a1212;
-  --color-red-100: #4d1717;
-  --color-red-200: #6b1f1f;
-  --color-red-300: #8a2a2a;
-  --color-amber-50: #33280b;
-  --color-amber-100: #45360e;
-  --color-amber-200: #5e4a12;
-  --color-amber-300: #7d6217;
-  --color-emerald-50: #072b20;
-  --color-emerald-200: #0d4f3a;
-  --color-green-50: #072b16;
-  --color-green-200: #114b28;
+/* the plan uses at most weight 600: older "bold" text is drawn as 600 too (no 700 font is loaded) */
+b,
+strong {
+  font-weight: 600;
 }
 
-/* text that sits on light tints in light mode needs a light colour on the dark tints */
-.dark .text-brand-100 { color: #dbeafe; }
-.dark .text-brand-700,
-.dark .text-brand-800,
-.dark .hover\:text-brand-700:hover,
-.dark .group:hover .group-hover\:text-brand-700 { color: #93c5fd; }
-.dark .text-red-700,
-.dark .text-red-800,
-.dark .text-red-900,
-.dark .hover\:text-red-700:hover,
-.dark .hover\:text-red-800:hover { color: #fca5a5; }
-.dark .text-amber-800,
-.dark .text-amber-900 { color: #fcd34d; }
-.dark .text-emerald-800 { color: #6ee7b7; }
-.dark .text-green-800 { color: #86efac; }
+/* visible focus everywhere: blue 2 px outline, 2 px away from the element (plan, section 5) */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* prices and specs: digits of equal width, so they line up */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* no animations for people who asked their system for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes heart-pulse {
+  50% {
+    transform: scale(1.25);
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -99,7 +99,7 @@ export function LoginPage() {
         />
 
         <div className="text-right text-sm">
-          <Link to="/reset" className="text-brand-700 hover:underline">
+          <Link to="/reset" className="text-brand hover:underline">
             {t('auth.forgotPassword')}
           </Link>
         </div>
@@ -111,7 +111,7 @@ export function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-slate-600">
         {t('auth.noAccount')}{' '}
-        <Link to={`/register${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`} className="font-semibold text-brand-700 hover:underline">
+        <Link to={`/register${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`} className="font-semibold text-brand hover:underline">
           {t('auth.registerLink')}
         </Link>
       </p>

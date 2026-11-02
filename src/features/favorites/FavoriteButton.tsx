@@ -29,7 +29,7 @@ export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonPr
 
   const label = saved ? t('favorites.remove') : t('favorites.save')
   const heart = (
-    <span aria-hidden="true" className={saved ? 'text-red-600' : ''}>
+    <span aria-hidden="true" className={saved ? 'text-danger' : ''}>
       {saved ? '♥' : '♡'}
     </span>
   )
@@ -42,7 +42,7 @@ export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonPr
         aria-pressed={saved}
         aria-label={label}
         title={label}
-        className="flex size-10 items-center justify-center rounded-full bg-surface/90 text-xl leading-none text-slate-700 shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand-600"
+        className="flex size-10 items-center justify-center rounded-full bg-surface/90 text-xl leading-none text-slate-700 shadow hover:bg-surface focus-visible:outline-2 focus-visible:outline-brand"
       >
         {heart}
       </button>
@@ -54,8 +54,8 @@ export function FavoriteButton({ listingId, variant = 'icon' }: FavoriteButtonPr
       type="button"
       onClick={handleClick}
       aria-pressed={saved}
-      className={`flex min-h-11 flex-col items-center justify-center rounded-lg border px-1 py-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-brand-600 ${
-        saved ? 'border-red-200 bg-red-50 text-red-700' : 'border-slate-300 text-slate-700 hover:bg-slate-50'
+      className={`flex min-h-11 flex-col items-center justify-center rounded-field border px-1 py-1 text-xs font-medium focus-visible:outline-2 focus-visible:outline-brand ${
+        saved ? 'border-danger-200 bg-danger-50 text-danger' : 'border-line-strong text-slate-700 hover:bg-paper'
       }`}
     >
       <span className="text-lg leading-none">{heart}</span>

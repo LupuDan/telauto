@@ -74,7 +74,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold">{heading}</h1>
+        <h1 className="text-2xl font-semibold">{heading}</h1>
         <p className="text-sm text-slate-600" aria-live="polite">
           {result.data ? t('search.resultCount', { count: total }) : 'Â '}
         </p>
@@ -92,7 +92,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           aria-label={t('search.filtersTitle')}
         >
           {/* desktop: stays visible while scrolling, below the sticky header; scrolls inside if taller than the screen */}
-          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-xl lg:border lg:border-slate-200 lg:bg-surface lg:p-4 lg:shadow-sm">
+          <div className="lg:sticky lg:top-20 lg:max-h-[calc(100dvh-12rem)] lg:overflow-y-auto lg:rounded-card lg:border lg:border-line lg:bg-surface lg:p-4 lg:shadow-sm">
             <FilterPanel
               key={`${category?.slug ?? 'all'}?${params.toString()}`}
               category={category}
@@ -108,7 +108,7 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
             <Button variant="secondary" className="lg:hidden" onClick={() => setPanelOpen(true)}>
               {t('search.filtersButton')}
               {activeCount > 0 && (
-                <span className="rounded-full bg-brand-700 px-2 text-xs text-white">{activeCount}</span>
+                <span className="rounded-full bg-brand px-2 text-xs text-white">{activeCount}</span>
               )}
             </Button>
             <label htmlFor="sort" className="ml-auto text-sm text-slate-600">
@@ -150,11 +150,11 @@ export function SearchResults({ category, heading }: { category?: CategoryConfig
           ) : result.isError ? (
             <ErrorState error={result.error} onRetry={() => void result.refetch()} />
           ) : result.data.items.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-slate-300 bg-surface p-8 text-center">
+            <div className="rounded-card border border-dashed border-line-strong bg-surface p-8 text-center">
               <p className="font-semibold text-slate-800">{t('search.emptyTitle')}</p>
               <p className="mt-1 text-slate-600">{t('search.emptyText')}</p>
               {(activeCount > 0 || filters.q) && (
-                <Link to={basePath} className="mt-4 inline-block font-semibold text-brand-700 hover:underline">
+                <Link to={basePath} className="mt-4 inline-block font-semibold text-brand hover:underline">
                   {t('search.clearAll')}
                 </Link>
               )}

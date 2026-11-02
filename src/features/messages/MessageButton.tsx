@@ -28,7 +28,7 @@ export function MessageButton({ listingId }: { listingId: string }) {
         onClick={handleClick}
         disabled={start.isPending}
         aria-busy={start.isPending || undefined}
-        className="flex min-h-11 flex-col items-center justify-center rounded-lg border border-brand-700 px-1 py-1 text-xs font-semibold text-brand-800 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-brand-600 disabled:opacity-60"
+        className="flex min-h-11 flex-col items-center justify-center rounded-field border border-brand px-1 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-60"
       >
         <span aria-hidden="true" className="text-lg leading-none">
           ✉

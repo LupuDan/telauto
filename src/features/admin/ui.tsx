@@ -32,8 +32,8 @@ export function ConfirmButton({
     )
   }
   return (
-    <span className="inline-flex flex-wrap items-center gap-2 rounded-lg bg-red-50 px-2 py-1">
-      <span className="text-sm text-red-900">{confirmText}</span>
+    <span className="inline-flex flex-wrap items-center gap-2 rounded-field bg-danger-50 px-2 py-1">
+      <span className="text-sm text-danger">{confirmText}</span>
       <Button
         variant="danger"
         loading={loading}
@@ -59,10 +59,10 @@ export function ActionError({ error }: { error: unknown }) {
 
 export function EmptyBox({ children }: { children: ReactNode }) {
   return (
-    <p className="rounded-xl border border-dashed border-slate-300 bg-surface p-6 text-center text-slate-500">{children}</p>
+    <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-slate-500">{children}</p>
   )
 }
 
 export function Card({ children }: { children: ReactNode }) {
-  return <li className="space-y-3 rounded-xl border border-slate-200 bg-surface p-4 shadow-sm">{children}</li>
+  return <li className="space-y-3 rounded-card border border-line bg-surface p-4 shadow-sm">{children}</li>
 }

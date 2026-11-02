@@ -31,11 +31,11 @@ export function AccountPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-bold">{t('account.title')}</h1>
+        <h1 className="text-2xl font-semibold">{t('account.title')}</h1>
         {myProfile.data?.role === 'admin' && (
           <Link
             to="/admin"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-amber-300 bg-amber-50 px-3 text-sm font-semibold text-amber-900 hover:bg-amber-100"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-field border border-tag bg-tag-50 px-3 text-sm font-semibold text-ink hover:bg-tag-100"
           >
             <span aria-hidden="true">⚙</span>
             {t('admin.openPanel')}
@@ -50,7 +50,7 @@ export function AccountPage() {
       )}
 
       <nav aria-label={t('account.title')} className="-mx-4 mb-6 overflow-x-auto px-4">
-        <ul className="flex min-w-max gap-1 border-b border-slate-200">
+        <ul className="flex min-w-max gap-1 border-b border-line">
           {TABS.map((item) => (
             <li key={item}>
               <button
@@ -59,8 +59,8 @@ export function AccountPage() {
                 onClick={() => setParams({ tab: item })}
                 className={`-mb-px border-b-2 px-3 py-2 text-sm font-semibold ${
                   tab === item
-                    ? 'border-brand-700 text-brand-700'
-                    : 'border-transparent text-slate-600 hover:text-slate-900'
+                    ? 'border-brand text-brand'
+                    : 'border-transparent text-slate-600 hover:text-ink'
                 }`}
               >
                 {t(`account.tabs.${item}`)}
@@ -119,9 +119,9 @@ function SettingsTab() {
 
       <Section title={t('account.profileSection')}>
         <p className="mb-4 text-sm text-slate-600">
-          {t('account.email')}: <span className="font-medium text-slate-900">{email}</span>
+          {t('account.email')}: <span className="font-medium text-ink">{email}</span>
           {' · '}
-          <Link to={`/u/${user.id}`} className="text-brand-700 hover:underline">
+          <Link to={`/u/${user.id}`} className="text-brand hover:underline">
             {t('account.publicProfileLink')}
           </Link>
         </p>
@@ -148,9 +148,9 @@ function SettingsTab() {
 function Section({ title, danger = false, children }: { title: string; danger?: boolean; children: ReactNode }) {
   return (
     <section
-      className={`rounded-xl border bg-surface p-5 shadow-sm ${danger ? 'border-red-200' : 'border-slate-200'}`}
+      className={`rounded-card border bg-surface p-5 shadow-sm ${danger ? 'border-danger-200' : 'border-line'}`}
     >
-      <h2 className={`mb-4 text-lg font-semibold ${danger ? 'text-red-800' : ''}`}>{title}</h2>
+      <h2 className={`mb-4 text-lg font-semibold ${danger ? 'text-danger' : ''}`}>{title}</h2>
       {children}
     </section>
   )

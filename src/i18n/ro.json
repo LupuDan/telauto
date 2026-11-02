@@ -9,10 +9,13 @@
     "retry": "Încearcă din nou",
     "errorTitle": "A apărut o eroare",
     "yes": "Da",
-    "no": "Nu"
+    "no": "Nu",
+    "optional": "opțional",
+    "rangeFrom": "de la",
+    "rangeTo": "până la"
   },
   "header": {
-    "searchPlaceholder": "Caută telefoane, mașini, piese...",
+    "searchPlaceholder": "Ce cauți?",
     "searchLabel": "Căutare",
     "searchButton": "Caută",
     "addListing": "Adaugă anunț",
@@ -22,6 +25,14 @@
     "login": "Intră în cont",
     "messages": "Mesaje",
     "admin": "Admin"
+  },
+  "nav": {
+    "label": "Navigare principală",
+    "home": "Acasă",
+    "search": "Caută",
+    "add": "Adaugă",
+    "messages": "Mesaje",
+    "account": "Cont"
   },
   "language": {
     "label": "Limba",

@@ -33,8 +33,8 @@ export function MyCarFilter({
   )
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-brand-100 bg-brand-50 p-3 sm:flex-row sm:items-center">
-      <label htmlFor={id} className="text-sm font-semibold text-brand-800">
+    <div className="flex flex-col gap-2 rounded-card border border-brand-100 bg-brand-50 p-3 sm:flex-row sm:items-center">
+      <label htmlFor={id} className="text-sm font-semibold text-brand-700">
         <span aria-hidden="true">🚗 </span>
         {t('garage.onlyMyCar')}
       </label>
@@ -52,7 +52,7 @@ export function MyCarFilter({
           </option>
         ))}
       </select>
-      <Link to="/account?tab=garage" className="text-sm font-semibold text-brand-700 hover:underline">
+      <Link to="/account?tab=garage" className="text-sm font-semibold text-brand hover:underline">
         {t('garage.manage')}
       </Link>
     </div>

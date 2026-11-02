@@ -29,7 +29,7 @@ export function ReportButton({ target, variant = 'button' }: { target: ReportTar
         <button
           type="button"
           onClick={handleClick}
-          className="flex min-h-11 flex-col items-center justify-center rounded-lg border border-slate-300 px-1 py-1 text-xs font-medium text-slate-700 hover:border-red-300 hover:bg-red-50 hover:text-red-800 focus-visible:outline-2 focus-visible:outline-brand-600"
+          className="flex min-h-11 flex-col items-center justify-center rounded-field border border-line-strong px-1 py-1 text-xs font-medium text-slate-700 hover:border-danger-200 hover:bg-danger-50 hover:text-danger focus-visible:outline-2 focus-visible:outline-brand"
         >
           <span aria-hidden="true" className="text-lg leading-none">
             ⚑
@@ -40,7 +40,7 @@ export function ReportButton({ target, variant = 'button' }: { target: ReportTar
         <button
           type="button"
           onClick={handleClick}
-          className="text-[11px] text-slate-400 underline-offset-2 hover:text-red-700 hover:underline"
+          className="text-[11px] text-slate-400 underline-offset-2 hover:text-danger hover:underline"
         >
           {t('listing.actions.report')}
         </button>

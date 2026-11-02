@@ -27,9 +27,9 @@ export function AdminPage() {
   if (!profile.data || profile.data.role !== 'admin' || profile.data.is_blocked) {
     return (
       <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="text-2xl font-bold">{t('admin.noAccessTitle')}</h1>
+        <h1 className="text-2xl font-semibold">{t('admin.noAccessTitle')}</h1>
         <p className="mt-2 text-slate-600">{t('admin.noAccessText')}</p>
-        <Link to="/" className="mt-6 inline-block font-semibold text-brand-700 hover:underline">
+        <Link to="/" className="mt-6 inline-block font-semibold text-brand hover:underline">
           {t('notFound.backHome')}
         </Link>
       </section>
@@ -52,9 +52,9 @@ function AdminPanel() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="mb-4 text-2xl font-bold">{t('admin.title')}</h1>
+      <h1 className="mb-4 text-2xl font-semibold">{t('admin.title')}</h1>
       <nav aria-label={t('admin.title')} className="-mx-4 mb-6 overflow-x-auto px-4">
-        <ul className="flex min-w-max gap-1 border-b border-slate-200">
+        <ul className="flex min-w-max gap-1 border-b border-line">
           {TABS.map((item) => (
             <li key={item}>
               <button
@@ -62,12 +62,12 @@ function AdminPanel() {
                 aria-current={tab === item ? 'page' : undefined}
                 onClick={() => setParams({ tab: item })}
                 className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-semibold ${
-                  tab === item ? 'border-brand-700 text-brand-700' : 'border-transparent text-slate-600 hover:text-slate-900'
+                  tab === item ? 'border-brand text-brand' : 'border-transparent text-slate-600 hover:text-ink'
                 }`}
               >
                 {translateKey(t, `admin.tabs.${item}`)}
                 {(badge[item] ?? 0) > 0 && (
-                  <span className="rounded-full bg-red-600 px-1.5 text-xs leading-5 text-white">{badge[item]}</span>
+                  <span className="rounded-full bg-danger px-1.5 text-xs leading-5 text-white">{badge[item]}</span>
                 )}
               </button>
             </li>
