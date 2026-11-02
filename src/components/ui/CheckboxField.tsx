@@ -23,7 +23,7 @@ export function CheckboxField({ label, error, id, ref, ...rest }: CheckboxFieldP
           className="mt-0.5 size-5 shrink-0 accent-brand"
           {...rest}
         />
-        <label htmlFor={inputId} className="text-sm text-slate-700">
+        <label htmlFor={inputId} className="text-sm text-ink">
           {label}
         </label>
       </div>

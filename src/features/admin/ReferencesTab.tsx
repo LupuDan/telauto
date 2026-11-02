@@ -76,7 +76,7 @@ export function ReferencesTab() {
           </Button>
         ))}
       </div>
-      <p className="text-sm text-slate-600">{t('admin.references.hint')}</p>
+      <p className="text-sm text-muted">{t('admin.references.hint')}</p>
 
       <div className="grid gap-4 md:grid-cols-2">
         <ReferenceColumn
@@ -96,7 +96,7 @@ export function ReferencesTab() {
             parentId={parentId}
           />
         ) : (
-          <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-sm text-slate-500">
+          <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-sm text-muted">
             {t('admin.references.chooseParent')}
           </p>
         )}
@@ -142,7 +142,7 @@ function ReferenceColumn({
   const items = (query.data ?? []).filter((item) => item.name.toLowerCase().includes(filter.trim().toLowerCase()))
 
   return (
-    <section className="space-y-3 rounded-card border border-line bg-surface p-4 shadow-sm">
+    <section className="space-y-3 rounded-card border border-line bg-surface p-4">
       <h3 className="font-semibold">{title}</h3>
       <form onSubmit={handleAdd} className="flex gap-2">
         <label className="sr-only" htmlFor={`new-${kind}`}>
@@ -175,7 +175,7 @@ function ReferenceColumn({
       ) : query.isError ? (
         <ErrorState error={query.error} onRetry={() => void query.refetch()} />
       ) : (
-        <ul className="max-h-[28rem] divide-y divide-slate-100 overflow-y-auto rounded-field border border-slate-100">
+        <ul className="max-h-[28rem] divide-y divide-line overflow-y-auto rounded-field border border-line">
           {items.map((item) => (
             <ReferenceRow
               key={item.id}
@@ -186,7 +186,7 @@ function ReferenceColumn({
               onChanged={() => void refresh()}
             />
           ))}
-          {items.length === 0 && <li className="p-3 text-sm text-slate-500">{t('admin.references.none')}</li>}
+          {items.length === 0 && <li className="p-3 text-sm text-muted">{t('admin.references.none')}</li>}
         </ul>
       )}
     </section>

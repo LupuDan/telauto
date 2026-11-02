@@ -8,6 +8,7 @@ import { Alert } from '../components/ui/Alert'
 import { AuthCard } from '../components/ui/AuthCard'
 import { Button } from '../components/ui/Button'
 import { LoadingState } from '../components/ui/LoadingState'
+import { PasswordField } from '../components/ui/PasswordField'
 import { TextField } from '../components/ui/TextField'
 import { useFieldError } from '../components/ui/useFieldError'
 import { requestPasswordReset, setNewPassword } from '../features/auth/api'
@@ -64,11 +65,11 @@ function RequestForm() {
       {sent ? (
         <div className="space-y-4">
           <Alert kind="success">{t('auth.resetRequestSent')}</Alert>
-          <p className="text-sm text-slate-500">{t('auth.resetSameBrowserHint')}</p>
+          <p className="text-sm text-muted">{t('auth.resetSameBrowserHint')}</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
-          <p className="text-slate-600">{t('auth.resetRequestText')}</p>
+          <p className="text-muted">{t('auth.resetRequestText')}</p>
           {errorKey && <Alert kind="error">{translateKey(t, errorKey)}</Alert>}
           <TextField
             label={t('auth.email')}
@@ -117,17 +118,15 @@ function NewPasswordForm() {
     <AuthCard title={t('auth.resetNewTitle')}>
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
         {errorKey && <Alert kind="error">{translateKey(t, errorKey)}</Alert>}
-        <TextField
+        <PasswordField
           label={t('auth.newPassword')}
-          type="password"
           autoComplete="new-password"
           hint={t('auth.passwordHint')}
           error={fieldError(errors.password)}
           {...register('password')}
         />
-        <TextField
+        <PasswordField
           label={t('auth.passwordConfirm')}
-          type="password"
           autoComplete="new-password"
           error={fieldError(errors.passwordConfirm)}
           {...register('passwordConfirm')}
@@ -144,7 +143,7 @@ function LinkInvalid() {
   const { t } = useTranslation()
   return (
     <AuthCard title={t('auth.confirmErrorTitle')}>
-      <p className="text-slate-600">{t('auth.recoveryOtherDevice')}</p>
+      <p className="text-muted">{t('auth.recoveryOtherDevice')}</p>
       <p className="mt-6 text-center text-sm">
         <Link to="/reset" className="font-semibold text-brand hover:underline">
           {t('auth.resetRequestAgain')}

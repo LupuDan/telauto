@@ -10,9 +10,9 @@ import { Toaster } from '../components/ui/Toaster'
 import { useLiveUnreadCounter } from '../features/messages/api'
 
 /** Pages with their own bar at the bottom of the phone screen hide the main bottom bar. */
-const PAGES_WITHOUT_BOTTOM_NAV = ['/messages/:id', '/a/:id']
+const PAGES_WITHOUT_BOTTOM_NAV = ['/messages/:id', '/a/:id', '/new', '/a/:id/edit']
 /** ...and of those, the ones whose bar covers the end of the page need the same free room at the bottom. */
-const PAGES_WITH_OWN_BAR = ['/a/:id']
+const PAGES_WITH_OWN_BAR = ['/a/:id', '/new', '/a/:id/edit']
 
 export function Layout() {
   const { t } = useTranslation()

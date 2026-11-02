@@ -16,7 +16,7 @@ import {
   type MessageReportGroup,
   type ReportRow,
 } from './api'
-import { ActionError, Card, ConfirmButton, EmptyBox } from './ui'
+import { ActionError, AdminList, Card, ConfirmButton, EmptyBox } from './ui'
 
 // ---------------------------------------------------------------------------
 // Open reports, grouped by listing / message
@@ -31,7 +31,7 @@ export function ReportsTab() {
   if (reports.data.length === 0) return <EmptyBox>{t('admin.reports.empty')}</EmptyBox>
 
   return (
-    <ul className="space-y-3">
+    <AdminList>
       {reports.data.map((group) =>
         group.kind === 'listing' ? (
           <ListingReportCard key={group.listingId} group={group} />
@@ -39,7 +39,7 @@ export function ReportsTab() {
           <MessageReportCard key={group.messageId} group={group} />
         ),
       )}
-    </ul>
+    </AdminList>
   )
 }
 
@@ -50,12 +50,12 @@ function ReportList({ reports }: { reports: ReportRow[] }) {
       {reports.map((report) => (
         <li key={report.id}>
           <span className="font-semibold">{translateKey(t, `reports.reasons.${report.reason}`)}</span>
-          <span className="text-slate-500">
+          <span className="text-muted">
             {' '}
             · {report.reporterName || t('profile.deletedUser')} · {formatDate(report.createdAt, i18n.resolvedLanguage)}
           </span>
           {/* user text: plain text */}
-          {report.details && <p className="break-words whitespace-pre-line text-slate-700">{report.details}</p>}
+          {report.details && <p className="break-words whitespace-pre-line text-ink">{report.details}</p>}
         </li>
       ))}
     </ul>
@@ -75,7 +75,7 @@ function ListingReportCard({ group }: { group: ListingReportGroup }) {
           <Link to={`/a/${group.listingId}`} className="font-semibold break-words text-brand hover:underline">
             {group.title}
           </Link>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted">
             {translateKey(t, `admin.status.${group.status}`)} · {t('admin.author')}:{' '}
             {group.authorId ? (
               <Link to={`/u/${group.authorId}`} className="hover:underline">
@@ -94,11 +94,11 @@ function ListingReportCard({ group }: { group: ListingReportGroup }) {
       <ReportList reports={group.reports} />
       <ActionError error={moderate.error ?? block.error} />
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" loading={moderate.isPending} onClick={() => run('restore')}>
+        <Button variant="secondary" size="compact" loading={moderate.isPending} onClick={() => run('restore')}>
           {t('admin.actions.allGood')}
         </Button>
         {group.status !== 'hidden' && (
-          <Button variant="secondary" loading={moderate.isPending} onClick={() => run('hide')}>
+          <Button variant="secondary" size="compact" loading={moderate.isPending} onClick={() => run('hide')}>
             {t('admin.actions.hide')}
           </Button>
         )}
@@ -127,7 +127,7 @@ function MessageReportCard({ group }: { group: MessageReportGroup }) {
   return (
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-2">
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-muted">
           {t('admin.messageFrom')}{' '}
           <SenderName id={group.senderId} name={group.senderName} blocked={group.senderBlocked} /> ·{' '}
           {formatDate(group.sentAt, i18n.resolvedLanguage)}
@@ -141,7 +141,7 @@ function MessageReportCard({ group }: { group: MessageReportGroup }) {
       <ReportList reports={group.reports} />
       <ActionError error={resolve.error ?? block.error} />
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" loading={resolve.isPending} onClick={() => resolve.mutate(group.messageId)}>
+        <Button variant="secondary" size="compact" loading={resolve.isPending} onClick={() => resolve.mutate(group.messageId)}>
           {t('admin.actions.closeReports')}
         </Button>
         {group.senderId && !group.senderBlocked && (
@@ -188,15 +188,15 @@ export function FlaggedTab() {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-600">{t('admin.flagged.intro')}</p>
+      <p className="text-sm text-muted">{t('admin.flagged.intro')}</p>
       <ActionError error={block.error} />
       {messages.data.length === 0 ? (
         <EmptyBox>{t('admin.flagged.empty')}</EmptyBox>
       ) : (
-        <ul className="space-y-3">
+        <AdminList>
           {messages.data.map((message) => (
             <Card key={message.id}>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted">
                 {t('admin.messageFrom')}{' '}
                 <SenderName id={message.senderId} name={message.senderName} blocked={message.senderBlocked} /> ·{' '}
                 {formatDate(message.createdAt, i18n.resolvedLanguage)}
@@ -214,7 +214,7 @@ export function FlaggedTab() {
               )}
             </Card>
           ))}
-        </ul>
+        </AdminList>
       )}
     </div>
   )
@@ -236,14 +236,14 @@ export function HiddenTab() {
   return (
     <div className="space-y-3">
       <ActionError error={moderate.error} />
-      <ul className="space-y-3">
+      <AdminList>
         {listings.data.map((listing) => (
           <Card key={listing.id}>
             <div className="min-w-0">
               <Link to={`/a/${listing.id}`} className="font-semibold break-words text-brand hover:underline">
                 {listing.title}
               </Link>
-              <p className="text-sm text-slate-600">
+              <p className="text-sm text-muted">
                 {translateKey(t, `admin.status.${listing.status}`)} · {formatDate(listing.updatedAt, i18n.resolvedLanguage)} ·{' '}
                 {t('admin.author')}:{' '}
                 <Link to={`/u/${listing.authorId}`} className="hover:underline">
@@ -271,7 +271,7 @@ export function HiddenTab() {
             </div>
           </Card>
         ))}
-      </ul>
+      </AdminList>
     </div>
   )
 }

@@ -1,9 +1,13 @@
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CategoryIcon } from '../../components/CategoryIcon'
 import { Link } from 'react-router'
+import { CategoryIcon } from '../../components/CategoryIcon'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
+import { buttonClass } from '../../components/ui/buttonStyles'
+import { EmptyState } from '../../components/ui/EmptyState'
+import { Sheet } from '../../components/ui/Sheet'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { LoadingState } from '../../components/ui/LoadingState'
 import { translateKey } from '../../i18n/translate'
@@ -48,28 +52,25 @@ export function MyListings({ userId }: { userId: string }) {
               type="button"
               aria-pressed={group === g}
               onClick={() => setGroup(g)}
-              className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
+              className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-4 text-sm ${
                 group === g
-                  ? 'border-brand bg-brand text-white'
-                  : 'border-line-strong bg-surface text-slate-700 hover:bg-paper'
+                  ? 'border-brand bg-brand-50 font-medium text-brand'
+                  : 'border-line-strong bg-surface text-ink hover:bg-paper'
               }`}
             >
-              {translateKey(t, `myListings.groups.${g}`)} ({counts[g]})
+              {translateKey(t, `myListings.groups.${g}`)}
+              <span className="tabular opacity-70">{counts[g]}</span>
             </button>
           ))}
         </div>
-        <Link
-          to="/new"
-          className="rounded-field bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-        >
-          + {t('header.addListing')}
+        <Link to="/new" className={buttonClass('action', 'compact')}>
+          <Plus aria-hidden="true" className="size-5" strokeWidth={2} />
+          {t('header.addListing')}
         </Link>
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center text-slate-500">
-          {t('myListings.empty')}
-        </p>
+        <EmptyState text={t('myListings.empty')} />
       ) : (
         <ul className="space-y-3">
           {visible.map((listing) => (
@@ -92,9 +93,9 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
     action.mutate({ type, listingId: listing.id })
 
   return (
-    <li className="rounded-card border border-line bg-surface p-3 shadow-sm">
+    <li className="rounded-card border border-line bg-surface p-3">
       <div className="flex gap-3">
-        <div className="size-20 shrink-0 overflow-hidden rounded-field bg-slate-100 sm:size-24">
+        <div className="size-20 shrink-0 overflow-hidden rounded-field bg-paper sm:size-24">
           {listing.coverPath ? (
             <img
               src={publicPhotoUrl(listing.coverPath)}
@@ -109,9 +110,10 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-semibold">{listing.title}</p>
-          <p className="font-semibold text-ink tabular">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
-          <p className="text-xs text-slate-500">
+          <p className="type-price text-ink">{formatPrice(listing.price, listing.currency, i18n.resolvedLanguage)}</p>
+          {/* user text: React shows it as plain text */}
+          <p className="line-clamp-2 font-medium break-words text-ink">{listing.title}</p>
+          <p className="mt-0.5 text-sm text-muted">
             {category ? t(`categories.${category.slug}`) : ''}
             {group === 'active' &&
               ` · ${t('myListings.expiresOn', { date: formatDate(listing.expires_at, i18n.resolvedLanguage) })}`}
@@ -120,7 +122,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
             {group !== 'draft' && ` · ${t('myListings.views', { count: listing.views })}`}
           </p>
           {group === 'hidden' && (
-            <p className="mt-1 text-xs font-medium text-danger">
+            <p className="mt-1 text-sm font-medium text-danger">
               {listing.status === 'rejected' ? t('myListings.rejectedNotice') : t('myListings.hiddenNotice')}
             </p>
           )}
@@ -133,11 +135,11 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
         </div>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2 border-t border-slate-100 pt-3">
+      <div className="mt-3 flex flex-wrap gap-2 border-t border-line pt-3">
         {group === 'draft' && (
           <>
             <LinkButton to={`/a/${listing.id}/edit`}>{t('myListings.finish')}</LinkButton>
-            <Button variant="secondary" disabled={busy} onClick={() => run('publish')}>
+            <Button variant="secondary" size="compact" disabled={busy} onClick={() => run('publish')}>
               {t('listingForm.publish')}
             </Button>
           </>
@@ -146,7 +148,7 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
           <>
             <LinkButton to={`/a/${listing.id}`}>{t('myListings.view')}</LinkButton>
             <LinkButton to={`/a/${listing.id}/edit`}>{t('myListings.edit')}</LinkButton>
-            <Button variant="secondary" disabled={busy} onClick={() => run('sold')}>
+            <Button variant="secondary" size="compact" disabled={busy} onClick={() => run('sold')}>
               {t('myListings.markSold')}
             </Button>
           </>
@@ -154,38 +156,37 @@ function MyListingCard({ listing, group, userId }: { listing: MyListing; group: 
         {(group === 'sold' || group === 'expired') && (
           <>
             <LinkButton to={`/a/${listing.id}/edit`}>{t('myListings.edit')}</LinkButton>
-            <Button variant="secondary" disabled={busy} onClick={() => run('reactivate')}>
+            <Button variant="secondary" size="compact" disabled={busy} onClick={() => run('reactivate')}>
               {t('myListings.reactivate')}
             </Button>
           </>
         )}
 
-        {confirmDelete ? (
-          <span className="flex flex-wrap items-center gap-2">
-            <span className="text-sm text-slate-700">{t('myListings.deleteConfirm')}</span>
-            <Button variant="danger" disabled={busy} onClick={() => run('delete')}>
-              {t('myListings.deleteYes')}
-            </Button>
-            <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
-              {t('myListings.deleteNo')}
-            </Button>
-          </span>
-        ) : (
-          <Button variant="ghost" className="ml-auto text-danger" onClick={() => setConfirmDelete(true)}>
-            {t('myListings.delete')}
-          </Button>
-        )}
+        <Button variant="danger" size="compact" className="ml-auto" onClick={() => setConfirmDelete(true)}>
+          {t('myListings.delete')}
+        </Button>
       </div>
+
+      {/* deleting cannot be undone: ask in a window first */}
+      <Sheet open={confirmDelete} onClose={() => setConfirmDelete(false)} title={t('myListings.deleteConfirm')}>
+        {/* user text: React shows it as plain text */}
+        <p className="text-muted">{listing.title}</p>
+        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          <Button variant="danger" fullWidth loading={busy} onClick={() => run('delete')}>
+            {t('myListings.deleteYes')}
+          </Button>
+          <Button variant="secondary" fullWidth onClick={() => setConfirmDelete(false)}>
+            {t('myListings.deleteNo')}
+          </Button>
+        </div>
+      </Sheet>
     </li>
   )
 }
 
 function LinkButton({ to, children }: { to: string; children: string }) {
   return (
-    <Link
-      to={to}
-      className="inline-flex min-h-11 items-center rounded-field border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-paper"
-    >
+    <Link to={to} className={buttonClass('secondary', 'compact')}>
       {children}
     </Link>
   )

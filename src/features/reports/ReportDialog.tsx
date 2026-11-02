@@ -1,9 +1,11 @@
 import { useMutation } from '@tanstack/react-query'
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
+import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
+import { FieldLabel } from '../../components/ui/FieldMessage'
 import { inputClass } from '../../components/ui/fieldStyles'
+import { Sheet } from '../../components/ui/Sheet'
 import { translateKey } from '../../i18n/translate'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../auth/authContext'
@@ -36,18 +38,12 @@ async function sendReport(reporterId: string, target: ReportTarget, reason: Reas
 export function ReportDialog({ target, onClose }: { target: ReportTarget; onClose: () => void }) {
   const { t } = useTranslation()
   const { user } = useAuth()
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const detailsId = useId()
   const [reason, setReason] = useState<Reason | ''>('')
   const [details, setDetails] = useState('')
   const report = useMutation({
     mutationFn: () => sendReport(user?.id ?? '', target, reason as Reason, details),
   })
-
-  useEffect(() => {
-    const dialog = dialogRef.current
-    if (dialog && !dialog.open) dialog.showModal()
-  }, [])
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -58,77 +54,58 @@ export function ReportDialog({ target, onClose }: { target: ReportTarget; onClos
   const isListing = 'listingId' in target
 
   return (
-    <dialog
-      ref={dialogRef}
-      onClose={onClose}
-      aria-labelledby={`${detailsId}-title`}
-      className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-card p-0 shadow-xl backdrop:bg-black/50"
-    >
-      <form onSubmit={handleSubmit} className="space-y-4 p-5">
-        <div className="flex items-start justify-between gap-2">
-          <h2 id={`${detailsId}-title`} className="text-lg font-semibold">
-            {isListing ? t('reports.titleListing') : t('reports.titleMessage')}
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex size-9 items-center justify-center rounded-field text-xl text-slate-500 hover:bg-slate-100"
-            aria-label={t('listing.closePhoto')}
-          >
-            ×
-          </button>
+    // same window as everywhere: slides up on phones, centred on computers
+    <Sheet open onClose={onClose} title={isListing ? t('reports.titleListing') : t('reports.titleMessage')}>
+      {report.isSuccess ? (
+        <div className="space-y-4">
+          <Alert kind="success">{t('reports.thanks')}</Alert>
+          <Button fullWidth onClick={onClose}>
+            {t('common.close')}
+          </Button>
         </div>
-
-        {report.isSuccess ? (
-          <>
-            <Alert kind="success">{t('reports.thanks')}</Alert>
-            <Button fullWidth onClick={onClose}>
-              {t('listing.closePhoto')}
-            </Button>
-          </>
-        ) : (
-          <>
-            <fieldset className="space-y-2">
-              <legend className="mb-1 text-sm font-medium text-slate-700">{t('reports.reasonLabel')}</legend>
-              {REPORT_REASONS.map((value) => (
-                <label key={value} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-field border border-line px-3 hover:bg-paper">
-                  <input
-                    type="radio"
-                    name="reason"
-                    value={value}
-                    checked={reason === value}
-                    onChange={() => setReason(value)}
-                    className="size-4 accent-brand"
-                  />
-                  <span className="text-sm">{translateKey(t, `reports.reasons.${value}`)}</span>
-                </label>
-              ))}
-            </fieldset>
-            <div>
-              <label htmlFor={detailsId} className="mb-1 block text-sm font-medium text-slate-700">
-                {t('reports.detailsLabel')}
+      ) : (
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <fieldset className="space-y-2">
+            <legend className="mb-1.5 text-sm font-medium text-ink">{t('reports.reasonLabel')}</legend>
+            {REPORT_REASONS.map((value) => (
+              <label
+                key={value}
+                className="flex min-h-11 cursor-pointer items-center gap-3 rounded-field border border-line-strong px-3 hover:bg-paper has-[:checked]:border-brand has-[:checked]:bg-brand-50"
+              >
+                <input
+                  type="radio"
+                  name="reason"
+                  value={value}
+                  checked={reason === value}
+                  onChange={() => setReason(value)}
+                  className="size-4 accent-brand"
+                />
+                <span className="text-ink">{translateKey(t, `reports.reasons.${value}`)}</span>
               </label>
-              <textarea
-                id={detailsId}
-                value={details}
-                onChange={(event) => setDetails(event.target.value)}
-                maxLength={1000}
-                rows={3}
-                className={inputClass(false)}
-              />
-            </div>
-            {report.isError && <Alert kind="error">{translateKey(t, errorToKey(report.error))}</Alert>}
-            <div className="flex gap-2">
-              <Button type="submit" variant="danger" loading={report.isPending} disabled={!reason} className="flex-1">
-                {t('reports.send')}
-              </Button>
-              <Button variant="secondary" onClick={onClose}>
-                {t('garage.cancel')}
-              </Button>
-            </div>
-          </>
-        )}
-      </form>
-    </dialog>
+            ))}
+          </fieldset>
+          <div>
+            <FieldLabel htmlFor={detailsId} label={t('reports.detailsLabel')} />
+            <textarea
+              id={detailsId}
+              value={details}
+              onChange={(event) => setDetails(event.target.value)}
+              maxLength={1000}
+              rows={3}
+              className={inputClass(false)}
+            />
+          </div>
+          {report.isError && <Alert kind="error">{translateKey(t, errorToKey(report.error))}</Alert>}
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button type="submit" variant="danger" loading={report.isPending} disabled={!reason} fullWidth>
+              {t('reports.send')}
+            </Button>
+            <Button variant="secondary" onClick={onClose} fullWidth>
+              {t('garage.cancel')}
+            </Button>
+          </div>
+        </form>
+      )}
+    </Sheet>
   )
 }

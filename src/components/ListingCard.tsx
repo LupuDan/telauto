@@ -18,15 +18,18 @@ import { TrustBadges } from './ui/TrustBadge'
  * No shadow and no hover effect: a 1 px outline only.
  * preview: shown in the listing form (step "Publicare"), not a link and without the heart.
  * categoryConfig: only for #/styleguide, to show a test category that is not in categories.ts.
+ * coverUrl: photo not uploaded yet (preview in the listing form).
  */
 export function ListingCard({
   listing,
   preview = false,
   categoryConfig,
+  coverUrl,
 }: {
   listing: ListingSummary
   preview?: boolean
   categoryConfig?: CategoryConfig
+  coverUrl?: string
 }) {
   const { t, i18n } = useTranslation()
   const lng = i18n.resolvedLanguage
@@ -41,9 +44,9 @@ export function ListingCard({
   const content = (
     <>
       <div className="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-paper">
-        {listing.coverPath ? (
+        {coverUrl || listing.coverPath ? (
           <img
-            src={publicPhotoUrl(listing.coverPath)}
+            src={coverUrl ?? publicPhotoUrl(listing.coverPath ?? '')}
             alt=""
             loading="lazy"
             decoding="async"

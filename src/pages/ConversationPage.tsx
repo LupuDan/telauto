@@ -1,11 +1,16 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
+import { Check, CheckCheck, ChevronLeft, SendHorizontal } from 'lucide-react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
 import { Alert } from '../components/ui/Alert'
 import { Button } from '../components/ui/Button'
+import { buttonClass } from '../components/ui/buttonStyles'
+import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorState } from '../components/ui/ErrorState'
+import { inputClass } from '../components/ui/fieldStyles'
 import { LoadingState } from '../components/ui/LoadingState'
+import { SafetyNotice } from '../components/ui/SafetyNotice'
 import { useAuth } from '../features/auth/authContext'
 import { errorToKey } from '../features/auth/authErrors'
 import { publicPhotoUrl } from '../features/listings/photos'
@@ -18,9 +23,11 @@ import {
   type ConversationSummary,
   type Message,
 } from '../features/messages/api'
-import { translateKey } from '../i18n/translate'
+import { ConversationList } from '../features/messages/ConversationList'
 import { ReportButton } from '../features/reports/ReportButton'
+import { translateKey } from '../i18n/translate'
 import { formatDate, formatPrice } from '../lib/format'
+import { MessagesLayout } from './MessagesPage'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -35,53 +42,69 @@ export function ConversationPage() {
   const name = conversation.data?.otherName || t('profile.unnamed')
   usePageMeta(conversation.data ? `${name} – ${t('messages.metaTitle')}` : t('messages.metaTitle'))
 
-  if (validId && conversation.isPending) return <LoadingState />
-  if (conversation.isError) return <ErrorState error={conversation.error} onRetry={() => void conversation.refetch()} />
-  if (!validId || !conversation.data) {
-    return (
-      <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="text-2xl font-semibold">{t('messages.notFound')}</h1>
-        <Link to="/messages" className="mt-6 inline-block font-semibold text-brand hover:underline">
-          {t('messages.backToList')}
-        </Link>
-      </section>
+  let chat: ReactNode
+  if (validId && conversation.isPending) chat = <LoadingState />
+  else if (conversation.isError) {
+    chat = <ErrorState error={conversation.error} onRetry={() => void conversation.refetch()} />
+  } else if (!validId || !conversation.data) {
+    chat = (
+      <EmptyState
+        title={t('messages.notFound')}
+        text={t('messages.empty')}
+        action={
+          <Link to="/messages" className={buttonClass('secondary')}>
+            {t('messages.backToList')}
+          </Link>
+        }
+      />
+    )
+  } else {
+    chat = (
+      <>
+        <ChatHeader conversation={conversation.data} />
+        {messages.isPending ? (
+          <div className="flex-1">
+            <LoadingState />
+          </div>
+        ) : messages.isError ? (
+          <div className="flex-1">
+            <ErrorState error={messages.error} onRetry={() => void messages.refetch()} />
+          </div>
+        ) : (
+          <MessageList messages={messages.data} />
+        )}
+        <Composer conversation={conversation.data} />
+      </>
     )
   }
 
   return (
-    // the chat fills the screen below the header, so the box to type in is always visible
-    <div className="mx-auto -my-6 flex h-[calc(100dvh-7.5rem)] min-h-[26rem] max-w-3xl flex-col md:h-[calc(100dvh-5rem)]">
-      <ChatHeader conversation={conversation.data} />
-      {messages.isPending ? (
-        <div className="flex-1">
-          <LoadingState />
-        </div>
-      ) : messages.isError ? (
-        <div className="flex-1">
-          <ErrorState error={messages.error} onRetry={() => void messages.refetch()} />
-        </div>
-      ) : (
-        <MessageList messages={messages.data} />
-      )}
-      <Composer conversation={conversation.data} />
-    </div>
+    <MessagesLayout list={<ConversationList activeId={validId} />} showListOnPhone={false}>
+      {/*
+        phones: the chat fills the screen below the header, so the box to type in is always visible;
+        computers: the right column of the messages frame
+      */}
+      <div className="-mx-4 -my-6 flex h-[calc(100dvh-7.1rem)] min-h-[24rem] flex-col sm:h-[calc(100dvh-3.85rem)] md:mx-0 lg:my-0 lg:h-full">
+        {chat}
+      </div>
+    </MessagesLayout>
   )
 }
 
+/** Fixed row at the top: back (phones), the other person, and the listing (photo, title, price). */
 function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) {
   const { t, i18n } = useTranslation()
   const name = c.otherUserId ? c.otherName || t('profile.unnamed') : t('profile.deletedUser')
 
   const listing = (
     <>
-      <span className="size-12 shrink-0 overflow-hidden rounded-field bg-slate-100">
+      <span className="size-11 shrink-0 overflow-hidden rounded-field bg-paper">
         {c.listingCover && <img src={publicPhotoUrl(c.listingCover)} alt="" className="size-full object-cover" />}
       </span>
       <span className="min-w-0">
-        <span className="block truncate text-sm font-medium text-slate-800">
-          {c.listingTitle ?? t('messages.listingDeleted')}
-        </span>
-        <span className="block text-sm text-slate-600">
+        {/* user text: plain text */}
+        <span className="block truncate text-sm font-medium text-ink">{c.listingTitle ?? t('messages.listingDeleted')}</span>
+        <span className="block text-sm text-muted tabular">
           {c.listingPrice !== null && c.listingCurrency
             ? formatPrice(c.listingPrice, c.listingCurrency, i18n.resolvedLanguage)
             : ''}
@@ -92,30 +115,34 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
   )
 
   return (
-    <div className="space-y-2 border-b border-line bg-paper py-3">
-      <div className="flex items-center gap-2">
+    <div className="shrink-0 border-b border-line bg-surface px-2 py-2 lg:px-4">
+      <div className="flex items-center gap-1">
         <Link
           to="/messages"
-          className="flex size-10 items-center justify-center rounded-field text-xl text-slate-600 hover:bg-slate-100"
+          className="flex size-11 shrink-0 items-center justify-center rounded-field text-ink hover:bg-paper lg:hidden"
           aria-label={t('messages.backToList')}
         >
-          ←
+          <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={1.75} />
         </Link>
-        {c.otherUserId ? (
-          <Link to={`/u/${c.otherUserId}`} className="truncate text-lg font-semibold hover:underline">
-            {name}
-          </Link>
-        ) : (
-          <span className="truncate text-lg font-semibold text-slate-500">{name}</span>
-        )}
-        <span className="text-xs text-slate-500">{c.iAmSeller ? t('messages.roleBuyer') : t('messages.roleSeller')}</span>
+        <div className="flex min-w-0 items-center gap-2">
+          {c.otherUserId ? (
+            <Link to={`/u/${c.otherUserId}`} className="truncate font-semibold text-ink hover:underline">
+              {name}
+            </Link>
+          ) : (
+            <span className="truncate font-semibold text-muted">{name}</span>
+          )}
+          <span className="shrink-0 text-sm text-muted">
+            {c.iAmSeller ? t('messages.roleBuyer') : t('messages.roleSeller')}
+          </span>
+        </div>
       </div>
       {c.listingId && c.listingAvailable ? (
-        <Link to={`/a/${c.listingId}`} className="flex items-center gap-3 rounded-field p-1 hover:bg-slate-100">
+        <Link to={`/a/${c.listingId}`} className="mt-1 flex items-center gap-3 rounded-field p-1 hover:bg-paper">
           {listing}
         </Link>
       ) : (
-        <div className="flex items-center gap-3 p-1 opacity-70">{listing}</div>
+        <div className="mt-1 flex items-center gap-3 p-1 opacity-70">{listing}</div>
       )}
     </div>
   )
@@ -134,54 +161,54 @@ function MessageList({ messages }: { messages: Message[] }) {
   }, [messages.length])
 
   if (messages.length === 0) {
-    return (
-      <div className="flex flex-1 items-center justify-center p-6 text-center text-slate-500">
-        {t('messages.startHint')}
-      </div>
-    )
+    return <div className="flex flex-1 items-center justify-center p-6 text-center text-muted">{t('messages.startHint')}</div>
   }
 
   return (
-    <div className="flex-1 space-y-2 overflow-y-auto py-4" role="log" aria-live="polite" aria-label={t('messages.title')}>
-      <div className="mx-auto max-w-prose px-2">
-        <Alert kind="warning">{t('messages.safetyNotice')}</Alert>
-      </div>
+    <div
+      className="min-h-0 flex-1 space-y-1 overflow-y-auto bg-paper px-3 py-4 lg:px-5"
+      role="log"
+      aria-live="polite"
+      aria-label={t('messages.title')}
+    >
+      <SafetyNotice compact className="mx-auto mb-3 max-w-prose">
+        {t('messages.safetyNotice')}
+      </SafetyNotice>
       {messages.map((message, index) => {
         const mine = message.senderId === user?.id
         const day = formatDate(message.createdAt, lng)
         const showDay = index === 0 || day !== formatDate(messages[index - 1].createdAt, lng)
         return (
-          <div key={message.id}>
-            {showDay && <p className="my-3 text-center text-xs font-medium text-slate-500">{day}</p>}
+          <div key={message.id} className={`flex flex-col ${mine ? 'items-end' : 'items-start'}`}>
+            {showDay && <p className="my-3 self-center text-sm text-muted">{day}</p>}
             {!mine && message.isFlagged && (
-              <div className="mb-1 max-w-[85%] rounded-field border border-danger-200 bg-danger-50 px-3 py-2 text-xs text-danger" role="note">
-                <span aria-hidden="true">⚠️ </span>
+              <SafetyNotice compact className="mb-1 max-w-[85%]">
                 {t('messages.flaggedWarning')}
-              </div>
+              </SafetyNotice>
             )}
-            <div className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[85%] rounded-panel px-3 py-2 shadow-sm ${
-                  mine ? 'rounded-br-sm bg-brand text-white' : 'rounded-bl-sm border border-line bg-surface text-ink'
-                }`}
-              >
-                {/* user text: React shows it as plain text, never as HTML */}
-                <p className="break-words whitespace-pre-wrap">{message.body}</p>
-                <p className={`mt-0.5 text-right text-[11px] ${mine ? 'text-brand-100' : 'text-slate-500'}`}>
-                  <time dateTime={message.createdAt}>{time.format(new Date(message.createdAt))}</time>
-                  {mine && (
-                    <span className="ml-1" aria-label={message.readAt ? t('messages.read') : t('messages.sent')}>
-                      {message.readAt ? '✓✓' : '✓'}
-                    </span>
-                  )}
-                </p>
-              </div>
+            {/* mine: blue, white text, on the right; theirs: white with an outline, on the left */}
+            <div
+              className={`max-w-[85%] rounded-panel px-3.5 py-2 ${
+                mine ? 'rounded-br-md bg-brand text-white' : 'rounded-bl-md border border-line bg-surface text-ink'
+              }`}
+            >
+              {/* user text: React shows it as plain text, never as HTML */}
+              <p className="break-words whitespace-pre-wrap">{message.body}</p>
             </div>
-            {!mine && message.senderId && (
-              <div className="mt-0.5 pl-1">
-                <ReportButton variant="link" target={{ messageId: message.id }} />
-              </div>
-            )}
+            <p className="mt-0.5 mb-1.5 flex items-center gap-1 px-1 text-xs text-muted tabular">
+              <time dateTime={message.createdAt}>{time.format(new Date(message.createdAt))}</time>
+              {mine &&
+                (message.readAt ? (
+                  <CheckCheck aria-label={t('messages.read')} className="size-3.5 text-brand" strokeWidth={2} />
+                ) : (
+                  <Check aria-label={t('messages.sent')} className="size-3.5" strokeWidth={2} />
+                ))}
+              {!mine && message.senderId && (
+                <span className="ml-2">
+                  <ReportButton variant="link" target={{ messageId: message.id }} />
+                </span>
+              )}
+            </p>
           </div>
         )
       })}
@@ -198,7 +225,7 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
 
   if (!conversation.canReply) {
     return (
-      <p className="border-t border-line p-3 text-center text-sm text-slate-600">
+      <p className="shrink-0 border-t border-line bg-surface p-3 text-center text-sm text-muted">
         {conversation.otherUserId ? t('messages.cannotReplyBlocked') : t('messages.cannotReplyDeleted')}
       </p>
     )
@@ -229,8 +256,10 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
   }
 
   return (
-    // same background as the page: only the text box stands out
-    <form onSubmit={handleSubmit} className="space-y-2 border-t border-line bg-paper pt-3 pb-1">
+    <form
+      onSubmit={handleSubmit}
+      className="shrink-0 space-y-2 border-t border-line bg-surface px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] lg:px-4"
+    >
       {send.isError && <Alert kind="error">{translateKey(t, errorToKey(send.error))}</Alert>}
       <div className="flex items-end gap-2">
         <label htmlFor="message-text" className="sr-only">
@@ -245,15 +274,21 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
           maxLength={MAX_MESSAGE_LENGTH}
           rows={Math.min(5, Math.max(1, text.split('\n').length))}
           placeholder={t('messages.placeholder')}
-          className="block min-h-11 w-full flex-1 resize-none rounded-card border border-line-strong bg-surface px-3 py-2 text-base outline-none focus:border-brand focus:ring-2 focus:ring-brand-100"
+          className={`${inputClass(false)} resize-none`}
         />
-        <Button type="submit" loading={send.isPending} disabled={!text.trim()} aria-label={t('messages.send')}>
-          <span aria-hidden="true">➤</span>
+        <Button
+          type="submit"
+          loading={send.isPending}
+          disabled={!text.trim()}
+          aria-label={t('messages.send')}
+          className="shrink-0 px-3 sm:px-4"
+        >
+          <SendHorizontal aria-hidden="true" className="size-5" strokeWidth={1.75} />
           <span className="hidden sm:inline">{t('messages.send')}</span>
         </Button>
       </div>
       {text.length > MAX_MESSAGE_LENGTH - 200 && (
-        <p className="text-right text-xs text-slate-500">
+        <p className="text-right text-sm text-muted tabular">
           {text.length} / {MAX_MESSAGE_LENGTH}
         </p>
       )}

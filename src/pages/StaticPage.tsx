@@ -30,8 +30,8 @@ export function StaticPage() {
   return (
     <article className="mx-auto max-w-3xl space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="type-h1 text-ink">{title}</h1>
+        <p className="text-sm text-muted">
           {t('pages.common.updated', { date: formatDate(LAST_UPDATED, i18n.resolvedLanguage) })}
         </p>
         {LEGAL_PAGES.includes(name) && <Alert kind="warning">{t('pages.common.draftNotice')}</Alert>}
@@ -39,7 +39,7 @@ export function StaticPage() {
 
       {name === 'contact' && (
         <p className="rounded-card border border-brand-100 bg-brand-50 p-4">
-          <span className="block text-sm text-slate-600">{t('pages.common.contactEmail')}</span>
+          <span className="block text-sm text-muted">{t('pages.common.contactEmail')}</span>
           <a href={`mailto:${CONTACT_EMAIL}`} className="text-lg font-semibold break-all text-brand hover:underline">
             {CONTACT_EMAIL}
           </a>
@@ -49,9 +49,9 @@ export function StaticPage() {
       {Array.isArray(sections) &&
         sections.map((section) => (
           <section key={section.heading} className="space-y-2">
-            <h2 className="text-lg font-semibold">{section.heading}</h2>
+            <h2 className="type-h2 text-ink">{section.heading}</h2>
             {section.paragraphs.map((paragraph, index) => (
-              <p key={index} className="leading-relaxed text-slate-700">
+              <p key={index} className="leading-relaxed text-ink">
                 {paragraph}
               </p>
             ))}

@@ -16,6 +16,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { ChevronLeft, ChevronRight, ImagePlus, Trash2, type LucideIcon } from 'lucide-react'
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from '../../components/ui/Alert'
@@ -26,11 +27,18 @@ type Props = {
   photos: PhotoItem[]
   onChange: (photos: PhotoItem[]) => void
   minPhotos: number
+  /** what the category asks for ("Adaugă cel puțin 5 poze: față, spate, lateral, interior, bord.") */
+  needs: string
   /** translated error (e.g. "add at least 3 photos") */
   error?: string
 }
 
-export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
+/**
+ * Photo upload (plan de design, section 5: ImageUploader): an add area that says what the category
+ * needs, thumbnails that can be reordered by dragging (or with the arrows), the first one marked
+ * "Poza principală".
+ */
+export function PhotoUploader({ photos, onChange, minPhotos, needs, error }: Props) {
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const [processing, setProcessing] = useState(0)
@@ -90,9 +98,12 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-600">
-        {t('listingForm.photosHint', { min: minPhotos, max: MAX_PHOTOS })}
-      </p>
+      <div>
+        <p className="font-medium text-ink">{needs}</p>
+        <p className="mt-0.5 text-sm text-muted">
+          {t('listingForm.photosHint', { min: minPhotos, max: MAX_PHOTOS })}
+        </p>
+      </div>
 
       {error && <Alert kind="error">{error}</Alert>}
       {failed > 0 && <Alert kind="warning">{t('listingForm.photoFailed', { count: failed })}</Alert>}
@@ -113,24 +124,27 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
             {Array.from({ length: processing }, (_, i) => (
               <li
                 key={`processing-${i}`}
-                className="flex aspect-[4/3] items-center justify-center rounded-field border border-line bg-slate-100 text-slate-500"
+                className="flex aspect-[4/3] items-center justify-center rounded-card border border-line bg-paper text-muted"
               >
                 <Spinner />
                 <span className="sr-only">{t('listingForm.photoProcessing')}</span>
               </li>
             ))}
             {free > 0 && (
-              <li>
+              <li className={photos.length === 0 && processing === 0 ? 'col-span-full' : undefined}>
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-1 rounded-field border-2 border-dashed border-line-strong bg-surface text-sm font-semibold text-brand hover:border-brand hover:bg-brand-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  className={`flex w-full flex-col items-center justify-center gap-1.5 rounded-card border-2 border-dashed bg-paper px-3 text-center hover:border-brand hover:bg-brand-50 ${
+                    error ? 'border-danger' : 'border-line-strong'
+                  } ${photos.length === 0 && processing === 0 ? 'min-h-48 py-8' : 'aspect-[4/3]'}`}
                 >
-                  <span aria-hidden="true" className="text-2xl">
-                    +
-                  </span>
-                  {t('listingForm.addPhotos')}
-                  <span className="text-xs font-normal text-slate-500">
+                  <ImagePlus aria-hidden="true" className="size-8 text-brand" strokeWidth={1.75} />
+                  <span className="font-semibold text-brand">{t('listingForm.addPhotos')}</span>
+                  {photos.length === 0 && processing === 0 && (
+                    <span className="text-sm text-muted">{t('listingForm.addPhotosHint')}</span>
+                  )}
+                  <span className="text-sm text-muted tabular">
                     {photos.length}/{MAX_PHOTOS}
                   </span>
                 </button>
@@ -149,7 +163,7 @@ export function PhotoUploader({ photos, onChange, minPhotos, error }: Props) {
         onChange={handleFiles}
       />
 
-      {photos.length > 1 && <p className="text-xs text-slate-500">{t('listingForm.photosReorderHint')}</p>}
+      {photos.length > 1 && <p className="text-sm text-muted">{t('listingForm.photosReorderHint')}</p>}
     </div>
   )
 }
@@ -170,8 +184,8 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`relative overflow-hidden rounded-field border bg-surface ${
-        isDragging ? 'z-10 border-brand shadow-lg' : 'border-line'
+      className={`relative overflow-hidden rounded-card border bg-surface ${
+        isDragging ? 'z-10 border-brand shadow-float' : index === 0 ? 'border-brand' : 'border-line'
       }`}
     >
       <div
@@ -189,23 +203,27 @@ function SortablePhoto({ photo, index, count, onRemove, onMove }: SortablePhotoP
       </div>
 
       {index === 0 && (
-        <span className="absolute top-1.5 left-1.5 rounded bg-brand px-1.5 py-0.5 text-xs font-semibold text-white">
+        <span className="absolute top-1.5 left-1.5 rounded-full bg-brand px-2 py-0.5 type-micro text-white">
           {t('listingForm.mainPhoto')}
         </span>
       )}
 
       <div className="flex items-center justify-between gap-1 border-t border-line p-1">
         <div className="flex gap-1">
-          <IconButton label={t('listingForm.photoMoveLeft')} disabled={index === 0} onClick={() => onMove(-1)}>
-            ←
-          </IconButton>
-          <IconButton label={t('listingForm.photoMoveRight')} disabled={index === count - 1} onClick={() => onMove(1)}>
-            →
-          </IconButton>
+          <IconButton
+            label={t('listingForm.photoMoveLeft')}
+            disabled={index === 0}
+            onClick={() => onMove(-1)}
+            Icon={ChevronLeft}
+          />
+          <IconButton
+            label={t('listingForm.photoMoveRight')}
+            disabled={index === count - 1}
+            onClick={() => onMove(1)}
+            Icon={ChevronRight}
+          />
         </div>
-        <IconButton label={t('listingForm.photoRemove')} onClick={onRemove} danger>
-          ✕
-        </IconButton>
+        <IconButton label={t('listingForm.photoRemove')} onClick={onRemove} danger Icon={Trash2} />
       </div>
     </li>
   )
@@ -216,13 +234,13 @@ function IconButton({
   onClick,
   disabled,
   danger,
-  children,
+  Icon,
 }: {
   label: string
   onClick: () => void
   disabled?: boolean
   danger?: boolean
-  children: string
+  Icon: LucideIcon
 }) {
   return (
     <button
@@ -231,11 +249,11 @@ function IconButton({
       title={label}
       disabled={disabled}
       onClick={onClick}
-      className={`flex size-9 items-center justify-center rounded-md text-base font-semibold disabled:opacity-30 ${
-        danger ? 'text-danger hover:bg-danger-50' : 'text-slate-700 hover:bg-slate-100'
+      className={`flex size-11 items-center justify-center rounded-field disabled:opacity-30 ${
+        danger ? 'text-danger hover:bg-danger-50' : 'text-ink hover:bg-paper'
       }`}
     >
-      <span aria-hidden="true">{children}</span>
+      <Icon aria-hidden="true" className="size-5" strokeWidth={1.75} />
     </button>
   )
 }

@@ -1,20 +1,25 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState, type ReactNode } from 'react'
-import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
+import { Check, ChevronLeft } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Controller, FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { CategoryIcon } from '../../components/CategoryIcon'
 import { useNavigate } from 'react-router'
+import { CategoryIcon } from '../../components/CategoryIcon'
+import { ListingCard } from '../../components/ListingCard'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { CheckboxField } from '../../components/ui/CheckboxField'
+import { ChipGroup } from '../../components/ui/ChipGroup'
+import { FieldError, FieldLabel } from '../../components/ui/FieldMessage'
+import { inputClass } from '../../components/ui/fieldStyles'
 import { SelectField } from '../../components/ui/SelectField'
 import { TextField } from '../../components/ui/TextField'
-import { inputClass } from '../../components/ui/fieldStyles'
 import { useFieldError } from '../../components/ui/useFieldError'
 import { translateKey } from '../../i18n/translate'
-import { CATEGORIES, CATEGORY_SLUGS, categoryBySlug, type CategoryConfig } from '../../lib/categories'
-import { localizedName, normalizePhone, PHONE_PATTERN } from '../../lib/format'
+import { buildAttributes, CATEGORIES, CATEGORY_SLUGS, categoryBySlug, type CategoryConfig } from '../../lib/categories'
+import { currencyUnit, localizedName, normalizePhone, PHONE_PATTERN } from '../../lib/format'
+import { isValidImei, isValidVin, parsePrice } from '../../lib/validators'
 import { useAuth } from '../auth/authContext'
 import { errorToKey } from '../auth/authErrors'
 import { updateMyPhone } from '../profile/api'
@@ -129,15 +134,17 @@ export function ListingWizard(props: Props) {
     }
     setSubmitError(null)
     try {
+      let savedId: string
       if (props.mode === 'new') {
-        await createListing(user.id, values, photos, setProgress)
+        savedId = await createListing(user.id, values, photos, setProgress)
         clearLocalDraft()
       } else {
+        savedId = props.listingId
         await updateListing(user.id, props.listingId, values, photos, { publish: isDraftEdit }, setProgress)
         void queryClient.invalidateQueries({ queryKey: listingKeys.edit(props.listingId) })
       }
       void queryClient.invalidateQueries({ queryKey: listingKeys.mine(user.id) })
-      navigate(`/account?tab=listings&notice=${willPublish ? 'published' : 'saved'}`, { replace: true })
+      navigate(`/account?tab=listings&notice=${willPublish ? 'published' : 'saved'}&id=${savedId}`, { replace: true })
     } catch (error) {
       setProgress(null)
       if (error instanceof DraftSavedError) {
@@ -161,12 +168,14 @@ export function ListingWizard(props: Props) {
 
   const blocked = profile.data?.is_blocked === true
 
+  const isLast = step === 'publish'
+
   return (
     <FormProvider {...methods}>
       <form
         onSubmit={(event) => {
           // Enter in a field moves to the next step; only the last step really submits.
-          if (step !== 'publish') {
+          if (!isLast) {
             event.preventDefault()
             if (step !== 'category') void next()
             return
@@ -184,8 +193,11 @@ export function ListingWizard(props: Props) {
           </div>
         )}
 
-        <section className="rounded-card border border-line bg-surface p-4 shadow-sm sm:p-6">
-          <h2 className="mb-4 text-xl font-semibold">{translateKey(t, `listingForm.steps.${step}`)}</h2>
+        {/* every step is one screen */}
+        <section aria-labelledby="step-heading" className="rounded-panel border border-line bg-surface p-4 sm:p-6">
+          <h2 id="step-heading" className="mb-5 type-h2 text-ink">
+            {translateKey(t, `listingForm.steps.${step}`)}
+          </h2>
 
           {step === 'category' && <CategoryStep selected={categorySlug} onChoose={chooseCategory} />}
 
@@ -197,6 +209,7 @@ export function ListingWizard(props: Props) {
                 if (photoError && next.length >= category.minPhotos) setPhotoError(undefined)
               }}
               minPhotos={category.minPhotos}
+              needs={translateKey(t, `listingForm.photoNeeds.${category.slug}`)}
               error={photoError}
             />
           )}
@@ -211,53 +224,22 @@ export function ListingWizard(props: Props) {
             </div>
           )}
 
-          {step === 'publish' && category && (
-            <PublishStep category={category} photosCount={photos.length} />
-          )}
+          {step === 'publish' && category && <PublishStep category={category} photos={photos} />}
 
           {submitError && (
-            <div className="mt-4">
+            <div className="mt-5">
               <Alert kind="error">{translateKey(t, submitError)}</Alert>
             </div>
           )}
-          {progress && (
-            <div className="mt-4" aria-live="polite">
-              <Alert kind="info">
-                {progress.stage === 'photos'
-                  ? t('listingForm.progressPhotos', { done: progress.done, total: progress.total })
-                  : progress.stage === 'publishing'
-                    ? t('listingForm.progressPublishing')
-                    : t('listingForm.progressSaving')}
-              </Alert>
-            </div>
-          )}
+          {progress && <SaveProgressBar progress={progress} />}
         </section>
 
-        {step !== 'category' && (
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <Button
-              variant="secondary"
-              disabled={stepIndex === 0 || Boolean(progress)}
-              onClick={() => goTo(steps[stepIndex - 1])}
-            >
-              ← {t('listingForm.back')}
-            </Button>
-            {step === 'publish' ? (
-              <Button type="submit" loading={Boolean(progress)} disabled={blocked}>
-                {willPublish ? t('listingForm.publish') : t('listingForm.saveChanges')}
-              </Button>
-            ) : (
-              <Button onClick={() => void next()}>{t('listingForm.next')} →</Button>
-            )}
-          </div>
-        )}
-
         {props.mode === 'new' && step !== 'category' && (
-          <p className="mt-4 text-center text-xs text-slate-500">
+          <p className="mt-4 text-center text-sm text-muted">
             {t('listingForm.localDraftHint')}{' '}
             <button
               type="button"
-              className="underline"
+              className="inline-flex min-h-11 items-center font-medium text-brand underline-offset-2 hover:underline"
               onClick={() => {
                 clearLocalDraft()
                 methods.reset(EMPTY_LISTING)
@@ -269,22 +251,129 @@ export function ListingWizard(props: Props) {
             </button>
           </p>
         )}
+
+        {/*
+          "Continuă" stays at the bottom of the phone screen, "Înapoi" is a link above it
+          (plan de design, 6.4). On computers both sit under the form.
+        */}
+        {step !== 'category' && (
+          <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 pt-1 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-float lg:static lg:mt-4 lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none">
+            <div className="mx-auto flex max-w-xl flex-col lg:mx-0 lg:max-w-none lg:flex-row lg:items-center lg:justify-between">
+              {stepIndex > 0 ? (
+                <button
+                  type="button"
+                  disabled={Boolean(progress)}
+                  onClick={() => goTo(steps[stepIndex - 1])}
+                  className="inline-flex min-h-11 items-center gap-1 self-start font-medium text-brand hover:underline disabled:text-muted lg:self-auto"
+                >
+                  <ChevronLeft aria-hidden="true" className="size-5" strokeWidth={1.75} />
+                  {t('listingForm.back')}
+                </button>
+              ) : (
+                <span />
+              )}
+              {isLast ? (
+                <Button
+                  type="submit"
+                  variant={willPublish ? 'action' : 'primary'}
+                  loading={Boolean(progress)}
+                  disabled={blocked}
+                  className="w-full lg:w-auto lg:min-w-56"
+                >
+                  {willPublish ? t('listingForm.publish') : t('listingForm.saveChanges')}
+                </Button>
+              ) : (
+                <Button onClick={() => void next()} className="w-full lg:w-auto lg:min-w-56">
+                  {t('listingForm.next')}
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
       </form>
     </FormProvider>
   )
 }
 
+/** While publishing: a progress bar with "Se încarcă pozele: 2 din 5". */
+function SaveProgressBar({ progress }: { progress: SaveProgress }) {
+  const { t } = useTranslation()
+  const percent =
+    progress.stage === 'photos' && progress.total > 0
+      ? Math.round((progress.done / progress.total) * 100)
+      : progress.stage === 'publishing'
+        ? 100
+        : 5
+  return (
+    <div className="mt-5 space-y-2" aria-live="polite">
+      <p className="text-sm text-ink">
+        {progress.stage === 'photos'
+          ? t('listingForm.progressPhotos', { done: progress.done, total: progress.total })
+          : progress.stage === 'publishing'
+            ? t('listingForm.progressPublishing')
+            : t('listingForm.progressSaving')}
+      </p>
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={percent}
+        className="h-2 overflow-hidden rounded-full bg-line"
+      >
+        <div className="h-full rounded-full bg-brand transition-all" style={{ width: `${percent}%` }} />
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Phones: "Pasul 2 din 5" and a progress bar. Computers: all steps on one row, numbered,
+ * the finished ones with a tick (plan de design, 6.4).
+ */
 function StepIndicator({ steps, current }: { steps: WizardStep[]; current: number }) {
   const { t } = useTranslation()
+  const stepOf = t('listingForm.stepOf', { current: current + 1, total: steps.length })
   return (
-    <div className="mb-4">
-      <p className="mb-2 text-sm text-slate-600">
-        {t('listingForm.stepOf', { current: current + 1, total: steps.length })}
-      </p>
-      <ol className="flex gap-1" aria-hidden="true">
-        {steps.map((s, i) => (
-          <li key={s} className={`h-1.5 flex-1 rounded-full ${i <= current ? 'bg-brand' : 'bg-slate-200'}`} />
-        ))}
+    <div className="mb-5">
+      <div className="lg:hidden">
+        <p className="mb-2 text-sm font-medium text-ink">
+          {stepOf}
+          <span className="font-normal text-muted"> · {translateKey(t, `listingForm.stepNames.${steps[current]}`)}</span>
+        </p>
+        <div
+          role="progressbar"
+          aria-label={stepOf}
+          aria-valuemin={1}
+          aria-valuemax={steps.length}
+          aria-valuenow={current + 1}
+          className="h-1.5 overflow-hidden rounded-full bg-line"
+        >
+          <div
+            className="h-full rounded-full bg-brand transition-all"
+            style={{ width: `${((current + 1) / steps.length) * 100}%` }}
+          />
+        </div>
+      </div>
+      <ol className="hidden items-center gap-2 lg:flex" aria-label={stepOf}>
+        {steps.map((step, index) => {
+          const done = index < current
+          const active = index === current
+          return (
+            <li key={step} className="flex flex-1 items-center gap-2 last:flex-none" aria-current={active ? 'step' : undefined}>
+              <span
+                className={`flex size-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold tabular ${
+                  active ? 'bg-brand text-white' : done ? 'bg-brand-50 text-brand' : 'bg-line text-muted'
+                }`}
+              >
+                {done ? <Check aria-hidden="true" className="size-4" strokeWidth={2.5} /> : index + 1}
+              </span>
+              <span className={`text-sm whitespace-nowrap ${active ? 'font-semibold text-ink' : 'text-muted'}`}>
+                {translateKey(t, `listingForm.stepNames.${step}`)}
+              </span>
+              {index < steps.length - 1 && <span aria-hidden="true" className="h-px min-w-4 flex-1 bg-line" />}
+            </li>
+          )
+        })}
       </ol>
     </div>
   )
@@ -300,7 +389,7 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
             type="button"
             onClick={() => onChoose(slug)}
             aria-pressed={selected === slug}
-            className={`flex w-full flex-col items-center gap-2 rounded-card border p-4 text-center font-medium transition hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+            className={`flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-card border p-4 text-center font-medium text-ink hover:border-brand ${
               selected === slug ? 'border-brand bg-brand-50' : 'border-line bg-surface'
             }`}
           >
@@ -308,7 +397,7 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
               <CategoryIcon name={CATEGORIES[slug].icon} className="size-7" />
             </span>
             <span>{t(`categories.${slug}`)}</span>
-            <span className="text-xs font-normal text-slate-500">
+            <span className="text-sm font-normal text-muted">
               {t('listingForm.minPhotosShort', { count: CATEGORIES[slug].minPhotos })}
             </span>
           </button>
@@ -320,6 +409,7 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
 
 function DetailsStep({ category }: { category: CategoryConfig }) {
   const { t, i18n } = useTranslation()
+  const lng = i18n.resolvedLanguage
   const fieldError = useFieldError()
   const localities = useLocalities()
   const {
@@ -327,12 +417,12 @@ function DetailsStep({ category }: { category: CategoryConfig }) {
     control,
     formState: { errors },
   } = useFormContext<ListingFormValues>()
-  const description = useWatch({ control, name: 'description' }) ?? ''
+  const [description, currency] = useWatch({ control, name: ['description', 'currency'] })
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <TextField
-        label={`${t('listingForm.title')} *`}
+        label={t('listingForm.title')}
         hint={t('listingForm.titleHint')}
         maxLength={100}
         error={fieldError(errors.title)}
@@ -340,59 +430,74 @@ function DetailsStep({ category }: { category: CategoryConfig }) {
       />
 
       <div>
-        <label htmlFor="listing-description" className="mb-1 block text-sm font-medium text-slate-700">
-          {t('listingForm.description')}
-        </label>
+        <FieldLabel htmlFor="listing-description" label={t('listingForm.description')} optional />
         <textarea
           id="listing-description"
           rows={6}
           maxLength={5000}
           aria-invalid={errors.description ? true : undefined}
+          aria-describedby={errors.description ? 'listing-description-error' : undefined}
           className={inputClass(Boolean(errors.description))}
           {...register('description')}
         />
-        <p className="mt-1 text-right text-xs text-slate-500">{description.length}/5000</p>
+        {errors.description ? (
+          <FieldError id="listing-description-error">{fieldError(errors.description) ?? ''}</FieldError>
+        ) : (
+          <p className="mt-1.5 text-right text-sm text-muted tabular">{(description ?? '').length}/5000</p>
+        )}
       </div>
 
-      <div className="grid grid-cols-[1fr_7rem] gap-3">
+      <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-start">
         <TextField
-          label={`${t('listingForm.price')} *`}
+          label={t('listingForm.price')}
           inputMode="decimal"
+          unit={currencyUnit(currency, lng)}
           error={fieldError(errors.price)}
           {...register('price')}
         />
-        <SelectField label={t('listingForm.currency')} {...register('currency')}>
-          <option value="MDL">MDL</option>
-          <option value="EUR">EUR</option>
-        </SelectField>
+        <Controller
+          control={control}
+          name="currency"
+          render={({ field }) => (
+            <ChipGroup
+              label={t('listingForm.currency')}
+              options={[
+                { value: 'MDL', label: currencyUnit('MDL', lng) },
+                { value: 'EUR', label: '€' },
+              ]}
+              value={field.value}
+              // a currency is always chosen: pressing the chosen one again keeps it
+              onChange={(next) => {
+                if (next) field.onChange(next)
+              }}
+            />
+          )}
+        />
       </div>
       <CheckboxField label={t('listingForm.negotiable')} {...register('negotiable')} />
 
-      <fieldset>
-        <legend className="mb-1 text-sm font-medium text-slate-700">{t('listingForm.condition')} *</legend>
-        <div className="flex flex-wrap gap-2">
-          {(['new', 'used'] as const).map((value) => (
-            <label
-              key={value}
-              className="flex min-h-11 cursor-pointer items-center gap-2 rounded-field border border-line-strong bg-surface px-4 has-[:checked]:border-brand has-[:checked]:bg-brand-50"
-            >
-              <input type="radio" value={value} className="accent-brand" {...register('condition')} />
-              {translateKey(t, `listingForm.conditionOptions.${category.conditionLabels}.${value}`)}
-            </label>
-          ))}
-        </div>
-        {errors.condition && <p className="mt-1 text-sm text-danger">{fieldError(errors.condition)}</p>}
-      </fieldset>
+      <Controller
+        control={control}
+        name="condition"
+        render={({ field }) => (
+          <ChipGroup
+            label={t('listingForm.condition')}
+            options={(['new', 'used'] as const).map((value) => ({
+              value,
+              label: translateKey(t, `listingForm.conditionOptions.${category.conditionLabels}.${value}`),
+            }))}
+            value={field.value}
+            onChange={(next) => field.onChange(next)}
+            error={fieldError(errors.condition)}
+          />
+        )}
+      />
 
-      <SelectField
-        label={`${t('listingForm.locality')} *`}
-        error={fieldError(errors.localityId)}
-        {...register('localityId')}
-      >
+      <SelectField label={t('listingForm.locality')} error={fieldError(errors.localityId)} {...register('localityId')}>
         <option value="">{t('listingForm.choose')}</option>
         {(localities.data ?? []).map((locality) => (
           <option key={locality.id} value={String(locality.id)}>
-            {localizedName(locality, i18n.resolvedLanguage)}
+            {localizedName(locality, lng)}
           </option>
         ))}
       </SelectField>
@@ -409,9 +514,10 @@ function PrivateField({ field }: { field: 'imei' | 'vin' }) {
   } = useFormContext<ListingFormValues>()
 
   return (
-    <div className="rounded-field border border-brand-100 bg-brand-50/50 p-4">
+    <div className="rounded-card border border-line bg-paper p-4">
       <TextField
         label={t(field === 'imei' ? 'listingForm.imei' : 'listingForm.vin')}
+        optional
         hint={t(field === 'imei' ? 'listingForm.imeiHint' : 'listingForm.vinHint')}
         inputMode={field === 'imei' ? 'numeric' : 'text'}
         autoCapitalize={field === 'vin' ? 'characters' : undefined}
@@ -424,35 +530,43 @@ function PrivateField({ field }: { field: 'imei' | 'vin' }) {
   )
 }
 
-function PublishStep({ category, photosCount }: { category: CategoryConfig; photosCount: number }) {
+/** Contact, then the card exactly as it will appear in the list (plan de design, 6.4). */
+function PublishStep({ category, photos }: { category: CategoryConfig; photos: PhotoItem[] }) {
   const { t } = useTranslation()
+  const { user } = useAuth()
   const { control } = useFormContext<ListingFormValues>()
-  const [title, price, currency] = useWatch({ control, name: ['title', 'price', 'currency'] })
+  const values = useWatch({ control }) as ListingFormValues
+  // the card shows "azi, 14:32": the moment the step was opened
+  const [now] = useState(() => new Date().toISOString())
+
+  const preview = {
+    id: 'preview',
+    userId: user?.id ?? '',
+    categoryId: category.id,
+    title: values.title,
+    price: parsePrice(values.price),
+    currency: values.currency,
+    negotiable: values.negotiable,
+    condition: values.condition,
+    localityId: Number(values.localityId),
+    attributes: buildAttributes(category, values.attributes ?? {}),
+    createdAt: now,
+    coverPath: null,
+    hasImei: category.privateField === 'imei' && isValidImei(values.imei ?? ''),
+    hasVin: category.privateField === 'vin' && isValidVin(values.vin ?? ''),
+  }
 
   return (
     <div className="space-y-6">
       <PhoneSection />
       <div>
-        <h3 className="mb-2 font-semibold">{t('listingForm.summary')}</h3>
-        <dl className="divide-y divide-slate-100 rounded-field border border-line text-sm">
-          <SummaryRow label={t('listingForm.summaryCategory')}>{t(`categories.${category.slug}`)}</SummaryRow>
-          <SummaryRow label={t('listingForm.title')}>{title}</SummaryRow>
-          <SummaryRow label={t('listingForm.price')}>
-            {price} {currency}
-          </SummaryRow>
-          <SummaryRow label={t('listingForm.summaryPhotos')}>{photosCount}</SummaryRow>
-        </dl>
+        <h3 className="mb-1 font-semibold text-ink">{t('listingForm.previewTitle')}</h3>
+        <p className="mb-3 text-sm text-muted">{t('listingForm.previewHint')}</p>
+        <div className="w-[min(100%,15rem)]">
+          <ListingCard listing={preview} preview coverUrl={photos[0]?.previewUrl} />
+        </div>
       </div>
-      <p className="text-xs text-slate-500">{t('listingForm.publishHint')}</p>
-    </div>
-  )
-}
-
-function SummaryRow({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex justify-between gap-4 px-3 py-2">
-      <dt className="text-slate-500">{label}</dt>
-      <dd className="text-right font-medium break-words">{children}</dd>
+      <p className="text-sm text-muted">{t('listingForm.publishHint')}</p>
     </div>
   )
 }
@@ -490,7 +604,7 @@ function PhoneSection() {
 
   return (
     <div>
-      <h3 className="mb-2 font-semibold">{t('listingForm.contactTitle')}</h3>
+      <h3 className="mb-2 font-semibold text-ink">{t('listingForm.contactTitle')}</h3>
       {editing ? (
         <div className="flex flex-wrap items-end gap-2">
           <TextField
@@ -509,7 +623,7 @@ function PhoneSection() {
         </div>
       ) : (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-field border border-line p-3">
-          <span className="text-sm">
+          <span className="text-ink">
             {phone.data ? (
               <>
                 {t('account.phone')}: <strong>{phone.data}</strong>
@@ -529,7 +643,7 @@ function PhoneSection() {
           </Button>
         </div>
       )}
-      <p className="mt-1 text-xs text-slate-500">{t('account.phoneHint')}</p>
+      <p className="mt-1.5 text-sm text-muted">{t('account.phoneHint')}</p>
     </div>
   )
 }

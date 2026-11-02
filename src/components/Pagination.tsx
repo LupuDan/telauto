@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Link } from 'react-router'
 
 type PaginationProps = {
@@ -21,7 +22,7 @@ function visiblePages(page: number, pageCount: number): (number | 'gap')[] {
 }
 
 const itemClass =
-  'flex min-h-11 min-w-11 items-center justify-center rounded-field border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand'
+  'flex min-h-11 min-w-11 items-center justify-center rounded-field border px-3 font-medium tabular '
 
 export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
   const { t } = useTranslation()
@@ -31,13 +32,13 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
     <nav aria-label={t('search.pagination')} className="flex flex-wrap items-center justify-center gap-2">
       {page > 1 && (
         <Link to={hrefFor(page - 1)} className={`${itemClass} border-line-strong bg-surface hover:bg-paper`}>
-          <span aria-hidden="true">←</span>
+          <ChevronLeft aria-hidden="true" className="size-5" strokeWidth={1.75} />
           <span className="sr-only sm:not-sr-only sm:ml-1">{t('search.previous')}</span>
         </Link>
       )}
       {visiblePages(page, pageCount).map((item, index) =>
         item === 'gap' ? (
-          <span key={`gap-${index}`} aria-hidden="true" className="px-1 text-slate-400">
+          <span key={`gap-${index}`} aria-hidden="true" className="px-1 text-muted">
             …
           </span>
         ) : item === page ? (
@@ -58,7 +59,7 @@ export function Pagination({ page, pageCount, hrefFor }: PaginationProps) {
       {page < pageCount && (
         <Link to={hrefFor(page + 1)} className={`${itemClass} border-line-strong bg-surface hover:bg-paper`}>
           <span className="sr-only sm:not-sr-only sm:mr-1">{t('search.next')}</span>
-          <span aria-hidden="true">→</span>
+          <ChevronRight aria-hidden="true" className="size-5" strokeWidth={1.75} />
         </Link>
       )}
     </nav>

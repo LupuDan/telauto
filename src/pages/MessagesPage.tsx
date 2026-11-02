@@ -1,87 +1,55 @@
+import { MessageCircle } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
-import { ErrorState } from '../components/ui/ErrorState'
-import { LoadingState } from '../components/ui/LoadingState'
-import { publicPhotoUrl } from '../features/listings/photos'
-import { useConversations, type ConversationSummary } from '../features/messages/api'
-import { formatPrice, formatShortDate } from '../lib/format'
+import { ConversationList } from '../features/messages/ConversationList'
 
+/**
+ * Messages (plan de design, 6.5). Phones: two screens (this list, then the conversation).
+ * Computers: two columns, the list on the left (360 px) and the conversation on the right.
+ */
 export function MessagesPage() {
   const { t } = useTranslation()
   usePageMeta(t('messages.metaTitle'))
-  const conversations = useConversations()
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl font-semibold">{t('messages.title')}</h1>
-
-      {conversations.isPending ? (
-        <LoadingState />
-      ) : conversations.isError ? (
-        <ErrorState error={conversations.error} onRetry={() => void conversations.refetch()} />
-      ) : conversations.data.length === 0 ? (
-        <div className="rounded-card border border-dashed border-line-strong bg-surface p-6 text-center">
-          <p className="text-slate-600">{t('messages.empty')}</p>
-          <Link to="/search" className="mt-3 inline-block font-semibold text-brand hover:underline">
-            {t('favorites.browse')}
-          </Link>
-        </div>
-      ) : (
-        <ul className="divide-y divide-slate-100 overflow-hidden rounded-card border border-line bg-surface shadow-sm">
-          {conversations.data.map((conversation) => (
-            <li key={conversation.id}>
-              <ConversationRow conversation={conversation} />
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <MessagesLayout list={<ConversationList />}>
+      <div className="hidden h-full flex-col items-center justify-center gap-3 p-6 text-center text-muted lg:flex">
+        <MessageCircle aria-hidden="true" className="size-10" strokeWidth={1.5} />
+        <p>{t('messages.chooseConversation')}</p>
+      </div>
+    </MessagesLayout>
   )
 }
 
-function ConversationRow({ conversation: c }: { conversation: ConversationSummary }) {
-  const { t, i18n } = useTranslation()
-  const lng = i18n.resolvedLanguage
-  const unread = c.unreadCount > 0
-  const name = c.otherUserId ? c.otherName || t('profile.unnamed') : t('profile.deletedUser')
-
+/**
+ * Frame shared by the list page and the conversation page. `showListOnPhone`: the list page
+ * shows the list on phones; the conversation page shows only the chat there.
+ */
+export function MessagesLayout({
+  list,
+  children,
+  showListOnPhone = true,
+}: {
+  list: ReactNode
+  children: ReactNode
+  showListOnPhone?: boolean
+}) {
+  const { t } = useTranslation()
   return (
-    <Link
-      to={`/messages/${c.id}`}
-      className={`flex items-center gap-3 p-3 hover:bg-paper focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand ${
-        unread ? 'bg-brand-50/60' : ''
-      }`}
-    >
-      <div className="size-16 shrink-0 overflow-hidden rounded-field bg-slate-100">
-        {c.listingCover && (
-          <img src={publicPhotoUrl(c.listingCover)} alt="" loading="lazy" className="size-full object-cover" />
-        )}
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className={`truncate ${unread ? 'font-semibold' : 'font-semibold'} text-ink`}>{name}</p>
-          <span className="shrink-0 text-xs text-slate-500">{formatShortDate(c.lastMessageAt, lng)}</span>
+    <div className="lg:grid lg:h-[calc(100dvh-10rem)] lg:min-h-[32rem] lg:grid-cols-[360px_minmax(0,1fr)] lg:overflow-hidden lg:rounded-panel lg:border lg:border-line lg:bg-surface">
+      <section
+        aria-label={t('messages.title')}
+        className={`${showListOnPhone ? '' : 'hidden'} lg:flex lg:min-h-0 lg:flex-col lg:border-r lg:border-line`}
+      >
+        <h1 className="mb-4 type-h1 text-ink lg:mb-0 lg:border-b lg:border-line lg:px-4 lg:py-3 lg:type-h2">
+          {t('messages.title')}
+        </h1>
+        <div className="-mx-4 border-y border-line bg-surface md:mx-0 md:rounded-card md:border lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:rounded-none lg:border-0">
+          {list}
         </div>
-        {/* user text: plain text */}
-        <p className="truncate text-sm text-slate-700">
-          {c.listingTitle ?? t('messages.listingDeleted')}
-          {c.listingPrice !== null && c.listingCurrency && (
-            <span className="text-slate-500"> · {formatPrice(c.listingPrice, c.listingCurrency, lng)}</span>
-          )}
-        </p>
-        <div className="flex items-center justify-between gap-2">
-          <p className={`truncate text-sm ${unread ? 'font-semibold text-ink' : 'text-slate-500'}`}>
-            {c.lastBody ? `${c.lastFromMe ? `${t('messages.you')}: ` : ''}${c.lastBody}` : t('messages.noMessagesYet')}
-          </p>
-          {unread && (
-            <span className="shrink-0 rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-white">
-              <span className="sr-only">{t('messages.unread', { count: c.unreadCount })}</span>
-              <span aria-hidden="true">{c.unreadCount}</span>
-            </span>
-          )}
-        </div>
-      </div>
-    </Link>
+      </section>
+      <div className={`${showListOnPhone ? 'hidden' : ''} min-h-0 lg:block`}>{children}</div>
+    </div>
   )
 }

@@ -8,7 +8,7 @@ import { inputClass } from '../../components/ui/fieldStyles'
 import { formatDate } from '../../lib/format'
 import { useAuth } from '../auth/authContext'
 import { useAdminUsers, useSetUserBlocked } from './api'
-import { ActionError, Card, ConfirmButton, EmptyBox } from './ui'
+import { ActionError, AdminList, Card, ConfirmButton, EmptyBox } from './ui'
 
 /** Search by name or email; block / unblock. Blocked users cannot publish or write, their listings disappear. */
 export function UsersTab() {
@@ -27,7 +27,7 @@ export function UsersTab() {
 
   return (
     <div className="space-y-3">
-      <label htmlFor="admin-user-search" className="block text-sm font-medium text-slate-700">
+      <label htmlFor="admin-user-search" className="block text-sm font-medium text-ink">
         {t('admin.users.searchLabel')}
       </label>
       <input
@@ -48,7 +48,7 @@ export function UsersTab() {
       ) : users.data.length === 0 ? (
         <EmptyBox>{t('admin.users.empty')}</EmptyBox>
       ) : (
-        <ul className="space-y-3">
+        <AdminList>
           {users.data.map((row) => (
             <Card key={row.id}>
               <div className="flex flex-wrap items-start justify-between gap-2">
@@ -64,8 +64,8 @@ export function UsersTab() {
                       {t('profile.blocked')}
                     </span>
                   )}
-                  <p className="text-sm break-all text-slate-600">{row.email}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm break-all text-muted">{row.email}</p>
+                  <p className="text-sm text-muted">
                     {t('admin.users.since', { date: formatDate(row.created_at, i18n.resolvedLanguage) })} ·{' '}
                     {t('admin.users.activeListings', { count: row.active_listings })}
                     {row.open_reports > 0 && (
@@ -77,6 +77,7 @@ export function UsersTab() {
                   row.is_blocked ? (
                     <Button
                       variant="secondary"
+                      size="compact"
                       loading={block.isPending}
                       onClick={() => block.mutate({ userId: row.id, blocked: false })}
                     >
@@ -95,7 +96,7 @@ export function UsersTab() {
               </div>
             </Card>
           ))}
-        </ul>
+        </AdminList>
       )}
     </div>
   )

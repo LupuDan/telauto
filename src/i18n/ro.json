@@ -13,7 +13,9 @@
     "optional": "opțional",
     "rangeFrom": "de la",
     "rangeTo": "până la",
-    "close": "Închide"
+    "close": "Închide",
+    "noMatches": "Nimic găsit",
+    "loadFailed": "Nu s-au putut încărca anunțurile. Verifică internetul și încearcă din nou."
   },
   "header": {
     "searchPlaceholder": "Ce cauți?",
@@ -121,7 +123,9 @@
     "recoveryOtherDevice": "Link-ul de resetare funcționează doar pe dispozitivul și în browserul în care l-ai cerut, și doar o dată. Cere un link nou de aici și deschide-l în același browser.",
     "goToAccount": "Mergi la contul meu",
     "goToLogin": "Intră în cont",
-    "logout": "Ieși din cont"
+    "logout": "Ieși din cont",
+    "showPassword": "Arată",
+    "hidePassword": "Ascunde"
   },
   "account": {
     "metaTitle": "Contul meu – Telauto.md",
@@ -227,8 +231,8 @@
   "notFound": {
     "metaTitle": "Pagina nu a fost găsită – Telauto.md",
     "heading": "Pagina nu a fost găsită",
-    "text": "Adresa nu există sau a fost mutată.",
-    "backHome": "Înapoi la prima pagină"
+    "text": "Pagina nu există sau anunțul a fost șters.",
+    "backHome": "Mergi la prima pagină"
   },
   "listingForm": {
     "newMetaTitle": "Adaugă anunț – Telauto.md",
@@ -254,13 +258,13 @@
     "otherOption": "Altul (scrie)",
     "rangeHint": "Între {{min}} și {{max}}.",
     "minPhotosShort": "minimum {{count}} poze",
-    "photosHint": "Adaugă între {{min}} și {{max}} poze. Prima poză este poza principală.",
+    "photosHint": "Până la {{max}} poze. Prima este poza principală.",
     "photosMin": "Adaugă cel puțin {{count}} poze pentru această categorie.",
     "photosReorderHint": "Schimbă ordinea trăgând pozele (pe telefon: ține apăsat) sau cu săgețile ← →.",
     "photoFailed": "Unele poze nu au putut fi citite ({{count}}). Încearcă JPG, PNG sau WebP.",
     "photoProcessing": "Se pregătește poza...",
     "addPhotos": "Adaugă poze",
-    "mainPhoto": "Principală",
+    "mainPhoto": "Poza principală",
     "photoAlt": "Poza {{n}}",
     "photoDrag": "Poza {{n}} – trage pentru a schimba ordinea",
     "photoMoveLeft": "Mută mai în față",
@@ -284,9 +288,9 @@
       }
     },
     "locality": "Localitatea",
-    "imei": "IMEI (opțional)",
+    "imei": "IMEI",
     "imeiHint": "Îl găsești formând *#06#. Este vizibil doar utilizatorilor conectați. Anunțurile cu IMEI primesc eticheta „IMEI indicat”.",
-    "vin": "VIN (opțional)",
+    "vin": "VIN",
     "vinHint": "Codul de 17 caractere din talon. Este vizibil doar utilizatorilor conectați. Anunțurile cu VIN primesc eticheta „VIN indicat”.",
     "compatibilityTitle": "Mașini compatibile",
     "compatibilityHint": "Pentru ce mașini se potrivește piesa. Fără model = toate modelele mărcii.",
@@ -313,7 +317,23 @@
     "draftRestored": "Am restaurat ciorna nesalvată. Pozele trebuie adăugate din nou.",
     "draftNotice": "Acest anunț este o ciornă și nu este vizibil pentru nimeni. Verifică pașii și apasă „Publică anunțul”.",
     "notEditable": "Acest anunț a fost ascuns de administrator și nu poate fi editat.",
-    "backToMyListings": "Înapoi la anunțurile mele"
+    "backToMyListings": "Înapoi la anunțurile mele",
+    "stepNames": {
+      "category": "Categorie",
+      "photos": "Poze",
+      "details": "Detalii",
+      "characteristics": "Caracteristici",
+      "publish": "Publicare"
+    },
+    "photoNeeds": {
+      "telefoane": "Adaugă cel puțin 3 poze: față, spate și ecranul pornit.",
+      "accesorii-telefoane": "Adaugă cel puțin o poză clară a produsului.",
+      "autovehicule": "Adaugă cel puțin 5 poze: față, spate, lateral, interior, bord.",
+      "piese-auto": "Adaugă cel puțin o poză a piesei; dacă are cod, fotografiază-l și pe el."
+    },
+    "addPhotosHint": "JPG, PNG sau WebP, de pe telefon sau calculator",
+    "previewTitle": "Așa va arăta anunțul în listă",
+    "previewHint": "Verifică poza principală, prețul și titlul."
   },
   "myListings": {
     "groups": {
@@ -340,8 +360,9 @@
     "deleteConfirm": "Sigur ștergi anunțul?",
     "deleteYes": "Da, șterge",
     "deleteNo": "Nu",
-    "publishedNotice": "Anunțul a fost publicat.",
-    "savedNotice": "Modificările au fost salvate."
+    "publishedNotice": "Anunțul a fost publicat",
+    "savedNotice": "Modificările au fost salvate.",
+    "viewListing": "Vezi anunțul"
   },
   "fields": {
     "brand_id": {
@@ -603,9 +624,9 @@
     "saved": "Salvat",
     "remove": "Elimină din favorite",
     "removeShort": "Elimină",
-    "empty": "Nu ai salvat încă niciun anunț. Apasă ♡ pe un anunț ca să-l găsești aici.",
+    "empty": "Salvează anunțurile care îți plac apăsând pe inimă.",
     "browse": "Caută anunțuri",
-    "hint": "Apasă ♥ pe un anunț ca să-l elimini din favorite.",
+    "hint": "Apasă pe inimă ca să elimini un anunț din favorite.",
     "unavailableHeading": "Anunțuri indisponibile",
     "unavailableTitle": "Anunț indisponibil",
     "unavailableText": "A fost vândut, a expirat sau a fost ascuns."
@@ -635,7 +656,7 @@
   "messages": {
     "metaTitle": "Mesaje – Telauto.md",
     "title": "Mesaje",
-    "empty": "Nu ai încă nicio conversație. Apasă „Scrie mesaj” pe un anunț ca să-i scrii vânzătorului.",
+    "empty": "Mesajele cu vânzătorii și cumpărătorii apar aici.",
     "listingDeleted": "Anunț șters",
     "listingUnavailable": "anunț indisponibil",
     "you": "Tu",
@@ -649,13 +670,14 @@
     "roleSeller": "vânzător",
     "startHint": "Scrie primul mesaj. De ex.: „Bună ziua, anunțul mai este valabil?”",
     "safetyNotice": "Nu plăti avans și nu trimite datele cardului. Întâlnește-te personal și verifică produsul înainte de plată.",
-    "flaggedWarning": "Atenție: mesajul de mai jos conține un link sau cuvinte folosite des în înșelătorii (avans, card, curier). Nu plăti nimic în avans.",
+    "flaggedWarning": "Acest mesaj conține un link sau o cerere de plată în avans. Fii atent.",
     "sent": "trimis",
     "read": "citit",
     "placeholder": "Scrie un mesaj...",
     "send": "Trimite",
     "cannotReplyDeleted": "Celălalt utilizator și-a șters contul. Nu mai poți trimite mesaje în această conversație.",
-    "cannotReplyBlocked": "Nu poți trimite mesaje: contul tău este blocat."
+    "cannotReplyBlocked": "Nu poți trimite mesaje: contul tău este blocat.",
+    "chooseConversation": "Alege o conversație din stânga."
   },
   "reports": {
     "titleListing": "Raportează anunțul",

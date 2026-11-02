@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
+import { PasswordField } from '../../components/ui/PasswordField'
 import { TextField } from '../../components/ui/TextField'
 import { translateKey } from '../../i18n/translate'
 import { verifyCurrentPassword } from '../auth/api'
@@ -37,12 +38,11 @@ export function DeleteAccountForm({ userId, email }: { userId: string; email: st
 
   return (
     <form onSubmit={onSubmit} noValidate className="space-y-4">
-      <p className="text-sm text-slate-700">{t('account.deleteText')}</p>
+      <p className="text-sm text-ink">{t('account.deleteText')}</p>
       {errorKey && <Alert kind="error">{translateKey(t, errorKey)}</Alert>}
       <input type="email" autoComplete="username" value={email} readOnly hidden />
-      <TextField
+      <PasswordField
         label={t('account.deletePasswordLabel')}
-        type="password"
         autoComplete="current-password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}

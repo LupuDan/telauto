@@ -1,11 +1,14 @@
+import { Settings } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
 import { Alert } from '../components/ui/Alert'
 import { Button } from '../components/ui/Button'
+import { buttonClass } from '../components/ui/buttonStyles'
 import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
+import { Tabs } from '../components/ui/Tabs'
 import { signOut } from '../features/auth/api'
 import { useAuth } from '../features/auth/authContext'
 import { FavoritesList } from '../features/favorites/FavoritesList'
@@ -15,8 +18,11 @@ import { ChangePasswordForm } from '../features/profile/ChangePasswordForm'
 import { DeleteAccountForm } from '../features/profile/DeleteAccountForm'
 import { useMyPhone, useProfile } from '../features/profile/hooks'
 import { ProfileSettingsForm } from '../features/profile/ProfileSettingsForm'
+import { CATEGORIES, CATEGORY_SLUGS } from '../lib/categories'
 
-const TABS = ['listings', 'favorites', 'garage', 'settings'] as const
+// "garage" is the tab the auto categories add (homeModule 'garage' in src/lib/categories.ts)
+const HAS_GARAGE = CATEGORY_SLUGS.some((slug) => CATEGORIES[slug].homeModule === 'garage')
+const TABS = (['listings', 'favorites', 'garage', 'settings'] as const).filter((tab) => tab !== 'garage' || HAS_GARAGE)
 type Tab = (typeof TABS)[number]
 
 export function AccountPage() {
@@ -31,13 +37,10 @@ export function AccountPage() {
   return (
     <div className="mx-auto max-w-3xl">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold">{t('account.title')}</h1>
+        <h1 className="type-h1 text-ink">{t('account.title')}</h1>
         {myProfile.data?.role === 'admin' && (
-          <Link
-            to="/admin"
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-field border border-tag bg-tag-50 px-3 text-sm font-semibold text-ink hover:bg-tag-100"
-          >
-            <span aria-hidden="true">⚙</span>
+          <Link to="/admin" className={buttonClass('secondary', 'compact')}>
+            <Settings aria-hidden="true" className="size-5" strokeWidth={1.75} />
             {t('admin.openPanel')}
           </Link>
         )}
@@ -49,31 +52,27 @@ export function AccountPage() {
         </div>
       )}
 
-      <nav aria-label={t('account.title')} className="-mx-4 mb-6 overflow-x-auto px-4">
-        <ul className="flex min-w-max gap-1 border-b border-line">
-          {TABS.map((item) => (
-            <li key={item}>
-              <button
-                type="button"
-                aria-current={tab === item ? 'page' : undefined}
-                onClick={() => setParams({ tab: item })}
-                className={`-mb-px border-b-2 px-3 py-2 text-sm font-semibold ${
-                  tab === item
-                    ? 'border-brand text-brand'
-                    : 'border-transparent text-slate-600 hover:text-ink'
-                }`}
-              >
-                {t(`account.tabs.${item}`)}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <div className="mb-6">
+        <Tabs
+          label={t('account.title')}
+          items={TABS.map((item) => ({ value: item, label: t(`account.tabs.${item}`) }))}
+          value={tab}
+          onChange={(item) => setParams({ tab: item })}
+        />
+      </div>
 
       {(params.get('notice') === 'published' || params.get('notice') === 'saved') && (
         <div className="mb-4">
           <Alert kind="success">
             {params.get('notice') === 'published' ? t('myListings.publishedNotice') : t('myListings.savedNotice')}
+            {params.get('id') && /^[0-9a-f-]{36}$/i.test(params.get('id') ?? '') && (
+              <>
+                {' '}
+                <Link to={`/a/${params.get('id')}`} className="font-medium text-brand underline-offset-2 hover:underline">
+                  {t('myListings.viewListing')}
+                </Link>
+              </>
+            )}
           </Alert>
         </div>
       )}
@@ -118,7 +117,7 @@ function SettingsTab() {
       {profile.data.is_blocked && <Alert kind="warning">{t('account.blockedNotice')}</Alert>}
 
       <Section title={t('account.profileSection')}>
-        <p className="mb-4 text-sm text-slate-600">
+        <p className="mb-4 text-sm text-muted">
           {t('account.email')}: <span className="font-medium text-ink">{email}</span>
           {' · '}
           <Link to={`/u/${user.id}`} className="text-brand hover:underline">
@@ -148,9 +147,9 @@ function SettingsTab() {
 function Section({ title, danger = false, children }: { title: string; danger?: boolean; children: ReactNode }) {
   return (
     <section
-      className={`rounded-card border bg-surface p-5 shadow-sm ${danger ? 'border-danger-200' : 'border-line'}`}
+      className={`rounded-panel border bg-surface p-4 sm:p-5 ${danger ? 'border-danger-200' : 'border-line'}`}
     >
-      <h2 className={`mb-4 text-lg font-semibold ${danger ? 'text-danger' : ''}`}>{title}</h2>
+      <h2 className={`mb-4 type-h2 ${danger ? 'text-danger' : 'text-ink'}`}>{title}</h2>
       {children}
     </section>
   )

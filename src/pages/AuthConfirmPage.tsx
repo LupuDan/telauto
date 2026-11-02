@@ -78,7 +78,7 @@ export function AuthConfirmPage() {
   if (result === 'confirmed' || result === 'confirmed-login') {
     return (
       <AuthCard title={t('auth.confirmSuccessTitle')}>
-        <p className="text-slate-700">{t('auth.confirmSuccessText')}</p>
+        <p className="text-ink">{t('auth.confirmSuccessText')}</p>
         <p className="mt-6 text-center">
           {result === 'confirmed' ? (
             <Link to="/account" className="font-semibold text-brand hover:underline">
@@ -96,7 +96,7 @@ export function AuthConfirmPage() {
 
   return (
     <AuthCard title={t('auth.confirmErrorTitle')}>
-      <p className="text-slate-700">
+      <p className="text-ink">
         {result === 'recovery-other-device' ? t('auth.recoveryOtherDevice') : t('auth.confirmErrorText')}
       </p>
       <div className="mt-6 flex flex-col items-center gap-2 text-sm">

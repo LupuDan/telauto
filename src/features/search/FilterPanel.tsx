@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../../components/ui/Button'
 import { ChipGroup } from '../../components/ui/ChipGroup'
+import { Combobox } from '../../components/ui/Combobox'
 import { RangeInput } from '../../components/ui/RangeInput'
 import { SelectField } from '../../components/ui/SelectField'
 import { TextField } from '../../components/ui/TextField'
@@ -307,18 +308,15 @@ function ReferenceSelect({
   const waitingForParent = needsParent && !parentValue
 
   return (
-    <SelectField
+    <Combobox
       label={label}
       value={value}
+      onChange={onChange}
+      allowEmpty
       disabled={waitingForParent}
-      onChange={(event) => onChange(event.target.value)}
-    >
-      <option value="">{waitingForParent ? t('listingForm.chooseParentFirst') : emptyLabel}</option>
-      {options.data?.map((option) => (
-        <option key={option.id} value={String(option.id)}>
-          {option.name}
-        </option>
-      ))}
-    </SelectField>
+      loading={!waitingForParent && options.isPending}
+      placeholder={waitingForParent ? t('listingForm.chooseParentFirst') : emptyLabel}
+      options={(options.data ?? []).map((option) => ({ value: String(option.id), label: option.name }))}
+    />
   )
 }

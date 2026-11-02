@@ -1,21 +1,25 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
+import { buttonClass } from '../components/ui/buttonStyles'
+import { EmptyState } from '../components/ui/EmptyState'
 
+/** "Pagina nu există sau anunțul a fost șters." + "Mergi la prima pagină" (plan de design, 6.9). */
 export function NotFoundPage() {
   const { t } = useTranslation()
   usePageMeta(t('notFound.metaTitle'))
 
   return (
-    <section className="mx-auto max-w-md py-12 text-center">
-      <p className="text-5xl font-semibold text-slate-300" aria-hidden="true">
-        404
-      </p>
-      <h1 className="mt-2 text-2xl font-semibold">{t('notFound.heading')}</h1>
-      <p className="mt-2 text-slate-600">{t('notFound.text')}</p>
-      <Link to="/" className="mt-6 inline-block font-semibold text-brand hover:underline">
-        {t('notFound.backHome')}
-      </Link>
+    <section>
+      <h1 className="sr-only">{t('notFound.heading')}</h1>
+      <EmptyState
+        text={t('notFound.text')}
+        action={
+          <Link to="/" className={buttonClass('secondary')}>
+            {t('notFound.backHome')}
+          </Link>
+        }
+      />
     </section>
   )
 }

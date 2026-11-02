@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
-import { TextField } from '../../components/ui/TextField'
+import { PasswordField } from '../../components/ui/PasswordField'
 import { useFieldError } from '../../components/ui/useFieldError'
 import { translateKey } from '../../i18n/translate'
 import { changePassword } from '../auth/api'
@@ -41,24 +41,21 @@ export function ChangePasswordForm({ email }: { email: string }) {
       {done && <Alert kind="success">{t('account.passwordChanged')}</Alert>}
       {/* hidden username helps password managers update the right entry */}
       <input type="email" autoComplete="username" value={email} readOnly hidden />
-      <TextField
+      <PasswordField
         label={t('auth.currentPassword')}
-        type="password"
         autoComplete="current-password"
         error={fieldError(errors.currentPassword)}
         {...register('currentPassword')}
       />
-      <TextField
+      <PasswordField
         label={t('auth.newPassword')}
-        type="password"
         autoComplete="new-password"
         hint={t('auth.passwordHint')}
         error={fieldError(errors.password)}
         {...register('password')}
       />
-      <TextField
+      <PasswordField
         label={t('auth.passwordConfirm')}
-        type="password"
         autoComplete="new-password"
         error={fieldError(errors.passwordConfirm)}
         {...register('passwordConfirm')}

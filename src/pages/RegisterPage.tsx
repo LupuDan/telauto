@@ -8,6 +8,7 @@ import { Alert } from '../components/ui/Alert'
 import { AuthCard } from '../components/ui/AuthCard'
 import { Button } from '../components/ui/Button'
 import { CheckboxField } from '../components/ui/CheckboxField'
+import { PasswordField } from '../components/ui/PasswordField'
 import { TextField } from '../components/ui/TextField'
 import { useFieldError } from '../components/ui/useFieldError'
 import { resendConfirmation, signUp } from '../features/auth/api'
@@ -76,8 +77,8 @@ export function RegisterPage() {
     return (
       <AuthCard title={t('auth.registerSuccessTitle')}>
         <div className="space-y-4">
-          <p className="text-slate-700">{t('auth.registerSuccessText', { email: sentTo })}</p>
-          <p className="text-sm text-slate-500">{t('auth.registerSuccessHint')}</p>
+          <p className="text-ink">{t('auth.registerSuccessText', { email: sentTo })}</p>
+          <p className="text-sm text-muted">{t('auth.registerSuccessHint')}</p>
           {errorKey && <Alert kind="error">{translateKey(t, errorKey)}</Alert>}
           {resendState === 'sent' ? (
             <Alert kind="success">{t('auth.resendSuccess')}</Alert>
@@ -117,17 +118,15 @@ export function RegisterPage() {
           error={fieldError(errors.email)}
           {...register('email')}
         />
-        <TextField
+        <PasswordField
           label={t('auth.password')}
-          type="password"
           autoComplete="new-password"
           hint={t('auth.passwordHint')}
           error={fieldError(errors.password)}
           {...register('password')}
         />
-        <TextField
+        <PasswordField
           label={t('auth.passwordConfirm')}
-          type="password"
           autoComplete="new-password"
           error={fieldError(errors.passwordConfirm)}
           {...register('passwordConfirm')}
@@ -154,7 +153,7 @@ export function RegisterPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-muted">
         {t('auth.haveAccount')}{' '}
         <Link to="/login" className="font-semibold text-brand hover:underline">
           {t('auth.loginLink')}

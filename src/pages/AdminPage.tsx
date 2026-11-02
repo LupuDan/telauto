@@ -1,7 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
+import { buttonClass } from '../components/ui/buttonStyles'
+import { EmptyState } from '../components/ui/EmptyState'
 import { LoadingState } from '../components/ui/LoadingState'
+import { Tabs } from '../components/ui/Tabs'
 import { useAdminCounts } from '../features/admin/api'
 import { FlaggedTab, HiddenTab, ReportsTab } from '../features/admin/ModerationTabs'
 import { ReferencesTab } from '../features/admin/ReferencesTab'
@@ -26,13 +29,15 @@ export function AdminPage() {
   if (profile.isPending) return <LoadingState />
   if (!profile.data || profile.data.role !== 'admin' || profile.data.is_blocked) {
     return (
-      <section className="mx-auto max-w-md py-12 text-center">
-        <h1 className="text-2xl font-semibold">{t('admin.noAccessTitle')}</h1>
-        <p className="mt-2 text-slate-600">{t('admin.noAccessText')}</p>
-        <Link to="/" className="mt-6 inline-block font-semibold text-brand hover:underline">
-          {t('notFound.backHome')}
-        </Link>
-      </section>
+      <EmptyState
+        title={t('admin.noAccessTitle')}
+        text={t('admin.noAccessText')}
+        action={
+          <Link to="/" className={buttonClass('secondary')}>
+            {t('notFound.backHome')}
+          </Link>
+        }
+      />
     )
   }
   return <AdminPanel />
@@ -51,29 +56,28 @@ function AdminPanel() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="mb-4 text-2xl font-semibold">{t('admin.title')}</h1>
-      <nav aria-label={t('admin.title')} className="-mx-4 mb-6 overflow-x-auto px-4">
-        <ul className="flex min-w-max gap-1 border-b border-line">
-          {TABS.map((item) => (
-            <li key={item}>
-              <button
-                type="button"
-                aria-current={tab === item ? 'page' : undefined}
-                onClick={() => setParams({ tab: item })}
-                className={`-mb-px flex items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-semibold ${
-                  tab === item ? 'border-brand text-brand' : 'border-transparent text-slate-600 hover:text-ink'
-                }`}
-              >
+    <div className="mx-auto max-w-5xl">
+      <h1 className="mb-4 type-h1 text-ink">{t('admin.title')}</h1>
+      <div className="mb-6">
+        <Tabs
+          label={t('admin.title')}
+          value={tab}
+          onChange={(item) => setParams({ tab: item })}
+          items={TABS.map((item) => ({
+            value: item,
+            label: (
+              <>
                 {translateKey(t, `admin.tabs.${item}`)}
                 {(badge[item] ?? 0) > 0 && (
-                  <span className="rounded-full bg-danger px-1.5 text-xs leading-5 text-white">{badge[item]}</span>
+                  <span className="min-w-5 rounded-full bg-danger px-1.5 text-center text-xs leading-5 text-white tabular">
+                    {badge[item]}
+                  </span>
                 )}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
+              </>
+            ),
+          }))}
+        />
+      </div>
 
       {tab === 'reports' && <ReportsTab />}
       {tab === 'flagged' && <FlaggedTab />}

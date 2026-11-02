@@ -7,6 +7,7 @@ import { usePageMeta } from '../app/usePageMeta'
 import { Alert } from '../components/ui/Alert'
 import { AuthCard } from '../components/ui/AuthCard'
 import { Button } from '../components/ui/Button'
+import { PasswordField } from '../components/ui/PasswordField'
 import { TextField } from '../components/ui/TextField'
 import { useFieldError } from '../components/ui/useFieldError'
 import { resendConfirmation, signIn } from '../features/auth/api'
@@ -90,9 +91,8 @@ export function LoginPage() {
           error={fieldError(errors.email)}
           {...register('email')}
         />
-        <TextField
+        <PasswordField
           label={t('auth.password')}
-          type="password"
           autoComplete="current-password"
           error={fieldError(errors.password)}
           {...register('password')}
@@ -109,7 +109,7 @@ export function LoginPage() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-600">
+      <p className="mt-6 text-center text-sm text-muted">
         {t('auth.noAccount')}{' '}
         <Link to={`/register${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`} className="font-semibold text-brand hover:underline">
           {t('auth.registerLink')}

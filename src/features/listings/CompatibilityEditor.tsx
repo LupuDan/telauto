@@ -25,7 +25,7 @@ export function CompatibilityEditor() {
   return (
     <fieldset className="space-y-3">
       <legend className="mb-1 text-base font-semibold">{t('listingForm.compatibilityTitle')} *</legend>
-      <p className="text-sm text-slate-600">{t('listingForm.compatibilityHint')}</p>
+      <p className="text-sm text-muted">{t('listingForm.compatibilityHint')}</p>
       {listError && <Alert kind="error">{translateKey(t, listError)}</Alert>}
 
       {fields.map((row, index) => (
@@ -62,7 +62,7 @@ function CompatibilityRow({ index, onRemove }: { index: number; onRemove: () => 
     <div className="rounded-field border border-line bg-paper p-3">
       <div className="grid gap-3 sm:grid-cols-[1fr_1fr_6rem_6rem]">
         <SelectField
-          label={`${t('listingForm.compatibilityMake')} *`}
+          label={t('listingForm.compatibilityMake')}
           error={err(rowErrors?.makeId?.message)}
           {...register(`compatibility.${index}.makeId`, {
             onChange: () => setValue(`compatibility.${index}.modelId`, ''),
@@ -88,14 +88,14 @@ function CompatibilityRow({ index, onRemove }: { index: number; onRemove: () => 
           ))}
         </SelectField>
         <TextField
-          label={`${t('listingForm.compatibilityYearFrom')} *`}
+          label={t('listingForm.compatibilityYearFrom')}
           inputMode="numeric"
           placeholder={String(MIN_YEAR + 50)}
           error={err(rowErrors?.yearFrom?.message)}
           {...register(`compatibility.${index}.yearFrom`)}
         />
         <TextField
-          label={`${t('listingForm.compatibilityYearTo')} *`}
+          label={t('listingForm.compatibilityYearTo')}
           inputMode="numeric"
           error={err(rowErrors?.yearTo?.message)}
           {...register(`compatibility.${index}.yearTo`)}

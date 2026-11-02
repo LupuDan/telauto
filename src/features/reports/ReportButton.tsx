@@ -40,7 +40,7 @@ export function ReportButton({ target, variant = 'button' }: { target: ReportTar
         <button
           type="button"
           onClick={handleClick}
-          className="text-[11px] text-slate-400 underline-offset-2 hover:text-danger hover:underline"
+          className="text-xs text-muted underline-offset-2 hover:text-danger hover:underline"
         >
           {t('listing.actions.report')}
         </button>
