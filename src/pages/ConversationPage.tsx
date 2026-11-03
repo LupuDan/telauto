@@ -23,10 +23,11 @@ import {
   type ConversationSummary,
   type Message,
 } from '../features/messages/api'
-import { ConversationList } from '../features/messages/ConversationList'
 import { ReportButton } from '../features/reports/ReportButton'
+import { ConversationList } from '../features/messages/ConversationList'
 import { translateKey } from '../i18n/translate'
 import { formatDate, formatPrice } from '../lib/format'
+import { useIsDesktop } from '../lib/useIsDesktop'
 import { MessagesLayout } from './MessagesPage'
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -42,21 +43,44 @@ export function ConversationPage() {
   const name = conversation.data?.otherName || t('profile.unnamed')
   usePageMeta(conversation.data ? `${name} – ${t('messages.metaTitle')}` : t('messages.metaTitle'))
 
+  // phones: the page behind the full-screen chat must not scroll
+  const isDesktop = useIsDesktop()
+  useEffect(() => {
+    if (isDesktop) return
+    const html = document.documentElement
+    const previous = html.style.overflow
+    html.style.overflow = 'hidden'
+    return () => {
+      html.style.overflow = previous
+    }
+  }, [isDesktop])
+
   let chat: ReactNode
-  if (validId && conversation.isPending) chat = <LoadingState />
+  if (validId && conversation.isPending)
+    chat = (
+      <BackOnly>
+        <LoadingState />
+      </BackOnly>
+    )
   else if (conversation.isError) {
-    chat = <ErrorState error={conversation.error} onRetry={() => void conversation.refetch()} />
+    chat = (
+      <BackOnly>
+        <ErrorState error={conversation.error} onRetry={() => void conversation.refetch()} />
+      </BackOnly>
+    )
   } else if (!validId || !conversation.data) {
     chat = (
-      <EmptyState
-        title={t('messages.notFound')}
-        text={t('messages.empty')}
-        action={
-          <Link to="/messages" className={buttonClass('secondary')}>
-            {t('messages.backToList')}
-          </Link>
-        }
-      />
+      <BackOnly>
+        <EmptyState
+          title={t('messages.notFound')}
+          text={t('messages.empty')}
+          action={
+            <Link to="/messages" className={buttonClass('secondary')}>
+              {t('messages.backToList')}
+            </Link>
+          }
+        />
+      </BackOnly>
     )
   } else {
     chat = (
@@ -81,12 +105,10 @@ export function ConversationPage() {
   return (
     <MessagesLayout list={<ConversationList activeId={validId} />} showListOnPhone={false}>
       {/*
-        phones: the chat fills the screen below the header, so the box to type in is always visible;
-        computers: the right column of the messages frame
+        phones: the chat covers the whole screen (also the site header), with "‹" back to the list;
+        computers: the right column of the messages frame, the list stays on the left
       */}
-      <div className="-mx-4 -my-6 flex h-[calc(100dvh-7.1rem)] min-h-[24rem] flex-col sm:h-[calc(100dvh-3.85rem)] md:mx-0 lg:my-0 lg:h-full">
-        {chat}
-      </div>
+      <div className="fixed inset-0 z-40 flex flex-col bg-surface lg:static lg:z-auto lg:h-full">{chat}</div>
     </MessagesLayout>
   )
 }
@@ -103,7 +125,9 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
       </span>
       <span className="min-w-0">
         {/* user text: plain text */}
-        <span className="block truncate text-sm font-medium text-ink">{c.listingTitle ?? t('messages.listingDeleted')}</span>
+        <span className="block truncate text-sm font-medium text-ink">
+          {c.listingTitle ?? t('messages.listingDeleted')}
+        </span>
         <span className="block text-sm text-muted tabular">
           {c.listingPrice !== null && c.listingCurrency
             ? formatPrice(c.listingPrice, c.listingCurrency, i18n.resolvedLanguage)
@@ -115,7 +139,7 @@ function ChatHeader({ conversation: c }: { conversation: ConversationSummary }) 
   )
 
   return (
-    <div className="shrink-0 border-b border-line bg-surface px-2 py-2 lg:px-4">
+    <div className="shrink-0 border-b border-line bg-surface px-2 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 lg:px-4">
       <div className="flex items-center gap-1">
         <Link
           to="/messages"
@@ -153,7 +177,10 @@ function MessageList({ messages }: { messages: Message[] }) {
   const { user } = useAuth()
   const bottomRef = useRef<HTMLDivElement>(null)
   const lng = i18n.resolvedLanguage
-  const time = new Intl.DateTimeFormat(lng === 'ru' ? 'ru-MD' : 'ro-MD', { hour: '2-digit', minute: '2-digit' })
+  const time = new Intl.DateTimeFormat(lng === 'ru' ? 'ru-MD' : 'ro-MD', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
   // always show the newest message
   useEffect(() => {
@@ -161,7 +188,11 @@ function MessageList({ messages }: { messages: Message[] }) {
   }, [messages.length])
 
   if (messages.length === 0) {
-    return <div className="flex flex-1 items-center justify-center p-6 text-center text-muted">{t('messages.startHint')}</div>
+    return (
+      <div className="flex flex-1 items-center justify-center p-6 text-center text-muted">
+        {t('messages.startHint')}
+      </div>
+    )
   }
 
   return (
@@ -293,5 +324,24 @@ function Composer({ conversation }: { conversation: ConversationSummary }) {
         </p>
       )}
     </form>
+  )
+}
+
+/** While the chat loads (or cannot be opened): only the "‹" back to the list, then the content. */
+function BackOnly({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
+  return (
+    <>
+      <div className="shrink-0 border-b border-line px-2 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 lg:hidden">
+        <Link
+          to="/messages"
+          className="flex size-11 items-center justify-center rounded-field text-ink hover:bg-paper"
+          aria-label={t('messages.backToList')}
+        >
+          <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={1.75} />
+        </Link>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
+    </>
   )
 }

@@ -144,7 +144,7 @@ export function ListingWizard(props: Props) {
         void queryClient.invalidateQueries({ queryKey: listingKeys.edit(props.listingId) })
       }
       void queryClient.invalidateQueries({ queryKey: listingKeys.mine(user.id) })
-      navigate(`/account?tab=listings&notice=${willPublish ? 'published' : 'saved'}&id=${savedId}`, { replace: true })
+      navigate(`/account/listings?notice=${willPublish ? 'published' : 'saved'}&id=${savedId}`, { replace: true })
     } catch (error) {
       setProgress(null)
       if (error instanceof DraftSavedError) {
@@ -398,12 +398,12 @@ function CategoryStep({ selected, onChoose }: { selected: string; onChoose: (slu
   return (
     <ul className="grid grid-cols-2 gap-3">
       {CATEGORY_SLUGS.map((slug) => (
-        <li key={slug}>
+        <li key={slug} className="flex">
           <button
             type="button"
             onClick={() => onChoose(slug)}
             aria-pressed={selected === slug}
-            className={`flex min-h-32 w-full flex-col items-center justify-center gap-2 rounded-card border p-4 text-center font-medium text-ink hover:border-brand ${
+            className={`flex min-h-32 w-full flex-1 flex-col items-center justify-center gap-2 rounded-card border p-4 text-center font-medium text-ink hover:border-brand ${
               selected === slug ? 'border-brand bg-brand-50' : 'border-line bg-surface'
             }`}
           >

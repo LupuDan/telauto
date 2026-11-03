@@ -50,10 +50,11 @@ export function BottomNav() {
     },
     messages: { to: '/messages', label: t('nav.messages'), Icon: MessageCircle, active: pathname.startsWith('/messages') },
     account: {
-      to: user ? '/account' : '/login',
+      // without an account 'Cont' opens a short screen with the login and register buttons
+      to: '/account',
       label: t('nav.account'),
       Icon: UserRound,
-      active: ['/account', '/login', '/register'].includes(pathname),
+      active: pathname.startsWith('/account') || ['/login', '/register'].includes(pathname),
     },
   }
   const addActive = pathname === '/new'

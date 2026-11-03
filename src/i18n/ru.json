@@ -15,7 +15,11 @@
     "rangeTo": "до",
     "close": "Закрыть",
     "noMatches": "Ничего не найдено",
-    "loadFailed": "Не удалось загрузить объявления. Проверьте интернет и попробуйте снова."
+    "loadFailed": "Не удалось загрузить объявления. Проверьте интернет и попробуйте снова.",
+    "undo": "Отменить",
+    "back": "Назад",
+    "moreActions": "Другие действия",
+    "cancel": "Отмена"
   },
   "header": {
     "searchPlaceholder": "Что вы ищете?",
@@ -158,7 +162,26 @@
     "deleteConfirmLabel": "Введите {{word}} для подтверждения",
     "deleteWord": "УДАЛИТЬ",
     "deleteButton": "Удалить аккаунт навсегда",
-    "deletedNotice": "Ваш аккаунт удалён. Спасибо, что пользовались Telauto.md."
+    "deletedNotice": "Ваш аккаунт удалён. Спасибо, что пользовались Telauto.md.",
+    "photo": "Фото профиля",
+    "photoAdd": "Добавить фото",
+    "photoChange": "Изменить фото",
+    "photoRemove": "Удалить фото",
+    "editProfile": "Редактировать профиль",
+    "statsLabel": "Коротко",
+    "statActive": "активные",
+    "statExpiring": "истекают",
+    "statFavorites": "избранное",
+    "sectionsLabel": "Разделы аккаунта",
+    "help": "Помощь и безопасность",
+    "guestText": "Войдите, чтобы размещать объявления, писать продавцам и сохранять избранное.",
+    "guestRegister": "Создать аккаунт",
+    "settings": {
+      "title": "Настройки",
+      "profile": "Профиль",
+      "security": "Безопасность",
+      "delete": "Удалить аккаунт"
+    }
   },
   "profile": {
     "metaTitle": "{{name}} – Telauto.md",
@@ -341,7 +364,8 @@
       "draft": "Черновики",
       "sold": "Проданные",
       "expired": "Истёкшие",
-      "hidden": "Скрытые"
+      "hidden": "Скрытые",
+      "expiring": "Скоро истекают"
     },
     "empty": "Здесь нет объявлений.",
     "expiresOn": "активно до {{date}}",
@@ -363,7 +387,38 @@
     "deleteNo": "Нет",
     "publishedNotice": "Объявление опубликовано",
     "savedNotice": "Изменения сохранены.",
-    "viewListing": "Посмотреть объявление"
+    "viewListing": "Посмотреть объявление",
+    "filtersLabel": "Фильтр объявлений",
+    "emptyAll": "У вас пока нет объявлений. Разместите первое меньше чем за минуту.",
+    "badgeActive": "Активно",
+    "badgeSold": "Продано",
+    "badgeExpired": "Истекло",
+    "badgeHidden": "Скрыто модератором",
+    "badgeRejected": "Отклонено модератором",
+    "badgeDraft": "Черновик",
+    "expiresIn_one": "Истекает через {{count}} день",
+    "expiresIn_few": "Истекает через {{count}} дня",
+    "expiresIn_many": "Истекает через {{count}} дней",
+    "expiresIn_other": "Истекает через {{count}} дня",
+    "why": "Почему?",
+    "whyTitle": "Почему объявление скрыто?",
+    "markSoldFull": "Отметить как проданное",
+    "soldToast": "Объявление отмечено как проданное",
+    "deleteFull": "Удалить объявление",
+    "share": "Поделиться",
+    "linkCopied": "Ссылка скопирована",
+    "actionsFor": "Действия для {{title}}",
+    "saves_one": "{{count}} сохранение",
+    "saves_few": "{{count}} сохранения",
+    "saves_many": "{{count}} сохранений",
+    "saves_other": "{{count}} сохранения",
+    "colPhoto": "Фото",
+    "colTitle": "Объявление",
+    "colPrice": "Цена",
+    "colStatus": "Статус",
+    "colStats": "Просмотры",
+    "colActions": "Действия",
+    "refreshing": "Обновление…"
   },
   "fields": {
     "brand_id": {
@@ -633,7 +688,10 @@
     "hint": "Нажмите на сердечко, чтобы убрать объявление из избранного.",
     "unavailableHeading": "Недоступные объявления",
     "unavailableTitle": "Объявление недоступно",
-    "unavailableText": "Продано, истекло или скрыто."
+    "unavailableText": "Продано, истекло или скрыто.",
+    "unavailableBadge": "Недоступно",
+    "removeUnavailable": "Удалить недоступные объявления",
+    "removedToast": "Убрано из избранного"
   },
   "garage": {
     "intro": "Добавьте свои машины, чтобы быстро находить совместимые запчасти («Только запчасти для моей машины»).",
@@ -655,7 +713,8 @@
     "moduleEmpty": "Добавьте свой автомобиль и смотрите только подходящие запчасти.",
     "moduleWithCar": "Запчасти, подходящие для {{car}}.",
     "addCar": "Добавить автомобиль",
-    "seeMatchingParts": "Подходящие запчасти"
+    "seeMatchingParts": "Подходящие запчасти",
+    "actionsFor": "Действия для {{car}}"
   },
   "messages": {
     "metaTitle": "Сообщения – Telauto.md",

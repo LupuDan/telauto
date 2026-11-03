@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '../../lib/supabase'
 import {
   deleteListing,
   fetchListingForEdit,
@@ -51,5 +52,18 @@ export function useListingAction(userId: string) {
       }
     },
     onSettled: () => queryClient.invalidateQueries({ queryKey: listingKeys.mine(userId) }),
+  })
+}
+
+/** How many people saved each of my listings (number only; database function my_listing_saves, 0017). */
+export function useMyListingSaves(userId: string | undefined) {
+  return useQuery({
+    queryKey: ['my-listing-saves', userId ?? ''],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('my_listing_saves')
+      if (error) throw error
+      return new Map(data.map((row) => [row.listing_id, row.saves]))
+    },
+    enabled: Boolean(userId),
   })
 }

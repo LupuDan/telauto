@@ -15,7 +15,11 @@
     "rangeTo": "până la",
     "close": "Închide",
     "noMatches": "Nimic găsit",
-    "loadFailed": "Nu s-au putut încărca anunțurile. Verifică internetul și încearcă din nou."
+    "loadFailed": "Nu s-au putut încărca anunțurile. Verifică internetul și încearcă din nou.",
+    "undo": "Anulează",
+    "back": "Înapoi",
+    "moreActions": "Mai multe acțiuni",
+    "cancel": "Anulează"
   },
   "header": {
     "searchPlaceholder": "Ce cauți?",
@@ -158,7 +162,26 @@
     "deleteConfirmLabel": "Scrie {{word}} pentru confirmare",
     "deleteWord": "ȘTERGE",
     "deleteButton": "Șterge contul definitiv",
-    "deletedNotice": "Contul tău a fost șters. Îți mulțumim că ai folosit Telauto.md."
+    "deletedNotice": "Contul tău a fost șters. Îți mulțumim că ai folosit Telauto.md.",
+    "photo": "Poza de profil",
+    "photoAdd": "Adaugă o poză",
+    "photoChange": "Schimbă poza",
+    "photoRemove": "Șterge poza",
+    "editProfile": "Editează profilul",
+    "statsLabel": "Pe scurt",
+    "statActive": "active",
+    "statExpiring": "expiră",
+    "statFavorites": "favorite",
+    "sectionsLabel": "Secțiunile contului",
+    "help": "Ajutor și siguranță",
+    "guestText": "Intră în cont ca să pui anunțuri, să scrii vânzătorilor și să salvezi favorite.",
+    "guestRegister": "Creează cont",
+    "settings": {
+      "title": "Setări",
+      "profile": "Profil",
+      "security": "Securitate",
+      "delete": "Șterge contul"
+    }
   },
   "profile": {
     "metaTitle": "{{name}} – Telauto.md",
@@ -257,7 +280,9 @@
     "notSpecified": "– Nespecificat –",
     "otherOption": "Altul (scrie)",
     "rangeHint": "Între {{min}} și {{max}}.",
-    "minPhotosShort": "minimum {{count}} poze",
+    "minPhotosShort_one": "minimum {{count}} poză",
+    "minPhotosShort_few": "minimum {{count}} poze",
+    "minPhotosShort_other": "minimum {{count}} de poze",
     "photosHint": "Până la {{max}} poze. Prima este poza principală.",
     "photosMin": "Adaugă cel puțin {{count}} poze pentru această categorie.",
     "photosReorderHint": "Schimbă ordinea trăgând pozele (pe telefon: ține apăsat) sau cu săgețile ← →.",
@@ -341,7 +366,8 @@
       "draft": "Ciorne",
       "sold": "Vândute",
       "expired": "Expirate",
-      "hidden": "Ascunse"
+      "hidden": "Ascunse",
+      "expiring": "Expiră curând"
     },
     "empty": "Nu ai anunțuri aici.",
     "expiresOn": "activ până pe {{date}}",
@@ -362,7 +388,36 @@
     "deleteNo": "Nu",
     "publishedNotice": "Anunțul a fost publicat",
     "savedNotice": "Modificările au fost salvate.",
-    "viewListing": "Vezi anunțul"
+    "viewListing": "Vezi anunțul",
+    "filtersLabel": "Filtrează anunțurile",
+    "emptyAll": "Nu ai încă anunțuri. Pune primul anunț în mai puțin de un minut.",
+    "badgeActive": "Activ",
+    "badgeSold": "Vândut",
+    "badgeExpired": "Expirat",
+    "badgeHidden": "Ascuns de moderator",
+    "badgeRejected": "Respins de moderator",
+    "badgeDraft": "Ciornă",
+    "expiresIn_one": "Expiră în {{count}} zi",
+    "expiresIn_few": "Expiră în {{count}} zile",
+    "expiresIn_other": "Expiră în {{count}} de zile",
+    "why": "De ce?",
+    "whyTitle": "De ce este ascuns anunțul?",
+    "markSoldFull": "Marchează ca vândut",
+    "soldToast": "Anunțul a fost marcat ca vândut",
+    "deleteFull": "Șterge anunțul",
+    "share": "Distribuie",
+    "linkCopied": "Linkul a fost copiat",
+    "actionsFor": "Acțiuni pentru {{title}}",
+    "saves_one": "{{count}} salvare",
+    "saves_few": "{{count}} salvări",
+    "saves_other": "{{count}} de salvări",
+    "colPhoto": "Poză",
+    "colTitle": "Anunț",
+    "colPrice": "Preț",
+    "colStatus": "Stare",
+    "colStats": "Vizualizări",
+    "colActions": "Acțiuni",
+    "refreshing": "Se reîmprospătează…"
   },
   "fields": {
     "brand_id": {
@@ -629,7 +684,10 @@
     "hint": "Apasă pe inimă ca să elimini un anunț din favorite.",
     "unavailableHeading": "Anunțuri indisponibile",
     "unavailableTitle": "Anunț indisponibil",
-    "unavailableText": "A fost vândut, a expirat sau a fost ascuns."
+    "unavailableText": "A fost vândut, a expirat sau a fost ascuns.",
+    "unavailableBadge": "Indisponibil",
+    "removeUnavailable": "Șterge anunțurile indisponibile",
+    "removedToast": "Scos din favorite"
   },
   "garage": {
     "intro": "Adaugă mașinile tale ca să găsești rapid piese compatibile („Doar piese pentru mașina mea”).",
@@ -651,7 +709,8 @@
     "moduleEmpty": "Adaugă mașina ta și vezi doar piesele care i se potrivesc.",
     "moduleWithCar": "Vezi piesele care se potrivesc cu {{car}}.",
     "addCar": "Adaugă o mașină",
-    "seeMatchingParts": "Vezi piesele potrivite"
+    "seeMatchingParts": "Vezi piesele potrivite",
+    "actionsFor": "Acțiuni pentru {{car}}"
   },
   "messages": {
     "metaTitle": "Mesaje – Telauto.md",

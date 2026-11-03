@@ -1,156 +1,139 @@
-import { Settings } from 'lucide-react'
-import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useSearchParams } from 'react-router'
+import { Link, Navigate, Outlet, useSearchParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
 import { Alert } from '../components/ui/Alert'
-import { Button } from '../components/ui/Button'
-import { buttonClass } from '../components/ui/buttonStyles'
-import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
-import { Tabs } from '../components/ui/Tabs'
-import { signOut } from '../features/auth/api'
+import { AccountHome, AccountSidebar, GuestAccount } from '../features/account/AccountHome'
+import { ScreenHeader } from '../features/account/parts'
 import { useAuth } from '../features/auth/authContext'
 import { FavoritesList } from '../features/favorites/FavoritesList'
 import { GarageList } from '../features/garage/GarageList'
 import { MyListings } from '../features/listings/MyListings'
-import { ChangePasswordForm } from '../features/profile/ChangePasswordForm'
-import { DeleteAccountForm } from '../features/profile/DeleteAccountForm'
-import { useMyPhone, useProfile } from '../features/profile/hooks'
-import { ProfileSettingsForm } from '../features/profile/ProfileSettingsForm'
-import { CATEGORIES, CATEGORY_SLUGS } from '../lib/categories'
+import { useIsDesktop } from '../lib/useIsDesktop'
 
-// "garage" is the tab the auto categories add (homeModule 'garage' in src/lib/categories.ts)
-const HAS_GARAGE = CATEGORY_SLUGS.some((slug) => CATEGORIES[slug].homeModule === 'garage')
-const TABS = (['listings', 'favorites', 'garage', 'settings'] as const).filter((tab) => tab !== 'garage' || HAS_GARAGE)
-type Tab = (typeof TABS)[number]
+export {
+  DeleteAccountScreen,
+  ProfileScreen,
+  SecurityScreen,
+  SettingsMenu,
+} from '../features/account/SettingsScreens'
 
+/**
+ * "Contul meu" (plan de design, 6.6). Every section has its own route, so the phone's back button works:
+ *   #/account                 main screen (phones) / "Anunțurile mele" next to the menu (computers)
+ *   #/account/listings        #/account/favorites        #/account/garage (category module)
+ *   #/account/settings        …/settings/profile, …/settings/security, …/settings/delete
+ * Computers (1024 px+): the menu stays in a 280 px column on the left, the section opens on the right.
+ */
 export function AccountPage() {
-  const { t } = useTranslation()
-  usePageMeta(t('account.metaTitle'))
-  const [params, setParams] = useSearchParams()
-  const tabParam = params.get('tab')
-  const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : 'listings'
-  const { user } = useAuth()
-  const myProfile = useProfile(user?.id)
+  const { user, loading } = useAuth()
+  const isDesktop = useIsDesktop()
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <h1 className="type-h1 text-ink">{t('account.title')}</h1>
-        {myProfile.data?.role === 'admin' && (
-          <Link to="/admin" className={buttonClass('secondary', 'compact')}>
-            <Settings aria-hidden="true" className="size-5" strokeWidth={1.75} />
-            {t('admin.openPanel')}
-          </Link>
-        )}
-      </div>
-
-      {params.get('notice') === 'password-changed' && (
-        <div className="mb-4">
-          <Alert kind="success">{t('auth.resetDone')}</Alert>
-        </div>
-      )}
-
-      <div className="mb-6">
-        <Tabs
-          label={t('account.title')}
-          items={TABS.map((item) => ({ value: item, label: t(`account.tabs.${item}`) }))}
-          value={tab}
-          onChange={(item) => setParams({ tab: item })}
-        />
-      </div>
-
-      {(params.get('notice') === 'published' || params.get('notice') === 'saved') && (
-        <div className="mb-4">
-          <Alert kind="success">
-            {params.get('notice') === 'published' ? t('myListings.publishedNotice') : t('myListings.savedNotice')}
-            {params.get('id') && /^[0-9a-f-]{36}$/i.test(params.get('id') ?? '') && (
-              <>
-                {' '}
-                <Link to={`/a/${params.get('id')}`} className="font-medium text-brand underline-offset-2 hover:underline">
-                  {t('myListings.viewListing')}
-                </Link>
-              </>
-            )}
-          </Alert>
-        </div>
-      )}
-
-      {tab === 'settings' ? (
-        <SettingsTab />
-      ) : tab === 'favorites' ? (
-        <FavoritesList />
-      ) : tab === 'garage' ? (
-        <GarageList />
-      ) : user ? (
-        <MyListings userId={user.id} />
-      ) : null}
-    </div>
-  )
-}
-
-function SettingsTab() {
-  const { t } = useTranslation()
-  const { user } = useAuth()
-  const profile = useProfile(user?.id)
-  const phone = useMyPhone(user?.id)
-
-  if (!user) return null
-  if (profile.isPending || phone.isPending) return <LoadingState />
-  if (profile.isError || phone.isError || !profile.data) {
+  if (loading) return <LoadingState />
+  if (!user || !isDesktop) {
     return (
-      <ErrorState
-        error={profile.error ?? phone.error}
-        onRetry={() => {
-          void profile.refetch()
-          void phone.refetch()
-        }}
-      />
+      <>
+        <AccountNotices />
+        <Outlet />
+      </>
     )
   }
-
-  const email = user.email ?? ''
-
   return (
-    <div className="space-y-6">
-      {profile.data.is_blocked && <Alert kind="warning">{t('account.blockedNotice')}</Alert>}
-
-      <Section title={t('account.profileSection')}>
-        <p className="mb-4 text-sm text-muted">
-          {t('account.email')}: <span className="font-medium text-ink">{email}</span>
-          {' · '}
-          <Link to={`/u/${user.id}`} className="text-brand hover:underline">
-            {t('account.publicProfileLink')}
-          </Link>
-        </p>
-        <ProfileSettingsForm userId={user.id} profile={profile.data} phone={phone.data} />
-      </Section>
-
-      <Section title={t('account.passwordSection')}>
-        <ChangePasswordForm email={email} />
-      </Section>
-
-      <Section title={t('account.logoutSection')}>
-        <Button variant="secondary" onClick={() => void signOut()}>
-          {t('auth.logout')}
-        </Button>
-      </Section>
-
-      <Section title={t('account.dangerSection')} danger>
-        <DeleteAccountForm userId={user.id} email={email} />
-      </Section>
+    <div className="grid grid-cols-[280px_minmax(0,1fr)] items-start gap-8">
+      <aside className="sticky top-6">
+        <AccountSidebar />
+      </aside>
+      <div className="min-w-0">
+        <AccountNotices />
+        <Outlet />
+      </div>
     </div>
   )
 }
 
-function Section({ title, danger = false, children }: { title: string; danger?: boolean; children: ReactNode }) {
+/** Old links (#/account?tab=garage) still open the right screen. */
+const OLD_TABS = ['listings', 'favorites', 'garage', 'settings']
+
+export function AccountIndex() {
+  const { t } = useTranslation()
+  usePageMeta(t('account.metaTitle'))
+  const { user } = useAuth()
+  const isDesktop = useIsDesktop()
+  const [params] = useSearchParams()
+  const tab = params.get('tab')
+
+  if (tab && OLD_TABS.includes(tab)) {
+    const rest = new URLSearchParams(params)
+    rest.delete('tab')
+    const query = rest.toString()
+    return <Navigate to={`/account/${tab}${query ? `?${query}` : ''}`} replace />
+  }
+  if (!user) return <GuestAccount />
+  return isDesktop ? <ListingsScreen /> : <AccountHome />
+}
+
+export function ListingsScreen() {
+  const { t } = useTranslation()
+  usePageMeta(`${t('account.tabs.listings')} – Telauto.md`)
+  const { user } = useAuth()
   return (
-    <section
-      className={`rounded-panel border bg-surface p-4 sm:p-5 ${danger ? 'border-danger-200' : 'border-line'}`}
-    >
-      <h2 className={`mb-4 type-h2 ${danger ? 'text-danger' : 'text-ink'}`}>{title}</h2>
-      {children}
-    </section>
+    <div>
+      <ScreenHeader title={t('account.tabs.listings')} back="/account" />
+      {user && <MyListings userId={user.id} />}
+    </div>
+  )
+}
+
+export function FavoritesScreen() {
+  const { t } = useTranslation()
+  usePageMeta(`${t('account.tabs.favorites')} – Telauto.md`)
+  return (
+    <div>
+      <ScreenHeader title={t('account.tabs.favorites')} back="/account" />
+      <FavoritesList />
+    </div>
+  )
+}
+
+export function GarageScreen() {
+  const { t } = useTranslation()
+  usePageMeta(`${t('account.tabs.garage')} – Telauto.md`)
+  return (
+    <div className="mx-auto max-w-xl lg:mx-0">
+      <ScreenHeader title={t('account.tabs.garage')} back="/account" />
+      <GarageList />
+    </div>
+  )
+}
+
+/** Notices after another page sent the person here (published listing, new password). */
+function AccountNotices() {
+  const { t } = useTranslation()
+  const [params] = useSearchParams()
+  const notice = params.get('notice')
+  const id = params.get('id') ?? ''
+
+  if (notice === 'password-changed') {
+    return (
+      <div className="mb-4">
+        <Alert kind="success">{t('auth.resetDone')}</Alert>
+      </div>
+    )
+  }
+  if (notice !== 'published' && notice !== 'saved') return null
+  return (
+    <div className="mb-4">
+      <Alert kind="success">
+        {notice === 'published' ? t('myListings.publishedNotice') : t('myListings.savedNotice')}
+        {/^[0-9a-f-]{36}$/i.test(id) && (
+          <>
+            {' '}
+            <Link to={`/a/${id}`} className="font-medium text-brand underline-offset-2 hover:underline">
+              {t('myListings.viewListing')}
+            </Link>
+          </>
+        )}
+      </Alert>
+    </div>
   )
 }

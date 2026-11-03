@@ -1,18 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Car, Plus } from 'lucide-react'
+import { Car, Ellipsis, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { z } from 'zod'
+import { CategoryIcon } from '../../components/CategoryIcon'
 import { Alert } from '../../components/ui/Alert'
 import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { ErrorState } from '../../components/ui/ErrorState'
 import { LoadingState } from '../../components/ui/LoadingState'
 import { SelectField } from '../../components/ui/SelectField'
+import { Sheet } from '../../components/ui/Sheet'
 import { TextField } from '../../components/ui/TextField'
 import { translateKey } from '../../i18n/translate'
+import { categoryBySlug } from '../../lib/categories'
 import { isValidYear, MIN_YEAR, maxYear } from '../../lib/validators'
 import { errorToKey } from '../auth/authErrors'
 import { useReferenceOptions } from '../reference/hooks'
@@ -30,30 +33,37 @@ const vehicleSchema = z.object({
   makeId: z.string().regex(/^\d+$/, 'validation.required'),
   modelId: z.string(),
   year: z.string().refine((value) => isValidYear(Number(value)), 'validation.year'),
-  label: z.string().trim().max(40, 'validation.tooLong'),
 })
 type VehicleFormValues = z.infer<typeof vehicleSchema>
 
-/** "Contul meu → Garajul meu": cars of the user, used by the "Only parts for my car" filter. */
+/**
+ * "Contul meu → Garajul meu" (plan de design, 6.6): the saved cars as 56 px rows (category icon,
+ * make, model, year), each with "Vezi piesele potrivite"; "⋯" opens "Editează" and "Șterge".
+ * "Adaugă o mașină" opens a panel from the bottom with three fields: make, model and year.
+ */
 export function GarageList() {
   const { t } = useTranslation()
   const vehicles = useVehicles()
   const remove = useDeleteVehicle()
-  const [editing, setEditing] = useState<string | 'new' | null>(null)
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
+  const [editing, setEditing] = useState<Vehicle | 'new' | null>(null)
+  const [actionsFor, setActionsFor] = useState<Vehicle | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const autoIcon = categoryBySlug('autovehicule')?.icon
 
   if (vehicles.isPending) return <LoadingState />
   if (vehicles.isError) return <ErrorState error={vehicles.error} onRetry={() => void vehicles.refetch()} />
 
   const list = vehicles.data
   const allModels = t('listingForm.compatibilityAllModels')
+  const closeActions = () => {
+    setActionsFor(null)
+    setConfirmDelete(false)
+    remove.reset()
+  }
 
   return (
     <div className="space-y-4">
-      {list.length > 0 && <p className="text-muted">{t('garage.intro')}</p>}
-      {remove.isError && <Alert kind="error">{translateKey(t, errorToKey(remove.error))}</Alert>}
-
-      {list.length === 0 && editing !== 'new' && (
+      {list.length === 0 ? (
         <EmptyState
           text={t('garage.moduleEmpty')}
           action={
@@ -63,78 +73,119 @@ export function GarageList() {
             </Button>
           }
         />
-      )}
-
-      {list.length > 0 && (
-        <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
-          {list.map((vehicle) =>
-            editing === vehicle.id ? (
-              <li key={vehicle.id} className="p-3">
-                <VehicleForm vehicle={vehicle} onDone={() => setEditing(null)} />
-              </li>
-            ) : (
-              <li key={vehicle.id} className="p-4">
-                {/* simple row: icon, make, model and year (plan de design, 6.6) */}
-                <div className="flex items-start gap-3">
+      ) : (
+        <>
+          <p className="text-muted">{t('garage.intro')}</p>
+          <ul className="divide-y divide-line overflow-hidden rounded-card border border-line bg-surface">
+            {list.map((vehicle) => {
+              const title = vehicleTitle(vehicle, allModels)
+              return (
+                <li key={vehicle.id} className="flex min-h-14 items-center gap-3 py-1 pr-1 pl-4">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-50 text-brand">
-                    <Car aria-hidden="true" className="size-5" strokeWidth={1.75} />
+                    {autoIcon ? (
+                      <CategoryIcon name={autoIcon} className="size-5" />
+                    ) : (
+                      <Car aria-hidden="true" className="size-5" strokeWidth={1.75} />
+                    )}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-ink">{vehicleTitle(vehicle, allModels)}</p>
+                    <p className="font-semibold text-ink">{title}</p>
                     {/* user text: plain text */}
                     {vehicle.label && <p className="truncate text-sm text-muted">{vehicle.label}</p>}
                     <Link
                       to={compatiblePartsHref(vehicle)}
-                      className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
+                      className="inline-flex min-h-9 items-center text-sm font-medium text-brand hover:underline"
                     >
-                      {t('garage.showParts')}
+                      {t('garage.seeMatchingParts')}
                     </Link>
                   </div>
-                </div>
-                <div className="flex flex-wrap gap-2 pl-13">
-                  {confirmDelete === vehicle.id ? (
-                    <>
-                      <span className="self-center text-sm text-ink">{t('garage.deleteConfirm')}</span>
-                      <Button
-                        variant="danger"
-                        loading={remove.isPending}
-                        onClick={() => remove.mutate(vehicle.id, { onSuccess: () => setConfirmDelete(null) })}
-                      >
-                        {t('myListings.deleteYes')}
-                      </Button>
-                      <Button variant="secondary" onClick={() => setConfirmDelete(null)}>
-                        {t('myListings.deleteNo')}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button variant="secondary" size="compact" onClick={() => setEditing(vehicle.id)}>
-                        {t('myListings.edit')}
-                      </Button>
-                      <Button variant="danger" size="compact" onClick={() => setConfirmDelete(vehicle.id)}>
-                        {t('myListings.delete')}
-                      </Button>
-                    </>
-                  )}
-                </div>
-              </li>
-            ),
+                  <button
+                    type="button"
+                    onClick={() => setActionsFor(vehicle)}
+                    aria-label={t('garage.actionsFor', { car: title })}
+                    className="flex size-11 shrink-0 items-center justify-center rounded-field text-ink hover:bg-paper"
+                  >
+                    <Ellipsis aria-hidden="true" className="size-5" strokeWidth={2} />
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+          {list.length < MAX_VEHICLES ? (
+            <Button variant="secondary" onClick={() => setEditing('new')}>
+              <Plus aria-hidden="true" className="size-5" strokeWidth={2} />
+              {t('garage.addCar')}
+            </Button>
+          ) : (
+            <Alert kind="info">{t('errors.garageLimit')}</Alert>
           )}
-        </ul>
+        </>
       )}
 
-      {editing === 'new' ? (
-        <VehicleForm onDone={() => setEditing(null)} />
-      ) : list.length < MAX_VEHICLES ? (
-        list.length > 0 && (
-          <Button variant="secondary" onClick={() => setEditing('new')}>
-            <Plus aria-hidden="true" className="size-5" strokeWidth={2} />
-            {t('garage.addCar')}
-          </Button>
-        )
-      ) : (
-        <Alert kind="info">{t('errors.garageLimit')}</Alert>
-      )}
+      {/* "⋯": Editează / Șterge (deleting asks once more, inside the same panel) */}
+      <Sheet open={actionsFor !== null} onClose={closeActions} title={actionsFor ? vehicleTitle(actionsFor, allModels) : ''}>
+        {actionsFor &&
+          (confirmDelete ? (
+            <div className="space-y-4">
+              <p className="text-ink">{t('garage.deleteConfirm')}</p>
+              {remove.isError && <Alert kind="error">{translateKey(t, errorToKey(remove.error))}</Alert>}
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Button
+                  variant="danger"
+                  fullWidth
+                  loading={remove.isPending}
+                  onClick={() => remove.mutate(actionsFor.id, { onSuccess: closeActions })}
+                >
+                  {t('myListings.deleteYes')}
+                </Button>
+                <Button variant="secondary" fullWidth onClick={() => setConfirmDelete(false)}>
+                  {t('myListings.deleteNo')}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <ul className="-mx-4 -my-4 divide-y divide-line">
+              <li>
+                <button
+                  type="button"
+                  className="flex min-h-14 w-full items-center gap-3 px-4 text-left text-ink hover:bg-paper"
+                  onClick={() => {
+                    const vehicle = actionsFor
+                    closeActions()
+                    setEditing(vehicle)
+                  }}
+                >
+                  <Pencil aria-hidden="true" className="size-5 text-muted" strokeWidth={1.75} />
+                  {t('myListings.edit')}
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  className="flex min-h-14 w-full items-center gap-3 px-4 text-left text-danger hover:bg-paper"
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  <Trash2 aria-hidden="true" className="size-5" strokeWidth={1.75} />
+                  {t('myListings.delete')}
+                </button>
+              </li>
+            </ul>
+          ))}
+      </Sheet>
+
+      <Sheet
+        open={editing !== null}
+        onClose={() => setEditing(null)}
+        title={editing && editing !== 'new' ? t('garage.editTitle') : t('garage.addTitle')}
+      >
+        {editing && (
+          <VehicleForm
+            key={editing === 'new' ? 'new' : editing.id}
+            vehicle={editing === 'new' ? undefined : editing}
+            onDone={() => setEditing(null)}
+          />
+        )}
+      </Sheet>
     </div>
   )
 }
@@ -154,7 +205,6 @@ function VehicleForm({ vehicle, onDone }: { vehicle?: Vehicle; onDone: () => voi
       makeId: vehicle ? String(vehicle.makeId) : '',
       modelId: vehicle?.modelId ? String(vehicle.modelId) : '',
       year: vehicle ? String(vehicle.year) : '',
-      label: vehicle?.label ?? '',
     },
   })
   const makeId = useWatch({ control, name: 'makeId' })
@@ -170,7 +220,8 @@ function VehicleForm({ vehicle, onDone }: { vehicle?: Vehicle; onDone: () => voi
           makeId: Number(values.makeId),
           modelId: values.modelId ? Number(values.modelId) : null,
           year: Number(values.year),
-          label: values.label,
+          // the form has three fields (plan 6.6); a name given earlier is kept as it was
+          label: vehicle?.label ?? '',
         },
       },
       { onSuccess: onDone },
@@ -180,65 +231,52 @@ function VehicleForm({ vehicle, onDone }: { vehicle?: Vehicle; onDone: () => voi
   const makeField = register('makeId')
 
   return (
-    <form
-      onSubmit={onSubmit}
-      noValidate
-      className="space-y-4 rounded-card border border-line bg-paper p-4"
-      aria-label={vehicle ? t('garage.editTitle') : t('garage.addTitle')}
-    >
-      <h2 className="font-semibold text-ink">{vehicle ? t('garage.editTitle') : t('garage.addTitle')}</h2>
+    <form onSubmit={onSubmit} noValidate className="space-y-4">
       {save.isError && <Alert kind="error">{translateKey(t, errorToKey(save.error))}</Alert>}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <SelectField
-          label={t('listingForm.compatibilityMake')}
-          error={err(errors.makeId?.message)}
-          {...makeField}
-          onChange={(event) => {
-            void makeField.onChange(event)
-            setValue('modelId', '')
-          }}
-        >
-          <option value="">{t('listingForm.choose')}</option>
-          {makes.data?.map((make) => (
-            <option key={make.id} value={String(make.id)}>
-              {make.name}
-            </option>
-          ))}
-        </SelectField>
-        <SelectField label={t('listingForm.compatibilityModel')} disabled={!makeId} {...register('modelId')}>
-          <option value="">
-            {makeId ? t('listingForm.compatibilityAllModels') : t('listingForm.chooseParentFirst')}
+      <SelectField
+        label={t('listingForm.compatibilityMake')}
+        error={err(errors.makeId?.message)}
+        {...makeField}
+        onChange={(event) => {
+          void makeField.onChange(event)
+          setValue('modelId', '')
+        }}
+      >
+        <option value="">{t('listingForm.choose')}</option>
+        {makes.data?.map((make) => (
+          <option key={make.id} value={String(make.id)}>
+            {make.name}
           </option>
-          {models.data?.map((model) => (
-            <option key={model.id} value={String(model.id)}>
-              {model.name}
-            </option>
-          ))}
-        </SelectField>
-        <TextField
-          label={t('garage.year')}
-          inputMode="numeric"
-          maxLength={4}
-          placeholder={`${MIN_YEAR}–${maxYear()}`}
-          error={err(errors.year?.message)}
-          {...register('year')}
-        />
-        <TextField
-          label={t('garage.label')}
-          hint={t('garage.labelHint')}
-          maxLength={40}
-          error={err(errors.label?.message)}
-          {...register('label')}
-        />
-      </div>
-      <p className="text-sm text-muted">{t('garage.modelHint')}</p>
+        ))}
+      </SelectField>
+      <SelectField
+        label={t('listingForm.compatibilityModel')}
+        disabled={!makeId}
+        {...register('modelId')}
+      >
+        <option value="">{makeId ? t('listingForm.compatibilityAllModels') : t('listingForm.chooseParentFirst')}</option>
+        {models.data?.map((model) => (
+          <option key={model.id} value={String(model.id)}>
+            {model.name}
+          </option>
+        ))}
+      </SelectField>
+      <p className="-mt-2 text-sm text-muted">{t('garage.modelHint')}</p>
+      <TextField
+        label={t('garage.year')}
+        inputMode="numeric"
+        maxLength={4}
+        placeholder={`${MIN_YEAR}–${maxYear()}`}
+        error={err(errors.year?.message)}
+        {...register('year')}
+      />
 
-      <div className="flex gap-2">
-        <Button type="submit" loading={save.isPending}>
+      <div className="grid gap-2 sm:grid-cols-2">
+        <Button type="submit" fullWidth loading={save.isPending}>
           {t('account.save')}
         </Button>
-        <Button variant="secondary" onClick={onDone}>
+        <Button variant="secondary" fullWidth onClick={onDone}>
           {t('garage.cancel')}
         </Button>
       </div>

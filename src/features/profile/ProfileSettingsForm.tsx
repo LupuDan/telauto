@@ -7,11 +7,11 @@ import { Button } from '../../components/ui/Button'
 import { SelectField } from '../../components/ui/SelectField'
 import { TextField } from '../../components/ui/TextField'
 import { useFieldError } from '../../components/ui/useFieldError'
-import { changeLanguage } from '../../i18n'
 import { translateKey } from '../../i18n/translate'
 import { localizedName, toLanguage } from '../../lib/format'
 import { errorToKey } from '../auth/authErrors'
 import { useLocalities } from '../reference/hooks'
+import { AvatarField } from './AvatarField'
 import type { PublicProfile } from './api'
 import { useUpdateMyProfile } from './hooks'
 import { profileSettingsSchema, type ProfileSettingsInput, type ProfileSettingsOutput } from './schemas'
@@ -36,7 +36,8 @@ export function ProfileSettingsForm({ userId, profile, phone }: Props) {
       displayName: profile.display_name,
       localityId: profile.locality_id ? String(profile.locality_id) : '',
       phone,
-      language: toLanguage(profile.language),
+      // the language is chosen with RO | RU on the main account screen; saving keeps the profile in step
+      language: toLanguage(i18n.resolvedLanguage),
     },
   })
 
@@ -54,13 +55,12 @@ export function ProfileSettingsForm({ userId, profile, phone }: Props) {
     }
     reset({ ...values })
     setSaved(true)
-    if (values.language !== i18n.resolvedLanguage) {
-      void changeLanguage(values.language)
-    }
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4" onChange={() => setSaved(false)}>
+      <AvatarField userId={userId} profile={profile} />
+
       {update.isError && <Alert kind="error">{translateKey(t, errorToKey(update.error))}</Alert>}
       {saved && !isDirty && <Alert kind="success">{t('account.saved')}</Alert>}
 
@@ -92,14 +92,15 @@ export function ProfileSettingsForm({ userId, profile, phone }: Props) {
         {...register('phone')}
       />
 
-      <SelectField label={t('account.language')} {...register('language')}>
-        <option value="ro">{t('language.ro')}</option>
-        <option value="ru">{t('language.ru')}</option>
-      </SelectField>
-
-      <Button type="submit" loading={isSubmitting}>
-        {t('account.save')}
-      </Button>
+      {/*
+        fixed at the bottom of the screen (above the bottom bar on phones);
+        active only after a change (plan de design, 6.6)
+      */}
+      <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] -mx-4 border-t border-line bg-surface px-4 py-3 lg:static lg:mx-0 lg:border-0 lg:bg-transparent lg:px-0 lg:pt-2 lg:pb-0">
+        <Button type="submit" fullWidth loading={isSubmitting} disabled={!isDirty} className="lg:w-auto lg:min-w-48">
+          {t('account.save')}
+        </Button>
+      </div>
     </form>
   )
 }

@@ -121,6 +121,19 @@ begin
   select count(*) into v_n from public.reports;
   r := r || array['Cumpărător: NU citește raportările (doar adminii)', '0', v_n::text];
 
+  -- added in 0017 ("Contul meu"): the buyer saves the listing; only the seller sees the number
+  insert into public.favorites (user_id, listing_id) values (v_buyer, v_listing);
+  select count(*) into v_n from public.my_listing_saves();
+  r := r || array['Cumpărător: NU vede salvările anunțurilor altcuiva', '0', v_n::text];
+
+  begin
+    update public.profiles set avatar_path = v_seller || '/' || gen_random_uuid() || '.webp' where id = v_buyer;
+    v_text := 'a reușit';
+  exception when check_violation then
+    v_text := 'refuzat';
+  end;
+  r := r || array['Cumpărător: NU poate folosi poza din dosarul altcuiva', 'refuzat', v_text];
+
   reset role;
 
   -- ---------- 3) anti-spam: new account, max 3 listings in 24h ----------
@@ -140,6 +153,9 @@ begin
     v_text := sqlerrm;
   end;
   r := r || array['Cont nou: al 4-lea anunț în 24h este refuzat', 'LISTING_LIMIT_REACHED', v_text];
+
+  select coalesce(sum(saves), 0) into v_n from public.my_listing_saves();
+  r := r || array['Vânzător: vede câte salvări are anunțul său', '1', v_n::text];
 
   reset role;
 

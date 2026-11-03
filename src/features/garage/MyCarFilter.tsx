@@ -92,7 +92,7 @@ export function MyCarFilter({
         </>
       )}
       <Link
-        to="/account?tab=garage"
+        to="/account/garage"
         className={`inline-flex min-h-11 items-center text-sm font-medium text-brand hover:underline ${
           vehicles.data.length > 1 ? '' : 'sm:ml-auto'
         }`}

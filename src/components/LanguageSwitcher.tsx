@@ -2,7 +2,14 @@ import { useTranslation } from 'react-i18next'
 import { changeLanguage, SUPPORTED_LANGUAGES, type Language } from '../i18n'
 
 /** "RO | RU": the active language is bold and dark, the other one grey (plan de design, section 5). */
-export function LanguageSwitcher({ className = '' }: { className?: string }) {
+export function LanguageSwitcher({
+  className = '',
+  onChange,
+}: {
+  className?: string
+  /** called after the language changed (e.g. to save it in the profile) */
+  onChange?: (lng: Language) => void
+}) {
   const { t, i18n } = useTranslation()
   const current: Language = i18n.resolvedLanguage === 'ru' ? 'ru' : 'ro'
   const short = (lng: Language) => t(lng === 'ro' ? 'language.roShort' : 'language.ruShort')
@@ -23,7 +30,11 @@ export function LanguageSwitcher({ className = '' }: { className?: string }) {
               lang={lng}
               aria-pressed={active}
               aria-label={`${short(lng)} – ${t(`language.${lng}`)}`}
-              onClick={() => void changeLanguage(lng)}
+              onClick={() => {
+                if (active) return
+                void changeLanguage(lng)
+                onChange?.(lng)
+              }}
               className={`inline-flex min-h-11 min-w-9 items-center justify-center rounded-field px-1.5 text-sm ${
                 active ? 'font-semibold text-ink' : 'text-muted hover:text-ink'
               }`}

@@ -1,11 +1,14 @@
 import { useTranslation } from 'react-i18next'
-import { Link, useParams } from 'react-router'
+import { ChevronLeft } from 'lucide-react'
+import { Link, useNavigate, useParams } from 'react-router'
 import { usePageMeta } from '../app/usePageMeta'
 import { ListingGrid, ListingGridSkeleton } from '../components/ListingCard'
 import { buttonClass } from '../components/ui/buttonStyles'
 import { EmptyState } from '../components/ui/EmptyState'
 import { ErrorState } from '../components/ui/ErrorState'
 import { LoadingState } from '../components/ui/LoadingState'
+import { Avatar } from '../components/ui/Avatar'
+import { avatarUrl } from '../features/profile/api'
 import { useProfile } from '../features/profile/hooks'
 import { useLocalities } from '../features/reference/hooks'
 import { useSearchListings } from '../features/search/api'
@@ -44,14 +47,10 @@ export function PublicProfilePage() {
   const locality = localities.data?.find((item) => item.id === data.locality_id)
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-3xl space-y-4">
+      <BackButton />
       <section className="flex items-center gap-4 rounded-card border border-line bg-surface p-5">
-        <div
-          aria-hidden="true"
-          className="flex size-16 shrink-0 items-center justify-center rounded-full bg-brand-100 text-2xl font-semibold text-brand"
-        >
-          {name.charAt(0).toLocaleUpperCase()}
-        </div>
+        <Avatar name={name} src={avatarUrl(data.avatar_path)} size="2xl" />
         <div className="min-w-0">
           {/* user text is rendered as plain text by React (no HTML) */}
           <h1 className="truncate type-h1 text-ink">{name}</h1>
@@ -65,7 +64,7 @@ export function PublicProfilePage() {
         </div>
       </section>
 
-      <section aria-labelledby="profile-listings">
+      <section aria-labelledby="profile-listings" className="pt-2">
         <h2 id="profile-listings" className="mb-3 type-h2 text-ink">
           {t('profile.listingsHeading')}
         </h2>
@@ -89,4 +88,21 @@ function ProfileListings({ userId }: { userId: string }) {
     )
   }
   return <ListingGrid listings={listings.data.items} />
+}
+
+/** "‹ Înapoi": to the previous page (e.g. "Contul meu" or the listing); to the home page if opened from a link. */
+function BackButton() {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const hasHistory = ((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0
+  return (
+    <button
+      type="button"
+      onClick={() => (hasHistory ? navigate(-1) : navigate('/'))}
+      className="-ml-2 inline-flex min-h-11 items-center gap-1 rounded-field pr-3 pl-1 font-medium text-ink hover:bg-surface"
+    >
+      <ChevronLeft aria-hidden="true" className="size-6" strokeWidth={2} />
+      {t('common.back')}
+    </button>
+  )
 }

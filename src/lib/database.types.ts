@@ -450,6 +450,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_path: string | null
           created_at: string
           display_name: string
           id: string
@@ -460,6 +461,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_path?: string | null
           created_at?: string
           display_name?: string
           id: string
@@ -470,6 +472,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_path?: string | null
           created_at?: string
           display_name?: string
           id?: string
@@ -745,6 +748,24 @@ export type Database = {
       mark_conversation_read: {
         Args: { p_conversation_id: string }
         Returns: undefined
+      }
+      message_has_report: { Args: { p_message_id: string }; Returns: boolean }
+      my_listing_saves: {
+        Args: never
+        Returns: {
+          listing_id: string
+          saves: number
+        }[]
+      }
+      my_unavailable_favorites: {
+        Args: never
+        Returns: {
+          cover_path: string
+          currency: string
+          listing_id: string
+          price: number
+          title: string
+        }[]
       }
       owns_listing_folder: { Args: { object_name: string }; Returns: boolean }
       price_in_mdl: {

@@ -2,6 +2,7 @@ import { Heart } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router'
+import { toast } from '../../lib/toast'
 import { useAuth } from '../auth/authContext'
 import { useFavoriteIds, useToggleFavorite } from './api'
 
@@ -26,6 +27,12 @@ export function FavoriteButton({ listingId }: { listingId: string }) {
     }
     if (!saved) setPulse((value) => value + 1)
     toggle.mutate({ listingId, save: !saved })
+    // "Scos din favorite" with "Anulează" for 5 seconds (plan de design, 6.6)
+    if (saved) {
+      toast(t('favorites.removedToast'), {
+        action: { label: t('common.undo'), onClick: () => toggle.mutate({ listingId, save: true }) },
+      })
+    }
   }
 
   const label = saved ? t('favorites.remove') : t('favorites.save')

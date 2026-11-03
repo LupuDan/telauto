@@ -380,3 +380,6 @@ export function attributesToForm(category: CategoryConfig, stored: StoredAttribu
   }
   return values
 }
+
+/** "Garajul meu" is the account section added by the auto categories (homeModule 'garage'). */
+export const HAS_GARAGE = CATEGORY_SLUGS.some((slug) => CATEGORIES[slug].homeModule === 'garage')

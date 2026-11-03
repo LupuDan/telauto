@@ -31,3 +31,4 @@ export const supabase = createClient<Database>(
 )
 
 export const LISTING_IMAGES_BUCKET = 'listing-images'
+export const AVATARS_BUCKET = 'avatars'

@@ -25,7 +25,7 @@ export function EditListingPage() {
     return (
       <section className="mx-auto max-w-md py-12 text-center">
         <h1 className="type-h1 text-ink">{t('errors.listingNotFound')}</h1>
-        <Link to="/account?tab=listings" className="mt-6 inline-block font-semibold text-brand hover:underline">
+        <Link to="/account/listings" className="mt-6 inline-block font-semibold text-brand hover:underline">
           {t('listingForm.backToMyListings')}
         </Link>
       </section>

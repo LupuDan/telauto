@@ -32,7 +32,7 @@ export type ListingDetails = {
   expired: boolean
   photos: string[]
   compatibility: CompatibilityRow[]
-  seller: { displayName: string; createdAt: string; localityId: number | null } | null
+  seller: { displayName: string; createdAt: string; localityId: number | null; avatarPath: string | null } | null
   hasImei: boolean
   hasVin: boolean
 }
@@ -49,7 +49,7 @@ export async function fetchListing(id: string): Promise<ListingDetails | null> {
        attributes, status, views, created_at, expires_at,
        listing_images (storage_path, position),
        listing_compatibility (make_id, model_id, year_from, year_to, vehicle_makes (name)),
-       profiles!listings_user_id_fkey (display_name, created_at, locality_id)`,
+       profiles!listings_user_id_fkey (display_name, created_at, locality_id, avatar_path)`,
     )
     .eq('id', id)
     .maybeSingle()
@@ -98,6 +98,7 @@ export async function fetchListing(id: string): Promise<ListingDetails | null> {
           displayName: data.profiles.display_name,
           createdAt: data.profiles.created_at,
           localityId: data.profiles.locality_id,
+          avatarPath: data.profiles.avatar_path,
         }
       : null,
     hasImei: badges.data?.[0]?.has_imei ?? false,

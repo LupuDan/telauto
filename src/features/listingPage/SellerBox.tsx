@@ -12,6 +12,7 @@ import { toast } from '../../lib/toast'
 import { useAuth } from '../auth/authContext'
 import { errorToKey } from '../auth/authErrors'
 import { MessageButton } from '../messages/MessageButton'
+import { avatarUrl } from '../profile/api'
 import { useSearchListings } from '../search/api'
 import type { ListingDetails, useListingContact } from './api'
 
@@ -30,7 +31,7 @@ export function SellerBox({ listing }: { listing: ListingDetails }) {
   return (
     <section aria-label={t('listing.sellerTitle')} className="rounded-card border border-line bg-surface p-4">
       <div className="flex items-center gap-3">
-        <Avatar name={sellerName} />
+        <Avatar name={sellerName} src={avatarUrl(seller?.avatarPath)} />
         <div className="min-w-0">
           <p className="truncate font-semibold text-ink">{sellerName}</p>
           {seller && (

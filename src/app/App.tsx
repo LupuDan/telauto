@@ -8,6 +8,7 @@ import { HomePage } from '../pages/HomePage'
 import { ListingPage } from '../pages/ListingPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { SearchPage } from '../pages/SearchPage'
+import { HAS_GARAGE } from '../lib/categories'
 import { Layout } from './Layout'
 
 // The pages most visitors open (home, category, search, listing) are in the main file.
@@ -34,7 +35,16 @@ const page = <K extends string>(load: () => Promise<Record<K, ComponentType>>, n
     ),
   )
 
-const AccountPage = page(() => import('../pages/AccountPage'), 'AccountPage')
+const accountModule = () => import('../pages/AccountPage')
+const AccountPage = page(accountModule, 'AccountPage')
+const AccountIndex = page(accountModule, 'AccountIndex')
+const ListingsScreen = page(accountModule, 'ListingsScreen')
+const FavoritesScreen = page(accountModule, 'FavoritesScreen')
+const GarageScreen = page(accountModule, 'GarageScreen')
+const SettingsMenu = page(accountModule, 'SettingsMenu')
+const ProfileScreen = page(accountModule, 'ProfileScreen')
+const SecurityScreen = page(accountModule, 'SecurityScreen')
+const DeleteAccountScreen = page(accountModule, 'DeleteAccountScreen')
 const AdminPage = page(() => import('../pages/AdminPage'), 'AdminPage')
 const AuthConfirmPage = page(() => import('../pages/AuthConfirmPage'), 'AuthConfirmPage')
 const ConversationPage = page(() => import('../pages/ConversationPage'), 'ConversationPage')
@@ -75,8 +85,21 @@ export function App() {
               <Route path="/p/:page" element={<StaticPage />} />
               {StyleguidePage && <Route path="/styleguide" element={<StyleguidePage />} />}
 
+              {/* "Contul meu": the main screen also works without an account (login / register) */}
+              <Route path="/account" element={<AccountPage />}>
+                <Route index element={<AccountIndex />} />
+                <Route element={<RequireAuth />}>
+                  <Route path="listings" element={<ListingsScreen />} />
+                  <Route path="favorites" element={<FavoritesScreen />} />
+                  {HAS_GARAGE && <Route path="garage" element={<GarageScreen />} />}
+                  <Route path="settings" element={<SettingsMenu />} />
+                  <Route path="settings/profile" element={<ProfileScreen />} />
+                  <Route path="settings/security" element={<SecurityScreen />} />
+                  <Route path="settings/delete" element={<DeleteAccountScreen />} />
+                </Route>
+              </Route>
+
               <Route element={<RequireAuth />}>
-                <Route path="/account" element={<AccountPage />} />
                 <Route path="/new" element={<NewListingPage />} />
                 <Route path="/a/:id/edit" element={<EditListingPage />} />
                 <Route path="/messages" element={<MessagesPage />} />

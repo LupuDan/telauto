@@ -64,7 +64,15 @@ export function useToggleFavorite() {
 
 export type FavoriteItem =
   | { listingId: string; available: true; listing: ListingSummary }
-  | { listingId: string; available: false; title: string | null }
+  | {
+      listingId: string
+      available: false
+      /** null when the listing was hidden by a moderator (or deleted): no title and no photo then */
+      title: string | null
+      price: number | null
+      currency: string | null
+      coverPath: string | null
+    }
 
 /**
  * Saved listings, newest saved first. A listing that was sold, expired or hidden is still listed
@@ -82,11 +90,30 @@ async function fetchFavorites(): Promise<FavoriteItem[]> {
   if (error) throw error
 
   const now = Date.now()
+  const isAvailable = (l: (typeof data)[number]['listings']) =>
+    l !== null && l.status === 'active' && new Date(l.expires_at).getTime() > now
+
+  // sold or expired listings of other people are not readable any more: one database function
+  // gives back their title, price and cover photo (0017)
+  let gone = new Map<string, { title: string; price: number; currency: string; cover_path: string | null }>()
+  if (data.some((row) => !isAvailable(row.listings))) {
+    const { data: rows, error: goneError } = await supabase.rpc('my_unavailable_favorites')
+    if (goneError) throw goneError
+    gone = new Map(rows.map((item) => [item.listing_id, item]))
+  }
+
   return data.map((row): FavoriteItem => {
     const l = row.listings
-    if (!l) return { listingId: row.listing_id, available: false, title: null }
-    if (l.status !== 'active' || new Date(l.expires_at).getTime() <= now) {
-      return { listingId: row.listing_id, available: false, title: l.title }
+    if (!l || !isAvailable(l)) {
+      const info = gone.get(row.listing_id)
+      return {
+        listingId: row.listing_id,
+        available: false,
+        title: info?.title ?? null,
+        price: info?.price ?? null,
+        currency: info?.currency ?? null,
+        coverPath: info?.cover_path ?? null,
+      }
     }
     const cover = [...l.listing_images].sort((a, b) => a.position - b.position)[0]
     return {

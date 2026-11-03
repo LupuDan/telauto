@@ -38,7 +38,7 @@ export function GarageHomeModule() {
           {t('garage.seeMatchingParts')}
         </Link>
       ) : (
-        <Link to={user ? '/account?tab=garage' : '/login?next=%2Faccount%3Ftab%3Dgarage'} className={buttonClass('secondary')}>
+        <Link to={user ? '/account/garage' : '/login?next=%2Faccount%2Fgarage'} className={buttonClass('secondary')}>
           {t('garage.addCar')}
         </Link>
       )}
