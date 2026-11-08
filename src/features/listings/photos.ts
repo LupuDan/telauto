@@ -1,4 +1,4 @@
-import imageCompression from 'browser-image-compression'
+import { compressImage } from '../../lib/imageCompression'
 import { LISTING_IMAGES_BUCKET, supabase } from '../../lib/supabase'
 
 export const MAX_PHOTOS = 10
@@ -25,9 +25,9 @@ const BASE_OPTIONS = {
  * max 1600 px on the long side, WebP (or JPEG if the browser cannot make WebP), about 500 KB.
  */
 export async function compressPhoto(file: File): Promise<File> {
-  let result = await imageCompression(file, { ...BASE_OPTIONS, fileType: 'image/webp' })
+  let result = await compressImage(file, { ...BASE_OPTIONS, fileType: 'image/webp' })
   if (result.type !== 'image/webp') {
-    result = await imageCompression(file, { ...BASE_OPTIONS, fileType: 'image/jpeg' })
+    result = await compressImage(file, { ...BASE_OPTIONS, fileType: 'image/jpeg' })
   }
   const extension = result.type === 'image/webp' ? 'webp' : 'jpg'
   return new File([result], `photo.${extension}`, { type: result.type })

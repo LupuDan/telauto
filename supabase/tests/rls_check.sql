@@ -134,6 +134,23 @@ begin
   end;
   r := r || array['Cumpărător: NU poate folosi poza din dosarul altcuiva', 'refuzat', v_text];
 
+  -- added in 0018 (security): the log of opened phone numbers is internal
+  begin
+    select count(*) into v_n from public.contact_reveals;
+    v_text := 'a citit';
+  exception when insufficient_privilege then
+    v_text := 'acces refuzat';
+  end;
+  r := r || array['Cumpărător: NU citește jurnalul telefoanelor deschise', 'acces refuzat', v_text];
+
+  begin
+    perform public.delete_my_account();
+    v_text := 'cont șters';
+  exception when insufficient_privilege then
+    v_text := sqlerrm;
+  end;
+  r := r || array['Ștergere cont fără parolă introdusă recent: refuzată', 'REAUTH_REQUIRED', v_text];
+
   reset role;
 
   -- ---------- 3) anti-spam: new account, max 3 listings in 24h ----------
@@ -157,6 +174,35 @@ begin
   select coalesce(sum(saves), 0) into v_n from public.my_listing_saves();
   r := r || array['Vânzător: vede câte salvări are anunțul său', '1', v_n::text];
 
+  reset role;
+
+  -- ---------- 4) delete account (0018): password login older than 10 minutes / just now ----------
+  perform set_config('request.jwt.claims', json_build_object(
+    'sub', v_buyer, 'role', 'authenticated',
+    'amr', json_build_array(json_build_object('method', 'password',
+      'timestamp', extract(epoch from now())::bigint - 3600)))::text, true);
+  set local role authenticated;
+  begin
+    perform public.delete_my_account();
+    v_text := 'cont șters';
+  exception when insufficient_privilege then
+    v_text := sqlerrm;
+  end;
+  r := r || array['Ștergere cont cu parola introdusă acum o oră: refuzată', 'REAUTH_REQUIRED', v_text];
+  reset role;
+
+  perform set_config('request.jwt.claims', json_build_object(
+    'sub', v_buyer, 'role', 'authenticated',
+    'amr', json_build_array(json_build_object('method', 'password',
+      'timestamp', extract(epoch from now())::bigint)))::text, true);
+  set local role authenticated;
+  begin
+    perform public.delete_my_account();
+    v_text := 'cont șters';
+  exception when others then
+    v_text := sqlerrm;
+  end;
+  r := r || array['Ștergere cont cu parola introdusă chiar acum: reușește', 'cont șters', v_text];
   reset role;
 
   -- ---------- cleanup ----------

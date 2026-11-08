@@ -10,6 +10,8 @@ export const passwordField = z
   .string()
   .min(8, 'validation.passwordMin')
   .max(72, 'validation.passwordMax')
+  // same rule as Supabase Auth "letters_digits" (supabase/config.toml)
+  .refine((value) => /[a-zA-Z]/.test(value) && /[0-9]/.test(value), 'validation.passwordLettersDigits')
 
 export const displayNameField = z
   .string()

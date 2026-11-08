@@ -1,4 +1,4 @@
-import imageCompression from 'browser-image-compression'
+import { compressImage } from '../../lib/imageCompression'
 import { AVATARS_BUCKET, LISTING_IMAGES_BUCKET, supabase } from '../../lib/supabase'
 import type { Language } from '../../i18n'
 
@@ -62,8 +62,8 @@ export function avatarUrl(path: string | null | undefined): string | null {
 /** Profile photo: square, 400 × 400 px, WebP (or JPEG), about 60 KB. */
 async function compressAvatar(file: File): Promise<File> {
   const options = { maxWidthOrHeight: 400, maxSizeMB: 0.1, useWebWorker: true, initialQuality: 0.85 }
-  let result = await imageCompression(file, { ...options, fileType: 'image/webp' })
-  if (result.type !== 'image/webp') result = await imageCompression(file, { ...options, fileType: 'image/jpeg' })
+  let result = await compressImage(file, { ...options, fileType: 'image/webp' })
+  if (result.type !== 'image/webp') result = await compressImage(file, { ...options, fileType: 'image/jpeg' })
   return new File([result], result.type === 'image/webp' ? 'avatar.webp' : 'avatar.jpg', { type: result.type })
 }
 
